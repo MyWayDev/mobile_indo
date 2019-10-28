@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:mor_release/pages/items/icon_bar.dart';
 import 'package:mor_release/models/item.dart';
 import 'package:mor_release/scoped/connected.dart';

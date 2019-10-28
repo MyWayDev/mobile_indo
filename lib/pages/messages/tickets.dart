@@ -20,7 +20,7 @@ class _TicketsState extends State<Tickets> {
   List<TicketType> types = [];
   ChatScreen msgs;
 
-  String path = "flamelink/environments/stage/content/support/id";
+  String path = "flamelink/environments/indoProduction/content/support/en-US";
 
   FirebaseDatabase database = FirebaseDatabase.instance;
 
@@ -38,7 +38,6 @@ class _TicketsState extends State<Tickets> {
 
   @override
   void initState() {
-    super.initState();
     getTicketTypes();
 
     databaseReference = database.reference().child(path);
@@ -55,15 +54,16 @@ class _TicketsState extends State<Tickets> {
     /* WidgetsBinding.instance.addPostFrameCallback((_) {
       _asyncInputDialog(context);
     });*/
+    super.initState();
   }
 
   @override
   void dispose() {
-    super.dispose();
     subAdd?.cancel();
     subChanged?.cancel();
     subDel?.cancel();
     // subSelect?.cancel();
+    super.dispose();
   }
 
   @override
@@ -438,7 +438,8 @@ class _TicketsState extends State<Tickets> {
   getTicketTypes() async {
     DataSnapshot snapshot = await database
         .reference()
-        .child('flamelink/environments/stage/content/ticketType/id/')
+        .child(
+            'flamelink/environments/indoProduction/content/ticketType/en-US/')
         .once();
     Map<dynamic, dynamic> typeList = snapshot.value;
     List list = typeList.values.toList();

@@ -133,8 +133,6 @@ class _FooterState extends State<Footer> with SingleTickerProviderStateMixin {
   static TabController _controller;
   @override
   void initState() {
-    super.initState();
-
     _tabs = [
       Tab(
         child: Text(
@@ -148,6 +146,7 @@ class _FooterState extends State<Footer> with SingleTickerProviderStateMixin {
       length: _tabs.length,
       vsync: this,
     );
+    super.initState();
   }
 
   @override

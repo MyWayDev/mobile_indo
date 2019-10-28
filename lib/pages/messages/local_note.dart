@@ -21,7 +21,7 @@ class _LocalNotificationState extends State<LocalNotification> {
 
   List<Notify> notifyData = List();
   List<Notify> filteredNotify = [];
-  String path = 'flamelink/environments/production/content/tokens/id/';
+  String path = 'flamelink/environments//en-US//content/tokens/en-US/';
   FirebaseDatabase database = FirebaseDatabase.instance;
 
   DatabaseReference databaseReference;
@@ -32,7 +32,6 @@ class _LocalNotificationState extends State<LocalNotification> {
 
   @override
   void initState() {
-    super.initState();
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     _cancelAllNotifications();
     databaseReference =
@@ -46,13 +45,13 @@ class _LocalNotificationState extends State<LocalNotification> {
 
   @override
   void dispose() {
-    super.dispose();
     _cancelAllNotifications();
     notifyData
         .forEach((n) => databaseReference.child(n.key).update({'seen': true}));
     subAdd?.cancel();
     subChanged?.cancel();
     subDel?.cancel();
+    super.dispose();
   }
 
   @override

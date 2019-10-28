@@ -126,7 +126,7 @@ class SalesOrder {
 
   Future<http.Response> createPost(SalesOrder salesOrder) async {
     final response =
-        await http.put('http://mywayapi.azurewebsites.net/api/invoice',
+        await http.put('http://mywayindoapi.azurewebsites.net/api/invoice',
             headers: {
               HttpHeaders.contentTypeHeader: 'application/json',
               //HttpHeaders.authorizationHeader: ''

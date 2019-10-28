@@ -115,7 +115,7 @@ class ChatScreenState extends State<ChatScreen> {
   bool isShowSticker;
   String imageUrl;
 
-  String path = "flamelink/environments/stage/content/messages/id/";
+  String path = "flamelink/environments/indoProduction/content/messages/en-US/";
   List<Message> _msgList = List();
   FirebaseDatabase database = FirebaseDatabase.instance;
   DatabaseReference databaseReference;
@@ -144,7 +144,7 @@ class ChatScreenState extends State<ChatScreen> {
   void updateInUse() {
     DatabaseReference dbUpdateref = FirebaseDatabase.instance.reference();
     dbUpdateref
-        .child("flamelink/environments/stage/content/support/id/")
+        .child("flamelink/environments/indoProduction/content/support/en-US/")
         .child(ticketId.toString())
         .update({'inUse': false});
   }
@@ -262,7 +262,7 @@ class ChatScreenState extends State<ChatScreen> {
 
   updateSeenCount() {
     DatabaseReference sumRef = FirebaseDatabase.instance.reference().child(
-        'flamelink/environments/stage/content/support/id/${widget.ticketId}');
+        'flamelink/environments/indoProduction/content/support/en-US/${widget.ticketId}');
     if (int.parse(widget.id) > 6) {
       sumRef.update({
         'fromClient': _nonseenToPeerMsgsCount(),

@@ -515,7 +515,7 @@ class _DocFormState extends State<DocForm> {
   void ticketPushToFirebase(Ticket ticket) {
     DatabaseReference ref = FirebaseDatabase.instance
         .reference()
-        .child('flamelink/environments/stage/content/support/id');
+        .child('flamelink/environments/indoProduction/content/support/en-US');
     var myRef = ref.child(DateTime.now().millisecondsSinceEpoch.toString());
     myRef.set({
       "inUse": false,

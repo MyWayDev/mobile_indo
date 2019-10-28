@@ -33,9 +33,9 @@ class MainModel extends Model {
   List<GiftOrder> giftorderList = [];
   List<PromoOrder> promoOrderList = [];
   String token = '';
-  final String firebaseDb = "stage";
-  final String stage = "stage";
-  final String updateDb = "stage";
+  final String firebaseDb = "indoProduction";
+  final String stage = "indoStage";
+  final String updateDb = "indoStage";
   bool loading = false;
   bool isBalanceChecked = true;
   bool isTypeing = false;
@@ -44,7 +44,8 @@ class MainModel extends Model {
   updateEnabledItems(String itemId) {
     database
         .reference()
-        .child('flamelink/environments/stage/content/items/id/$itemId')
+        .child(
+            'flamelink/environments/indoProduction/content/items/en-US/$itemId')
         .update({"disable": false});
   }
 
@@ -142,7 +143,7 @@ class MainModel extends Model {
     List<User> _contactList = [];
     DataSnapshot snapshot = await FirebaseDatabase.instance
         .reference()
-        .child('flamelink/environments/production/content/messages/id/')
+        .child('flamelink/environments/indoProduction/content/messages/en-US/')
         .once();
     Map<dynamic, dynamic> msg = snapshot.value;
     // print('mkeys:=>${msg.keys}');
@@ -166,7 +167,7 @@ class MainModel extends Model {
     User contactUser;
     DataSnapshot snapshot = await FirebaseDatabase.instance
         .reference()
-        .child('flamelink/environments/production/content/users/id/$key')
+        .child('flamelink/environments/indoProduction/content/users/en-US/$key')
         .once();
     if (snapshot.value != null) {
       contactUser = User.fromSnapshot(snapshot);
@@ -182,7 +183,7 @@ class MainModel extends Model {
   Future<Lock> settingsData() async {
     DataSnapshot snapshot = await FirebaseDatabase.instance
         .reference()
-        .child('flamelink/environments/$firebaseDb/content/lockScreen/id')
+        .child('flamelink/environments/$firebaseDb/content/lockScreen/en-US')
         .once();
     settings = Lock.fromSnapshot(snapshot);
     notifyListeners();
@@ -194,7 +195,7 @@ class MainModel extends Model {
   Future<List<Item>> fbItemList() async {
     DataSnapshot snapshot = await FirebaseDatabase.instance
         .reference()
-        .child('flamelink/environments/stage/content/items/id/')
+        .child('flamelink/environments/indoProduction/content/items/en-US/')
         .once();
     Map<dynamic, dynamic> fbitemsList = snapshot.value;
     List fblist = fbitemsList.values.toList();
@@ -264,7 +265,7 @@ class MainModel extends Model {
 
     void updateItemsToFirebase(int id, Item item) {
       DatabaseReference ref = FirebaseDatabase.instance.reference().child(
-          'flamelink/environments/stage/content/items/id/${id.toString()}');
+          'flamelink/environments/indoProduction/content/items/en-US/${id.toString()}');
       ref.update(item.toJsonUpdate());
     }
 
@@ -337,7 +338,7 @@ class MainModel extends Model {
     void pushItemsToFirebase(String itemId, Item item) {
       DatabaseReference ref = FirebaseDatabase.instance
           .reference()
-          .child('flamelink/environments/stage/content/items/id');
+          .child('flamelink/environments/indoProduction/content/items/en-US');
       ref.set(item.toJson());
     }
 
@@ -351,7 +352,7 @@ class MainModel extends Model {
   void stageToProduction() async {
     DataSnapshot stagesnapshot = await FirebaseDatabase.instance
         .reference()
-        .child('flamelink/environments/$firebaseDb/content/items/id/')
+        .child('flamelink/environments/$firebaseDb/content/items/en-US/')
         .once();
 
     Map<dynamic, dynamic> itemlist = stagesnapshot.value;
@@ -366,7 +367,7 @@ class MainModel extends Model {
     void pushItemsToFirebase(Item item, String key) {
       DatabaseReference ref = FirebaseDatabase.instance
           .reference()
-          .child('flamelink/environments/$firebaseDb/content/items/id/$key');
+          .child('flamelink/environments/$firebaseDb/content/items/en-US/$key');
       //var push =ref.push();
       ref.update({item.id: key});
     }
@@ -716,7 +717,7 @@ class MainModel extends Model {
   Future<List<Gift>> giftList() async {
     DataSnapshot snapshot = await FirebaseDatabase.instance
         .reference()
-        .child('flamelink/environments/$firebaseDb/content/gifts/id/')
+        .child('flamelink/environments/$firebaseDb/content/gifts/en-US/')
         .once();
 
     Map<dynamic, dynamic> giftsList = snapshot.value;
@@ -729,7 +730,7 @@ class MainModel extends Model {
   Future<List<Promo>> promoList() async {
     DataSnapshot snapshot = await FirebaseDatabase.instance
         .reference()
-        .child('flamelink/environments/$firebaseDb/content/timePromo/id/')
+        .child('flamelink/environments/$firebaseDb/content/timePromo/en-US/')
         .once();
 
     Map<dynamic, dynamic> promosList = snapshot.value;
@@ -1139,7 +1140,7 @@ for(var area in areas){
     void shipmentPushToFirebase(String courierId, Courier courier) {
       DatabaseReference ref = FirebaseDatabase.instance
           .reference()
-          .child('flamelink/environments/$firebaseDb/content/courier/id');
+          .child('flamelink/environments/$firebaseDb/content/courier/en-US');
       ref.child(courierId).update(courier.toJson());
     }
 
@@ -1158,7 +1159,7 @@ for(var area in areas){
     DataSnapshot snapshot = await FirebaseDatabase.instance
         .reference()
         .child(
-            'flamelink/environments/$firebaseDb/content/courier/id/') //!enviroments/$firebaseDb
+            'flamelink/environments/$firebaseDb/content/courier/en-US/') //!enviroments/$firebaseDb
         .once();
 
     List courierList = snapshot.value;
@@ -1216,7 +1217,7 @@ for(var area in areas){
     DataSnapshot snapshot = await FirebaseDatabase.instance
         .reference()
         .child(
-            'flamelink/environments/$firebaseDb/content/courier/id/$courierId/service') //!enviroments/production
+            'flamelink/environments/$firebaseDb/content/courier/en-US/$courierId/service') //!enviroments/production
         .once();
     List list = snapshot.value;
 // print(list.length);
@@ -1240,7 +1241,7 @@ for(var area in areas){
     DataSnapshot snapshot = await FirebaseDatabase.instance
         .reference()
         .child(
-            'flamelink/environments/$firebaseDb/content/courier/id/$courierId/service') //!enviroments/production
+            'flamelink/environments/$firebaseDb/content/courier/en-US/$courierId/service') //!enviroments/production
         .once();
     List list = snapshot.value;
 // print(list.length);
@@ -1277,7 +1278,7 @@ for( var i = 0 ; i < _list.length; i++){
     String memberId = int.parse(id).toString();
     DatabaseReference ref = FirebaseDatabase.instance
         .reference()
-        .child('flamelink/environments/$firebaseDb/content/users/id');
+        .child('flamelink/environments/$firebaseDb/content/users/en-US');
     ref.child(memberId).set(user.toJson());
   }
 
@@ -1337,7 +1338,7 @@ for( var i = 0 ; i < _list.length; i++){
     print('userData key:$key');
     final DataSnapshot snapshot = await FirebaseDatabase.instance
         .reference()
-        .child('flamelink/environments/$firebaseDb/content/users/id')
+        .child('flamelink/environments/$firebaseDb/content/users/en-US')
         .child(key)
         .once();
     user = User.fromSnapshot(snapshot);
@@ -1381,7 +1382,7 @@ for( var i = 0 ; i < _list.length; i++){
   updateToke(String _key) {
     DatabaseReference ref = FirebaseDatabase.instance
         .reference()
-        .child('flamelink/environments/$firebaseDb/content/users/id/$_key');
+        .child('flamelink/environments/$firebaseDb/content/users/en-US/$_key');
     if (token != null) {
       ref.update({"token": token});
     }
@@ -1394,7 +1395,7 @@ for( var i = 0 ; i < _list.length; i++){
     DatabaseReference databaseReference;
     databaseReference = database
         .reference()
-        .child('flamelink/environments/$firebaseDb/content/users/id/$key/');
+        .child('flamelink/environments/$firebaseDb/content/users/en-US/$key/');
     databaseReference.onValue.listen((event) async {
       access = await setIsAllowed(User.fromSnapshot(event.snapshot).isAllowed);
       print('isAllowedxx:$access');
@@ -1420,7 +1421,7 @@ for( var i = 0 ; i < _list.length; i++){
     final FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference databaseReference;
     databaseReference = database.reference().child(
-        'flamelink/environments/$firebaseDb/content/lockScreen/id/lockCart');
+        'flamelink/environments/$firebaseDb/content/lockScreen/en-US/lockCart');
     databaseReference.onValue.listen((event) async {
       cartLocked = await event.snapshot.value;
       //print('CARTLOCKED-XXXXX:$cartLocked');
@@ -1446,7 +1447,7 @@ for( var i = 0 ; i < _list.length; i++){
     final FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference databaseReference;
     databaseReference = database.reference().child(
-        'flamelink/environments/$firebaseDb/content/lockScreen/id/lockApp');
+        'flamelink/environments/$firebaseDb/content/lockScreen/en-US/lockApp');
     databaseReference.onValue.listen((event) async {
       appLocked = await event.snapshot.value;
       print('APPLOCKED-XXXXX:$appLocked');
@@ -1472,7 +1473,7 @@ for( var i = 0 ; i < _list.length; i++){
     final FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference databaseReference;
     databaseReference = database.reference().child(
-        'flamelink/environments/$firebaseDb/content/lockScreen/id/version');
+        'flamelink/environments/$firebaseDb/content/lockScreen/en-US/version');
     databaseReference.onValue.listen((event) async {
       String version = await event.snapshot.value;
       //print('APPLOCKED-XXXXX:$appLocked');
@@ -1523,7 +1524,7 @@ for( var i = 0 ; i < _list.length; i++){
     final FirebaseDatabase database = FirebaseDatabase.instance;
     DatabaseReference databaseReference;
     databaseReference = database.reference().child(
-        'flamelink/environments/$firebaseDb/content/users/id/${user.key}/');
+        'flamelink/environments/$firebaseDb/content/users/en-US/${user.key}/');
     databaseReference.onValue.listen((event) async {
       userInfo = User.fromSnapshot(event.snapshot);
     });

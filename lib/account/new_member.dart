@@ -28,7 +28,7 @@ class NewMemberPage extends StatefulWidget {
 @override
 class _NewMemberPage extends State<NewMemberPage> {
   DateTime selected;
-  String path = 'flamelink/environments/stage/content/areas/id/';
+  String path = 'flamelink/environments/indoProduction/content/areas/en-US/';
   FirebaseDatabase database = FirebaseDatabase.instance;
   TextEditingController controller = new TextEditingController();
 
@@ -38,7 +38,6 @@ class _NewMemberPage extends State<NewMemberPage> {
   var areaSplit;
   @override
   void initState() {
-    super.initState();
     getAreas();
     controller.addListener(() {
       setState(() {});
@@ -299,7 +298,8 @@ class _NewMemberPage extends State<NewMemberPage> {
                                         validator: (value) {
                                           String _msg;
                                           value.length < 9
-                                              ? _msg = 'Nama anggota tidak valid'
+                                              ? _msg =
+                                                  'Nama anggota tidak valid'
                                               : _msg = null;
                                           return _msg;
                                         },

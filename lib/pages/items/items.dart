@@ -18,7 +18,7 @@ class ItemsPage extends StatefulWidget {
 class _ItemsPage extends State<ItemsPage> {
   //String db = 'production';
   String path =
-      "flamelink/environments/stage/content/items/id"; //! VERY IMPORTANT change back to production before release
+      "flamelink/environments/indoProduction/content/items/en-US"; //! VERY IMPORTANT change back to production before release
   List<Item> itemData = List();
   List<Item> searchResult = [];
   FirebaseDatabase database = FirebaseDatabase.instance;
@@ -32,7 +32,6 @@ class _ItemsPage extends State<ItemsPage> {
 
   @override
   void initState() {
-    super.initState();
     databaseReference = database.reference().child(path);
     Query query = databaseReference.orderByChild('catalogue').equalTo(true);
 
@@ -44,7 +43,6 @@ class _ItemsPage extends State<ItemsPage> {
 
   @override
   void dispose() {
-    super.dispose();
     subAdd?.cancel();
     subChanged?.cancel();
     super.dispose();

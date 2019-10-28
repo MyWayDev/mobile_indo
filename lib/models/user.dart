@@ -116,7 +116,7 @@ class NewMember {
 
   Future<http.Response> createPost(NewMember newMember, String user) async {
     final response = await http.put(
-        'http://mywayapi.azurewebsites.net/api/memregister/$user',
+        'http://mywayindoapi.azurewebsites.net/api/memregister/$user',
         headers: {
           HttpHeaders.contentTypeHeader: 'application/json',
           //HttpHeaders.authorizationHeader: ''

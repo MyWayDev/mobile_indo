@@ -74,6 +74,11 @@ class SettingsScreenState extends State<SettingsScreen> {
     readLocal();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   void readLocal() async {
     prefs = await SharedPreferences.getInstance();
     String imageString() {
@@ -121,7 +126,8 @@ class SettingsScreenState extends State<SettingsScreen> {
           photoUrl = downloadUrl;
           FirebaseDatabase.instance
               .reference()
-              .child('flamelink/environments/stage/content/users/id/$id')
+              .child(
+                  'flamelink/environments/indoProduction/content/users/en-US/$id')
               .update({
             'name': name,
             'areaId': areaId,
@@ -167,7 +173,7 @@ class SettingsScreenState extends State<SettingsScreen> {
     });
     FirebaseDatabase.instance
         .reference()
-        .child('flamelink/environments/production/content/users/id/$id')
+        .child('flamelink/environments//en-US//content/users/en-US/$id')
         .update({'name': name, 'areaId': areaId, 'photoUrl': photoUrl}).then(
             (data) async {
       //await prefs.setString('name', name);

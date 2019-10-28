@@ -26,8 +26,6 @@ class _ColorLoader2State extends State<ColorLoader2>
 
   @override
   void initState() {
-    super.initState();
-
     controller1 = AnimationController(
         duration: const Duration(milliseconds: 1200), vsync: this);
 
@@ -50,6 +48,7 @@ class _ColorLoader2State extends State<ColorLoader2>
     controller1.repeat();
     controller2.repeat();
     controller3.repeat();
+    super.initState();
   }
 
   @override
