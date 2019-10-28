@@ -15,6 +15,7 @@ class OrderPage extends StatefulWidget {
 @override
 class _OrderPage extends State<OrderPage> {
   final formatter = new NumberFormat("#,###");
+  final formatWeight = new NumberFormat("#,###.##");
   @override
   void initState() {
     super.initState();
@@ -48,13 +49,21 @@ class _OrderPage extends State<OrderPage> {
                               Text(
                                 'Rp ${formatter.format(model.orderSum())}',
                                 style: TextStyle(
-                                  color: Colors.black,
+                                  color: Colors.green[700],
                                   fontSize: 15.0,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                               Text(
                                 ' Bp ${model.orderBp().toString()}',
+                                style: TextStyle(
+                                  color: Colors.red[900],
+                                  fontSize: 15.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                ' Kg ${formatWeight.format(model.orderWeight())}',
                                 style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 15.0,
@@ -225,16 +234,32 @@ class _OrderPage extends State<OrderPage> {
                                                         ),
                                                         _buildIconButton(
                                                             context, i, model),
-                                                        Text(
-                                                          'Bp ${model.itemorderlist[i].totalBp.toString()}',
-                                                          style: TextStyle(
-                                                            fontSize: 14.0,
-                                                            color:
-                                                                Colors.red[900],
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                          ),
-                                                        ),
+                                                        Column(
+                                                          children: <Widget>[
+                                                            Text(
+                                                              'Bp ${model.itemorderlist[i].totalBp.toString()}',
+                                                              style: TextStyle(
+                                                                fontSize: 14.0,
+                                                                color: Colors
+                                                                    .red[900],
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                            ),
+                                                            Text(
+                                                              'Kg ${formatWeight.format(model.itemorderlist[i].totalWeight)}',
+                                                              style: TextStyle(
+                                                                fontSize: 14.0,
+                                                                color: Colors
+                                                                    .black,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        )
                                                       ]),
                                                 ],
                                               ),

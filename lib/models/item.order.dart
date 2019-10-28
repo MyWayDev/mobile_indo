@@ -9,9 +9,15 @@ class ItemOrder {
   double price;
   int bp;
   double bv;
+  double weight;
   int qty;
   String name;
   String img;
+
+  double get totalWeight {
+    double _totalWeight = qty * weight;
+    return _totalWeight;
+  }
 
   double get totalPrice {
     double _totalPrice = qty * price;
@@ -30,6 +36,7 @@ class ItemOrder {
     this.bp,
     this.bv,
     this.name,
+    this.weight,
     this.img,
   });
 

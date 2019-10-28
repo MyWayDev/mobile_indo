@@ -420,6 +420,7 @@ class MainModel extends Model {
       bv: double.parse(item.bv.toString()),
       qty: qty,
       name: item.name,
+      weight: item.weight,
       img: item.imageUrl,
     );
     print('${itemorder.itemId}....${itemorder.qty}');
@@ -548,6 +549,14 @@ class MainModel extends Model {
   /*List<GiftPack> get displayGiftOrder {
     return List.from(giftpacklist);
   }*/
+  double orderWeight() {
+    double x = 0;
+    for (ItemOrder i in itemorderlist) {
+      x += i.weight * i.qty;
+    }
+    notifyListeners();
+    return x;
+  }
 
 //!--------*
   double orderSum() {

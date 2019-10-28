@@ -24,6 +24,7 @@ class Item {
   List cat;
   List grp;
   String usage;
+  var weight;
 
   Item(
       {this.key,
@@ -47,7 +48,8 @@ class Item {
       this.brand,
       this.cat,
       this.grp,
-      this.usage});
+      this.usage,
+      this.weight});
 
   final formatter = NumberFormat("#,###");
   String get priceFormat {
@@ -78,7 +80,8 @@ class Item {
         brand = snapshot.value['brand'],
         cat = snapshot.value['catagory'],
         grp = snapshot.value['group'],
-        usage = snapshot.value['usage'];
+        usage = snapshot.value['usage'],
+        weight = snapshot.value['weight'];
 
   factory Item.fromJson(Map<String, dynamic> json) {
     //! was Map<string, dynamic>

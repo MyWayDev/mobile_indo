@@ -1,5 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:mor_release/models/lock.dart';
 import 'package:mor_release/pages/items/itemDetails/footer.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -16,6 +17,7 @@ class ItemsPage extends StatefulWidget {
 
 @override
 class _ItemsPage extends State<ItemsPage> {
+  final formatWeight = new NumberFormat("#,###.##");
   //String db = 'production';
   String path =
       "flamelink/environments/indoProduction/content/items/en-US"; //! VERY IMPORTANT change back to production before release
@@ -99,7 +101,25 @@ class _ItemsPage extends State<ItemsPage> {
                                 fontSize: 16.0,
                                 fontWeight: FontWeight.bold),
                           ),
-                        )
+                        ),
+                        Chip(
+                          backgroundColor: Colors.grey[600],
+                          avatar: CircleAvatar(
+                            backgroundColor: Colors.yellow,
+                            child: Text('kg',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 15.0,
+                                    fontWeight: FontWeight.bold)),
+                          ),
+                          label: Text(
+                            formatWeight.format(model.orderWeight()),
+                            style: TextStyle(
+                                color: Colors.yellowAccent,
+                                fontSize: 15.0,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
                       ]),
                   padding: EdgeInsets.only(right: 38),
                 )
