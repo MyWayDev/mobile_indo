@@ -1,12 +1,21 @@
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:intl/intl.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:mor_release/models/courier.dart';
+import 'package:mor_release/pages/order/end_order.dart';
+import 'package:mor_release/pages/order/widgets/shipmentArea.dart';
 import 'package:mor_release/scoped/connected.dart';
+import 'package:mor_release/widgets/color_loader_2.dart';
 import 'package:mor_release/widgets/stock_dialog.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:flutter/cupertino.dart';
 
 class OrderPage extends StatefulWidget {
-  @override
+  final MainModel model;
+  OrderPage(this.model);
+
   State<StatefulWidget> createState() {
     return _OrderPage();
   }
@@ -95,9 +104,12 @@ class _OrderPage extends State<OrderPage> {
                           highlightColor: Colors.pink[900],
                           elevation: 3,
                           fillColor: Colors.green,
-                          onPressed: () {
-                            Navigator.pushNamed(context, '/endorder');
+                          onPressed: () async {
                             model.loading = false;
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (_) {
+                              return EndOrder(model);
+                            }));
                           },
                           splashColor: Colors.pink[900],
                         )),
@@ -246,6 +258,12 @@ class _OrderPage extends State<OrderPage> {
                                                                     FontWeight
                                                                         .bold,
                                                               ),
+                                                            ),
+                                                            Divider(
+                                                              height: 2.0,
+                                                              indent: 1,
+                                                              color:
+                                                                  Colors.black,
                                                             ),
                                                             Text(
                                                               'Kg ${formatWeight.format(model.itemorderlist[i].totalWeight)}',

@@ -28,7 +28,7 @@ class NewMemberPage extends StatefulWidget {
 @override
 class _NewMemberPage extends State<NewMemberPage> {
   DateTime selected;
-  String path = 'flamelink/environments/indoProduction/content/areas/en-US/';
+  String path = 'flamelink/environments/indoProduction/content/region/en-US/';
   FirebaseDatabase database = FirebaseDatabase.instance;
   TextEditingController controller = new TextEditingController();
 
@@ -36,6 +36,8 @@ class _NewMemberPage extends State<NewMemberPage> {
   List<DropdownMenuItem> items = [];
   String selectedValue;
   var areaSplit;
+  bool _loading = false;
+
   @override
   void initState() {
     getAreas();
@@ -67,17 +69,19 @@ class _NewMemberPage extends State<NewMemberPage> {
 
     Map<dynamic, dynamic> _areas = snapshot.value;
     List list = _areas.values.toList();
-    List<Area> fbAreas = list.map((f) => Area.json(f)).toList();
+    List<Region> fbRegion = list.map((f) => Region.json(f)).toList();
 
     if (snapshot.value != null) {
-      for (var t in fbAreas) {
-        String sValue = "${t.areaId}" + " " + "${t.name}";
-        items.add(DropdownMenuItem(
-            child: Text(
-              sValue,
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-            ),
-            value: sValue));
+      for (var t in fbRegion) {
+        String sValue = "${t.regionId}" + " " + "${t.name}";
+        items.add(
+          DropdownMenuItem(
+              child: Text(
+                sValue,
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+              ),
+              value: sValue),
+        );
       }
     }
   }
@@ -112,6 +116,7 @@ class _NewMemberPage extends State<NewMemberPage> {
     controller.clear();
     setState(() {
       veri = false;
+      _isloading = false;
     });
   }
 
@@ -215,6 +220,7 @@ class _NewMemberPage extends State<NewMemberPage> {
                                       : Container(),
                               color: Colors.pink[900],
                               onPressed: () async {
+                                isloading(true);
                                 if (!veri) {
                                   veri = await model.leaderVerification(
                                       controller.text.padLeft(8, '0'));
@@ -222,7 +228,7 @@ class _NewMemberPage extends State<NewMemberPage> {
                                     _nodeData = await model.nodeJson(
                                         controller.text.padLeft(8, '0'));
                                     controller.text = _nodeData.distrId +
-                                        '    ' +
+                                        ' ' +
                                         _nodeData.name;
                                   } else {
                                     resetVeri();
@@ -230,50 +236,57 @@ class _NewMemberPage extends State<NewMemberPage> {
                                 } else {
                                   resetVeri();
                                 }
+                                isloading(false);
                               },
                               splashColor: Colors.pink,
                             ),
                           ),
-                          veri
-                              ? Container(
-                                  child: Column(
-                                    children: <Widget>[
-                                      ListTile(
-                                        leading: RawMaterialButton(
-                                          child: Icon(
-                                            GroovinMaterialIcons.calendar_check,
-                                            size: 26.0,
-                                            color: Colors.white,
-                                          ),
-                                          shape: CircleBorder(),
-                                          highlightColor: Colors.pink[500],
-                                          elevation: 8,
-                                          fillColor: Colors.pink[500],
-                                          onPressed: () {
-                                            _showDateTimePicker(
-                                                model.userInfo.distrId);
-                                          },
-                                          splashColor: Colors.pink[900],
-                                        ),
-                                        title: selected != null
-                                            ? Text(DateFormat('yyyy-MM-dd')
-                                                .format(selected)
-                                                .toString())
-                                            : Text(''),
-                                        subtitle: Padding(
-                                          padding: EdgeInsets.only(right: 10),
-                                          child: selected == null
-                                              ? Text('Tanggal lahir')
-                                              : Text(''),
-                                        ),
+                          ModalProgressHUD(
+                              inAsyncCall: _loading,
+                              opacity: 0.6,
+                              progressIndicator: ColorLoader2(),
+                              child: veri
+                                  ? Container(
+                                      child: Column(
+                                        children: <Widget>[
+                                          ListTile(
+                                            leading: RawMaterialButton(
+                                              child: Icon(
+                                                GroovinMaterialIcons
+                                                    .calendar_check,
+                                                size: 26.0,
+                                                color: Colors.white,
+                                              ),
+                                              shape: CircleBorder(),
+                                              highlightColor: Colors.pink[500],
+                                              elevation: 8,
+                                              fillColor: Colors.pink[500],
+                                              onPressed: () {
+                                                _showDateTimePicker(
+                                                    model.userInfo.distrId);
+                                              },
+                                              splashColor: Colors.pink[900],
+                                            ),
+                                            title: selected != null
+                                                ? Text(DateFormat('yyyy-MM-dd')
+                                                    .format(selected)
+                                                    .toString())
+                                                : Text(''),
+                                            subtitle: Padding(
+                                              padding:
+                                                  EdgeInsets.only(right: 10),
+                                              child: selected == null
+                                                  ? Text('Tanggal lahir')
+                                                  : Text(''),
+                                            ),
 
-                                        //trailing:
-                                      ),
-                                      Divider(
-                                        height: 6,
-                                        color: Colors.black,
-                                      ),
-                                      /*  TextFormField(
+                                            //trailing:
+                                          ),
+                                          Divider(
+                                            height: 6,
+                                            color: Colors.black,
+                                          ),
+                                          /*  TextFormField(
                                     decoration: InputDecoration(
                                         labelText: 'الاسم العائلي',
                                         contentPadding: EdgeInsets.all(8.0),
@@ -286,74 +299,79 @@ class _NewMemberPage extends State<NewMemberPage> {
                                       _newMemberForm.familyName = value;
                                     },
                                   ),*/
-                                      TextFormField(
-                                        autovalidate: true,
-                                        decoration: InputDecoration(
-                                            labelText: 'Nama',
-                                            contentPadding: EdgeInsets.all(8.0),
-                                            icon: Icon(
-                                                GroovinMaterialIcons
-                                                    .format_title,
-                                                color: Colors.pink[500])),
-                                        validator: (value) {
-                                          String _msg;
-                                          value.length < 9
-                                              ? _msg =
-                                                  'Nama anggota tidak valid'
-                                              : _msg = null;
-                                          return _msg;
-                                        },
-                                        keyboardType: TextInputType.text,
-                                        onSaved: (String value) {
-                                          _newMemberForm.name = value;
-                                        },
-                                      ),
-                                      TextFormField(
-                                        decoration: InputDecoration(
-                                            labelText: 'Nomor tanda pengenal',
-                                            contentPadding: EdgeInsets.all(8.0),
-                                            icon: Icon(Icons.assignment_ind,
-                                                color: Colors.pink[500])),
-                                        validator: (value) {
-                                          String _msg;
-                                          value.length < 5
-                                              ? _msg = 'خطأ فى حفظ الرقم الوطنى'
-                                              : _msg = null;
-                                          return _msg;
-                                        },
-                                        autocorrect: true,
-                                        textCapitalization:
-                                            TextCapitalization.sentences,
-                                        keyboardType: TextInputType.text,
-                                        onSaved: (String value) {
-                                          _newMemberForm.personalId = value;
-                                        },
-                                      ),
-                                      TextFormField(
-                                        decoration: InputDecoration(
-                                            labelText: 'Nomor telepon',
-                                            filled: true,
-                                            fillColor: Colors.transparent,
-                                            contentPadding: EdgeInsets.all(8.0),
-                                            icon: Icon(
-                                              Icons.phone,
-                                              color: Colors.pink[500],
-                                            )),
-                                        validator: (value) {
-                                          String _msg;
-                                          value.length < 8
-                                              ? _msg = ' خطأ فى حفظ  الهاتف'
-                                              : _msg = null;
-                                          return _msg;
-                                        },
-                                        keyboardType:
-                                            TextInputType.numberWithOptions(
-                                                signed: true),
-                                        onSaved: (String value) {
-                                          _newMemberForm.telephone = value;
-                                        },
-                                      ),
-                                      /*  TextFormField(
+                                          TextFormField(
+                                            autovalidate: true,
+                                            decoration: InputDecoration(
+                                                labelText: 'Nama',
+                                                contentPadding:
+                                                    EdgeInsets.all(8.0),
+                                                icon: Icon(
+                                                    GroovinMaterialIcons
+                                                        .format_title,
+                                                    color: Colors.pink[500])),
+                                            validator: (value) {
+                                              String _msg;
+                                              value.length < 9
+                                                  ? _msg =
+                                                      'Nama anggota tidak valid'
+                                                  : _msg = null;
+                                              return _msg;
+                                            },
+                                            keyboardType: TextInputType.text,
+                                            onSaved: (String value) {
+                                              _newMemberForm.name = value;
+                                            },
+                                          ),
+                                          TextFormField(
+                                            decoration: InputDecoration(
+                                                labelText:
+                                                    'Nomor tanda pengenal',
+                                                contentPadding:
+                                                    EdgeInsets.all(8.0),
+                                                icon: Icon(Icons.assignment_ind,
+                                                    color: Colors.pink[500])),
+                                            validator: (value) {
+                                              String _msg;
+                                              value.length < 5
+                                                  ? _msg =
+                                                      'خطأ فى حفظ الرقم الوطنى'
+                                                  : _msg = null;
+                                              return _msg;
+                                            },
+                                            autocorrect: true,
+                                            textCapitalization:
+                                                TextCapitalization.sentences,
+                                            keyboardType: TextInputType.text,
+                                            onSaved: (String value) {
+                                              _newMemberForm.personalId = value;
+                                            },
+                                          ),
+                                          TextFormField(
+                                            decoration: InputDecoration(
+                                                labelText: 'Nomor telepon',
+                                                filled: true,
+                                                fillColor: Colors.transparent,
+                                                contentPadding:
+                                                    EdgeInsets.all(8.0),
+                                                icon: Icon(
+                                                  Icons.phone,
+                                                  color: Colors.pink[500],
+                                                )),
+                                            validator: (value) {
+                                              String _msg;
+                                              value.length < 8
+                                                  ? _msg = ' خطأ فى حفظ  الهاتف'
+                                                  : _msg = null;
+                                              return _msg;
+                                            },
+                                            keyboardType:
+                                                TextInputType.numberWithOptions(
+                                                    signed: true),
+                                            onSaved: (String value) {
+                                              _newMemberForm.telephone = value;
+                                            },
+                                          ),
+                                          /*  TextFormField(
                                     decoration: InputDecoration(
                                         labelText: 'Surel',
                                         filled: true,
@@ -368,65 +386,67 @@ class _NewMemberPage extends State<NewMemberPage> {
                                       _newMemberForm.email = value;
                                     },
                                   ),*/
-                                      TextFormField(
-                                        decoration: InputDecoration(
-                                            labelText: 'Alamat',
-                                            filled: true,
-                                            fillColor: Colors.transparent,
-                                            contentPadding: EdgeInsets.all(8.0),
-                                            icon: Icon(
-                                              GroovinMaterialIcons.home,
-                                              color: Colors.pink[500],
-                                            )),
-                                        validator: (value) {
-                                          String _msg;
-                                          value.length < 9
-                                              ? _msg = 'خطأ فى حفظ العنوان'
-                                              : _msg = null;
-                                          return _msg;
-                                        },
-                                        keyboardType: TextInputType.text,
-                                        onSaved: (String value) {
-                                          _newMemberForm.address = value;
-                                        },
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: <Widget>[
-                                          Icon(
-                                            Icons.add_location,
-                                            size: 28,
-                                            color: Colors.pink[500],
-                                          ),
-                                          SearchableDropdown(
-                                            hint: Text('Area'),
-                                            icon: Icon(
-                                              Icons.arrow_drop_down_circle,
-                                              size: 30,
-                                            ),
-                                            iconEnabledColor: Colors.pink[200],
-                                            iconDisabledColor: Colors.grey,
-                                            items: items,
-                                            value: selectedValue,
-                                            onChanged: (value) {
-                                              setState(() {
-                                                selectedValue = value;
-                                                areaSplit =
-                                                    selectedValue.split('\ ');
-                                                _newMemberForm.areaId =
-                                                    areaSplit.first;
-                                                print(
-                                                    'split:${_newMemberForm.areaId}');
-                                              });
+                                          TextFormField(
+                                            decoration: InputDecoration(
+                                                labelText: 'Alamat',
+                                                filled: true,
+                                                fillColor: Colors.transparent,
+                                                contentPadding:
+                                                    EdgeInsets.all(8.0),
+                                                icon: Icon(
+                                                  GroovinMaterialIcons.home,
+                                                  color: Colors.pink[500],
+                                                )),
+                                            validator: (value) {
+                                              String _msg;
+                                              value.length < 9
+                                                  ? _msg = 'خطأ فى حفظ العنوان'
+                                                  : _msg = null;
+                                              return _msg;
+                                            },
+                                            keyboardType: TextInputType.text,
+                                            onSaved: (String value) {
+                                              _newMemberForm.address = value;
                                             },
                                           ),
-                                        ],
-                                      )
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: <Widget>[
+                                              Icon(
+                                                Icons.add_location,
+                                                size: 28,
+                                                color: Colors.pink[500],
+                                              ),
+                                              SearchableDropdown(
+                                                hint: Text('REGION'),
+                                                icon: Icon(
+                                                  Icons.arrow_drop_down_circle,
+                                                  size: 30,
+                                                ),
+                                                iconEnabledColor:
+                                                    Colors.pink[200],
+                                                iconDisabledColor: Colors.grey,
+                                                items: items,
+                                                value: selectedValue,
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    selectedValue = value;
+                                                    areaSplit = selectedValue
+                                                        .split('\ ');
+                                                    _newMemberForm.areaId =
+                                                        areaSplit.first;
+                                                    print(
+                                                        'split:${_newMemberForm.areaId}');
+                                                  });
+                                                },
+                                              ),
+                                            ],
+                                          )
 
-                                      /*FormField<Area>(
+                                          /*FormField<Area>(
                                     initialValue: _newMemberForm.areaId = null,
                                     onSaved: (val) =>
                                         _newMemberForm.areaId = val.areaId,
@@ -485,10 +505,10 @@ class _NewMemberPage extends State<NewMemberPage> {
                                       );
                                     },
                                   ),*/
-                                    ],
-                                  ),
-                                )
-                              : Container()
+                                        ],
+                                      ),
+                                    )
+                                  : Container()),
                         ]),
                   ),
                 ),

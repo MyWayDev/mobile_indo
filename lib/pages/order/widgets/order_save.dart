@@ -8,7 +8,7 @@ import 'package:scoped_model/scoped_model.dart';
 
 class OrderSave extends StatelessWidget {
   final String courierId;
-  final int courierFee;
+  final double courierFee;
   final String distrId;
   final String note;
   final String userId;
@@ -40,16 +40,8 @@ class OrderSave extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
-                Text(
-                  formatter.format(orderTotal(model)) + ' Rp',
-                  style: TextStyle(
-                      color: Colors.pink[900], fontWeight: FontWeight.bold),
-                ),
-                Expanded(
-                  child: Container(),
-                ),
                 Transform.translate(
-                  offset: Offset(15.0, 0.0),
+                  offset: Offset(1.0, 0.0),
                   child: Container(
                     padding: const EdgeInsets.only(right: 10.0),
                     child: Text(
@@ -61,7 +53,15 @@ class OrderSave extends StatelessWidget {
                       //  textDirection: TextDirection.rtl,
                     ),
                   ),
-                )
+                ),
+                Expanded(
+                  child: Container(),
+                ),
+                Text(
+                  formatter.format(orderTotal(model)) + ' Rp',
+                  style: TextStyle(
+                      color: Colors.black, fontWeight: FontWeight.bold),
+                ),
               ],
             ),
             onPressed: () {

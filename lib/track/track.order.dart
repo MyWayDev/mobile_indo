@@ -52,6 +52,7 @@ class _TrackOrder extends State<TrackOrder> {
       print('ERROR UPDATE SO!');
     }
     _getSorders(widget.userId);
+    isLoading(false, model);
   }
 
   void _getSorders(String userId) async {
@@ -345,7 +346,7 @@ class _TrackOrder extends State<TrackOrder> {
             progressIndicator: LinearProgressIndicator(),
             child: Column(
               children: <Widget>[
-                CustomAppBar("Pelacakan order terunda"),
+                CustomAppBar("Pelacakan order tertunda"),
                 Container(),
                 Expanded(
                   child: ListView.builder(

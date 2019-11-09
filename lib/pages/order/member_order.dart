@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+
 import 'package:mor_release/models/courier.dart';
 import 'package:mor_release/pages/order/widgets/order_courier.dart';
 import 'package:mor_release/scoped/connected.dart';
+
 import 'package:scoped_model/scoped_model.dart';
 
 class MemberOrder extends StatefulWidget {
-  final Future<List<dynamic>> couriers;
+  final MainModel model;
   final String areaId;
-  MemberOrder(this.couriers, this.areaId);
+  final int distrPoint;
+  MemberOrder(this.model, this.areaId, this.distrPoint);
   @override
   State<StatefulWidget> createState() {
     return _MemberOrder();
@@ -17,10 +20,17 @@ class MemberOrder extends StatefulWidget {
 @override
 class _MemberOrder extends State<MemberOrder> {
   List<Courier> shipment = [];
+  bool _isloading = false;
+
+  void isloading(bool i) {
+    setState(() {
+      _isloading = i;
+    });
+  }
+
   @override
   void initState() {
     getinit();
-
     super.initState();
   }
 
@@ -30,7 +40,10 @@ class _MemberOrder extends State<MemberOrder> {
   }
 
   void getinit() async {
-    shipment = await widget.couriers;
+    isloading(true);
+    shipment =
+        await widget.model.couriersList(widget.areaId, widget.distrPoint);
+    isloading(false);
   }
 
   @override

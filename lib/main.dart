@@ -234,8 +234,8 @@ class _MyApp extends State<MyApp> {
           //'/welcome': (BuildContext context) => Welcome(),
           '/itemstabs': (BuildContext context) => ItemsTabs(),
           '/itemspage': (BuildContext context) => ItemsPage(),
-          '/endorder': (BuildContext context) => EndOrder(),
-          '/order': (BuildContext context) => OrderPage(),
+          // '/endorder': (BuildContext context) => EndOrder(),
+          '/order': (BuildContext context) => OrderPage(model),
 
           // '/savedialog':(BuildContext context) => SaveDialog(),
           //'/lockpage': (BuildContext context) => LockScreen(),

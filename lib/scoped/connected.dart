@@ -22,9 +22,17 @@ import 'package:firebase_core/firebase_core.dart';
 
 class MainModel extends Model {
   // ** items //** */
-  final String _version = '3.1r'; //!Modify for every release version./.
+  static String _version = '3.12r'; //!Modify for every release version./.
+  static String firebaseDb = "indoProduction";
+  static String stage = "indoStage";
+  static String updateDb = "indoStage";
   final FirebaseDatabase database = FirebaseDatabase.instance;
   DatabaseReference databaseReference;
+  final String path = 'flamelink/environments/$firebaseDb/content';
+  final String httpath = 'http://mywayindoapi.azurewebsites.net/api';
+  String shipmentName = '';
+  String shipmentArea = '';
+  int distrPoint = 0;
   int noteCount;
   List<Item> itemData = List();
   List<Item> searchResult = [];
@@ -32,10 +40,9 @@ class MainModel extends Model {
   //List<GiftPack> giftpacklist = [];
   List<GiftOrder> giftorderList = [];
   List<PromoOrder> promoOrderList = [];
+
   String token = '';
-  final String firebaseDb = "indoProduction";
-  final String stage = "indoStage";
-  final String updateDb = "indoStage";
+
   bool loading = false;
   bool isBalanceChecked = true;
   bool isTypeing = false;
@@ -44,8 +51,7 @@ class MainModel extends Model {
   updateEnabledItems(String itemId) {
     database
         .reference()
-        .child(
-            'flamelink/environments/indoProduction/content/items/en-US/$itemId')
+        .child('$path/items/en-US/$itemId')
         .update({"disable": false});
   }
 
@@ -141,10 +147,8 @@ class MainModel extends Model {
   Future<List<User>> messageKeys(String distrId) async {
     List<String> keys = [];
     List<User> _contactList = [];
-    DataSnapshot snapshot = await FirebaseDatabase.instance
-        .reference()
-        .child('flamelink/environments/indoProduction/content/messages/en-US/')
-        .once();
+    DataSnapshot snapshot =
+        await database.reference().child('$path/messages/en-US/').once();
     Map<dynamic, dynamic> msg = snapshot.value;
     // print('mkeys:=>${msg.keys}');
 
@@ -165,10 +169,8 @@ class MainModel extends Model {
 
   Future<User> contact(String key) async {
     User contactUser;
-    DataSnapshot snapshot = await FirebaseDatabase.instance
-        .reference()
-        .child('flamelink/environments/indoProduction/content/users/en-US/$key')
-        .once();
+    DataSnapshot snapshot =
+        await database.reference().child('$path/users/en-US/$key').once();
     if (snapshot.value != null) {
       contactUser = User.fromSnapshot(snapshot);
       print(
@@ -181,10 +183,8 @@ class MainModel extends Model {
   Lock settings;
 //!--------*Settings*-----------//
   Future<Lock> settingsData() async {
-    DataSnapshot snapshot = await FirebaseDatabase.instance
-        .reference()
-        .child('flamelink/environments/$firebaseDb/content/lockScreen/en-US')
-        .once();
+    DataSnapshot snapshot =
+        await database.reference().child('$path/lockScreen/en-US').once();
     settings = Lock.fromSnapshot(snapshot);
     notifyListeners();
 
@@ -193,10 +193,8 @@ class MainModel extends Model {
   }
 
   Future<List<Item>> fbItemList() async {
-    DataSnapshot snapshot = await FirebaseDatabase.instance
-        .reference()
-        .child('flamelink/environments/indoProduction/content/items/en-US/')
-        .once();
+    DataSnapshot snapshot =
+        await database.reference().child('$path/items/en-US/').once();
     Map<dynamic, dynamic> fbitemsList = snapshot.value;
     List fblist = fbitemsList.values.toList();
     List<Item> fbItems = fblist.map((f) => Item.fromList(f)).toList();
@@ -206,8 +204,7 @@ class MainModel extends Model {
   Future<List<Item>> dbItemsList() async {
     List<Item> products;
     //List productlist;
-    final response = await http
-        .get('http://mywayindoapi.azurewebsites.net/api/allitemdetails');
+    final response = await http.get('$httpath/api/allitemdetails');
     if (response.statusCode == 200) {
       final productlist = json.decode(response.body) as List;
 
@@ -264,9 +261,9 @@ class MainModel extends Model {
     }
 
     void updateItemsToFirebase(int id, Item item) {
-      DatabaseReference ref = FirebaseDatabase.instance.reference().child(
-          'flamelink/environments/indoProduction/content/items/en-US/${id.toString()}');
-      ref.update(item.toJsonUpdate());
+      databaseReference =
+          database.reference().child('f$path/items/en-US/${id.toString()}');
+      databaseReference.update(item.toJsonUpdate());
     }
 
     for (Item item in items) {
@@ -336,10 +333,8 @@ class MainModel extends Model {
     print('itemslist length${items.length}');
 
     void pushItemsToFirebase(String itemId, Item item) {
-      DatabaseReference ref = FirebaseDatabase.instance
-          .reference()
-          .child('flamelink/environments/indoProduction/content/items/en-US');
-      ref.set(item.toJson());
+      databaseReference = database.reference().child('$path/items/en-US');
+      databaseReference.set(item.toJson());
     }
 
     for (Item item in items) {
@@ -350,10 +345,8 @@ class MainModel extends Model {
   }
 
   void stageToProduction() async {
-    DataSnapshot stagesnapshot = await FirebaseDatabase.instance
-        .reference()
-        .child('flamelink/environments/$firebaseDb/content/items/en-US/')
-        .once();
+    DataSnapshot stagesnapshot =
+        await database.reference().child('$path/items/en-US/').once();
 
     Map<dynamic, dynamic> itemlist = stagesnapshot.value;
     List list = itemlist.values.toList();
@@ -365,9 +358,8 @@ class MainModel extends Model {
 //items.forEach((f)=>print(f.itemId));
 
     void pushItemsToFirebase(Item item, String key) {
-      DatabaseReference ref = FirebaseDatabase.instance
-          .reference()
-          .child('flamelink/environments/$firebaseDb/content/items/en-US/$key');
+      DatabaseReference ref =
+          database.reference().child('$path/items/en-US/$key');
       //var push =ref.push();
       ref.update({item.id: key});
     }
@@ -423,7 +415,6 @@ class MainModel extends Model {
       weight: item.weight,
       img: item.imageUrl,
     );
-    print('${itemorder.itemId}....${itemorder.qty}');
 
     var x = itemorderlist.where((orderItem) => orderItem.itemId == item.itemId);
     int i;
@@ -596,8 +587,8 @@ class MainModel extends Model {
   bool loadingSoPage = false;
   Future<List<Sorder>> checkSoDeletion(String userId) async {
     List<Sorder> sos;
-    final http.Response response = await http
-        .get('http://mywayindoapi.azurewebsites.net/api/userpending/$userId');
+    final http.Response response =
+        await http.get('$httpath/userpending/$userId');
     if (response.statusCode == 200) {
       print('check deletion!!');
       List<dynamic> soList = json.decode(response.body);
@@ -625,8 +616,7 @@ class MainModel extends Model {
 
   Future<DateTime> serverTimeNow() async {
     DateTime _stn;
-    final http.Response response =
-        await http.get('http://mywayindoapi.azurewebsites.net/api/datetimenow');
+    final http.Response response = await http.get('$httpath/datetimenow');
     if (response.statusCode == 200) {
       String stn = json.encode(response.body);
       // print(stn);
@@ -724,10 +714,8 @@ class MainModel extends Model {
   }
 
   Future<List<Gift>> giftList() async {
-    DataSnapshot snapshot = await FirebaseDatabase.instance
-        .reference()
-        .child('flamelink/environments/$firebaseDb/content/gifts/en-US/')
-        .once();
+    DataSnapshot snapshot =
+        await database.reference().child('$path/gifts/en-US/').once();
 
     Map<dynamic, dynamic> giftsList = snapshot.value;
     List list = giftsList.values.toList();
@@ -737,10 +725,8 @@ class MainModel extends Model {
   }
 
   Future<List<Promo>> promoList() async {
-    DataSnapshot snapshot = await FirebaseDatabase.instance
-        .reference()
-        .child('flamelink/environments/$firebaseDb/content/timePromo/en-US/')
-        .once();
+    DataSnapshot snapshot =
+        await database.reference().child('$path/timePromo/en-US/').once();
 
     Map<dynamic, dynamic> promosList = snapshot.value;
     List list = [];
@@ -937,8 +923,7 @@ class MainModel extends Model {
 
 //!--------*Stock*---------//
   Future<int> getStock(String itemId) async {
-    http.Response response = await http
-        .get('http://mywayindoapi.azurewebsites.net/api/stock/$itemId');
+    http.Response response = await http.get('$httpath/stock/$itemId');
 
     List stockData = json.decode(response.body);
     ItemOrder itemOrder = ItemOrder.fromJson(stockData[0]);
@@ -978,29 +963,31 @@ class MainModel extends Model {
       price: settings.adminFee,
       bp: 0,
       bv: 0.0,
-      name: 'Biaya admin"',
+      name: 'Biaya admin',
       imageUrl: '',
     );
     addToItemOrder(item, 1);
   }
 
-  void addCourierToOrder(String itemid, int fee) {
-    final Item item = Item(
+  void addCourierToOrder(String itemid, double fee) {
+    final ItemOrder itemorder = ItemOrder(
       itemId: itemid,
       price: fee,
       bp: 0,
-      bv: 0.0,
-      name: 'Biaya admin"',
-      imageUrl: '',
+      bv: 0,
+      qty: 1,
+      name: 'Biaya Courier',
+      weight: 0,
+      img: "",
     );
-    addToItemOrder(item, 1);
+    itemorderlist.add(itemorder);
   }
 
   void mockOrder(Item item, int qty) {
     addItemOrder(item, qty);
   }
 
-  Future<OrderMsg> orderBalanceCheck(String shipmentId, int courierfee,
+  Future<OrderMsg> orderBalanceCheck(String shipmentId, double courierfee,
       String distrId, String note, String areaId) async {
     OrderMsg msg;
     List<ItemOrder> orderOutList = List();
@@ -1050,28 +1037,34 @@ class MainModel extends Model {
 
 //!-------------------------------------SaveOrder---------------------------------//
 
-  Future<OrderMsg> saveOrder(String shipmentId, int courierfee, String distrId,
-      String note, String areaId) async {
+  Future<OrderMsg> saveOrder(String shipmentId, double courierfee,
+      String distrId, String note, String areaId) async {
     //itemorderlist.forEach((i)=>print({i.itemId:i.qty}));
 // giftorderList.forEach((p)=>print(p.pack.map((g)=>{g.itemId:p.qty})));
     print('OrderListLength:${itemorderlist.length}');
+    //!! fix errors on bottom commentted block;
 
-    addCatToOrder(settings.catCode);
-    addAdminToOrder('91');
+    //addCatToOrder(settings.catCode);
+    //addAdminToOrder('91');
+    //print("courier fee test=> :$courierfee");
+
+    if (giftorderList.length > 0 || promoOrderList.length > 0) {
+      giftorderList
+          .forEach((g) => g.pack.forEach((p) => {p.bp = 0: p.bv = 0.0}));
+      promoOrderList.forEach(
+          (p) => p.promoPack.forEach((pp) => {pp.bp = 0: pp.bv = 0.0}));
+      giftorderList.forEach((g) => g.pack.forEach((p) => p.price = 0.0));
+      promoOrderList
+          .forEach((p) => p.promoPack.forEach((pp) => pp.price = 0.0));
+
+      giftorderList
+          .forEach((g) => g.pack.forEach((p) => addToItemOrder(p, g.qty)));
+      promoOrderList.forEach(
+          (p) => p.promoPack.forEach((pp) => addToItemOrder(pp, p.qty)));
+    }
     if (courierfee > 0) {
       addCourierToOrder('90', courierfee);
     }
-    giftorderList.forEach((g) => g.pack.forEach((p) => {p.bp = 0: p.bv = 0.0}));
-    promoOrderList
-        .forEach((p) => p.promoPack.forEach((pp) => {pp.bp = 0: pp.bv = 0.0}));
-    giftorderList.forEach((g) => g.pack.forEach((p) => p.price = 0.0));
-    promoOrderList.forEach((p) => p.promoPack.forEach((pp) => pp.price = 0.0));
-
-    giftorderList
-        .forEach((g) => g.pack.forEach((p) => addToItemOrder(p, g.qty)));
-    promoOrderList
-        .forEach((p) => p.promoPack.forEach((pp) => addToItemOrder(pp, p.qty)));
-
     SalesOrder salesOrder = SalesOrder(
       distrId: distrId,
       userId: userInfo.distrId,
@@ -1079,7 +1072,7 @@ class MainModel extends Model {
       totalBp: orderBp(),
       note: note,
       courierId: shipmentId,
-      areaId: idPadding(areaId),
+      areaId: areaId,
       order: itemorderlist,
     );
 
@@ -1115,8 +1108,7 @@ class MainModel extends Model {
   List<Area> areas;
 
   Future<List<Area>> getArea() async {
-    final response =
-        await http.get('http://mywayindoapi.azurewebsites.net/api/areas');
+    final response = await http.get('$httpath/areas');
 
     if (response.statusCode == 200) {
       //Map<String,dynamic> jSON;
@@ -1143,14 +1135,13 @@ for(var area in areas){
   List<Courier> couriers;
 
   void getShipmentCompanies() async {
-    final response = await http
-        .get('http://mywayindoapi.azurewebsites.net/api/shipmentcompanies');
+    final response = await http.get('$httpath/shipmentcompanies');
 
     void shipmentPushToFirebase(String courierId, Courier courier) {
-      DatabaseReference ref = FirebaseDatabase.instance
+      databaseReference = database
           .reference()
           .child('flamelink/environments/$firebaseDb/content/courier/en-US');
-      ref.child(courierId).update(courier.toJson());
+      databaseReference.child(courierId).update(courier.toJson());
     }
 
     if (response.statusCode == 200) {
@@ -1163,32 +1154,63 @@ for(var area in areas){
 //return couriers;
   }
 
-  List companies;
-  Future<List> courierList(String areaid) async {
-    DataSnapshot snapshot = await FirebaseDatabase.instance
+  Future<List<ShipmentArea>> getShipmentAreas(String distrId, int point) async {
+    List<ShipmentArea> shipmentAreas = [];
+    List<ShipmentArea> validShipmentAreas = [];
+    final response =
+        await http.get('$httpath/get_shipment_places_by_distr_id/$distrId');
+    if (response.statusCode == 200) {
+      final _shipmentArea = json.decode(response.body) as List;
+      shipmentAreas =
+          _shipmentArea.map((s) => ShipmentArea.fromJson(s)).toList();
+      shipmentAreas.forEach((a) => print(a.shipmentName));
+
+      for (ShipmentArea s in shipmentAreas) {
+        await couriersList(s.shipmentArea, point)
+            .then((c) => c.length > 0 ? validShipmentAreas.add(s) : null);
+      }
+
+      //  products = productlist.map((i) => Item.fromJson(i)).toList();
+    } else {
+      shipmentAreas = [];
+      print('no shipment Areas for $distrId');
+    }
+    return validShipmentAreas;
+  }
+
+  List companies = [];
+  Future<List> couriersList(String areaid, int distrPoint) async {
+    DataSnapshot snapshot = await database
         .reference()
-        .child(
-            'flamelink/environments/$firebaseDb/content/courier/en-US/') //!enviroments/$firebaseDb
+        .child('$path/courier/en-US') //!enviroments/$firebaseDb
         .once();
 
-    List courierList = snapshot.value;
+    var courierList = snapshot
+        .value; //! changed list to var in this line for firebase key genrated
 
     List ships = [];
-    for (var c in courierList) {
+    for (var c in courierList.values) {
+      //! add .values to courierlist to loop through values while firebase key is generated
       if (c != null) {
-        for (var s in c['service']) {
-          for (var a in s['areas']) {
-            if (a.toString() == areaid) {
-              // print(c['courierId']);
-              ships.add(c);
+        if (c['region'] == distrPoint) {
+          for (var s in c['service']) {
+            for (var a in s['areas']) {
+              if (a.toString() == areaid) {
+                // print('a.string:=>${a.toString()}');
+                // print(c['courierId']);
+                ships.add(c);
+              }
             }
           }
         }
       }
     }
+    courierList = [];
     List companies = ships.map((f) => Courier.fromList(f)).toList();
+
     // companies.forEach((c) => print(c));
 //companies.forEach((f)=>print('${f.name} : ${f.courierId}'));
+    ships.clear();
 
     return companies;
   }
@@ -1222,11 +1244,25 @@ for(var area in areas){
   }*/
 
 //!--------*
+  Future<List<Region>> getPoints() async {
+    DataSnapshot snapshot =
+        await database.reference().child('$path/region/en-US/').once();
+
+    Map<dynamic, dynamic> _areas = snapshot.value;
+    List list = _areas.values.toList();
+    List<Region> distrPoints = list
+        .map((f) => Region.json(f))
+        .where((r) => r.distrPoint == true)
+        .toList();
+
+    return distrPoints;
+  }
+
   Future<bool> courierService(String courierId, String areaId) async {
-    DataSnapshot snapshot = await FirebaseDatabase.instance
+    DataSnapshot snapshot = await database
         .reference()
         .child(
-            'flamelink/environments/$firebaseDb/content/courier/en-US/$courierId/service') //!enviroments/production
+            '$path/courier/en-US/$courierId/service') //!enviroments/production
         .once();
     List list = snapshot.value;
 // print(list.length);
@@ -1245,29 +1281,30 @@ for(var area in areas){
     return x;
   }
 
-  Future<int> courierServiceFee(
-      String courierId, String areaId, int orderBp) async {
-    DataSnapshot snapshot = await FirebaseDatabase.instance
+  Future<double> courierServiceFee(
+      String courierId, String areaId, double orderWeight) async {
+    DataSnapshot snapshot = await database
         .reference()
         .child(
-            'flamelink/environments/$firebaseDb/content/courier/en-US/$courierId/service') //!enviroments/production
+            '$path/courier/en-US/$courierId/service') //!enviroments/production
         .once();
     List list = snapshot.value;
 // print(list.length);
     List<Service> services = list.map((f) => Service.fromJson(f)).toList();
-//print(services.map((f)=>f.areas.forEach((a)=>a == areaId))) ;
-    int x;
+    // print(services.map((f) => f.areas.forEach((a) => a == areaId)));
+    double x;
     for (var s in services) {
       for (var a in s.areas) {
         if (areaId == a.toString()) {
-          if (orderBp <= s.freeBp || s.freeBp == 0) {
-            x = s.fees;
+          if (orderWeight.toDouble() < s.minWeight.toDouble()) {
+            x = s.minWeight.toInt().toDouble() * s.rate.toDouble();
           } else {
-            x = 0;
+            x = orderWeight.ceil().toDouble() * s.rate.toDouble();
           }
         }
       }
     }
+    services.clear();
     return x;
   }
 
@@ -1285,17 +1322,14 @@ for( var i = 0 ; i < _list.length; i++){
 //!--------*Users/Members*-----------//
   void userPushToFirebase(String id, User user) {
     String memberId = int.parse(id).toString();
-    DatabaseReference ref = FirebaseDatabase.instance
-        .reference()
-        .child('flamelink/environments/$firebaseDb/content/users/en-US');
-    ref.child(memberId).set(user.toJson());
+    databaseReference = database.reference().child('$path/content/users/en-US');
+    databaseReference.child(memberId).set(user.toJson());
   }
 
   User memberData;
   //!--------*
   Future<User> memberJson(String distrid) async {
-    http.Response response = await http
-        .get('http://mywayindoapi.azurewebsites.net/api/memberid/$distrid');
+    http.Response response = await http.get('$httpath/memberid/$distrid');
 
     if (response.body.length > 2) {
       List responseData = await json.decode(response.body);
@@ -1316,8 +1350,7 @@ for( var i = 0 ; i < _list.length; i++){
 
   User nodeJsonData;
   Future<User> nodeJson(String nodeid) async {
-    http.Response response = await http
-        .get('http://mywayindoapi.azurewebsites.net/api/memberid/$nodeid');
+    http.Response response = await http.get('$httpath/memberid/$nodeid');
 
     if (response.statusCode == 200) {
       List responseData = await json.decode(response.body);
@@ -1345,11 +1378,8 @@ for( var i = 0 ; i < _list.length; i++){
   User user;
   Future<User> userData(String key) async {
     print('userData key:$key');
-    final DataSnapshot snapshot = await FirebaseDatabase.instance
-        .reference()
-        .child('flamelink/environments/$firebaseDb/content/users/en-US')
-        .child(key)
-        .once();
+    final DataSnapshot snapshot =
+        await database.reference().child('$path/users/en-US').child(key).once();
     user = User.fromSnapshot(snapshot);
     print('userData user.distrId:${user.distrId}');
     print('userData user.token:${user.token}');
@@ -1389,22 +1419,16 @@ for( var i = 0 ; i < _list.length; i++){
   }
 
   updateToke(String _key) {
-    DatabaseReference ref = FirebaseDatabase.instance
-        .reference()
-        .child('flamelink/environments/$firebaseDb/content/users/en-US/$_key');
+    databaseReference = database.reference().child('$path/users/en-US/$_key');
     if (token != null) {
-      ref.update({"token": token});
+      databaseReference.update({"token": token});
     }
   }
 
   //!--------*
   bool access = true;
   void userAccess(key, BuildContext context) {
-    final FirebaseDatabase database = FirebaseDatabase.instance;
-    DatabaseReference databaseReference;
-    databaseReference = database
-        .reference()
-        .child('flamelink/environments/$firebaseDb/content/users/en-US/$key/');
+    databaseReference = database.reference().child('$path/users/en-US/$key/');
     databaseReference.onValue.listen((event) async {
       access = await setIsAllowed(User.fromSnapshot(event.snapshot).isAllowed);
       print('isAllowedxx:$access');
@@ -1427,10 +1451,8 @@ for( var i = 0 ; i < _list.length; i++){
 
   bool cartLocked = false;
   void locKCart(BuildContext context) {
-    final FirebaseDatabase database = FirebaseDatabase.instance;
-    DatabaseReference databaseReference;
-    databaseReference = database.reference().child(
-        'flamelink/environments/$firebaseDb/content/lockScreen/en-US/lockCart');
+    databaseReference =
+        database.reference().child('$path/lockScreen/en-US/lockCart');
     databaseReference.onValue.listen((event) async {
       cartLocked = await event.snapshot.value;
       //print('CARTLOCKED-XXXXX:$cartLocked');
@@ -1453,10 +1475,8 @@ for( var i = 0 ; i < _list.length; i++){
 
   bool appLocked = false;
   void locKApp(BuildContext context) {
-    final FirebaseDatabase database = FirebaseDatabase.instance;
-    DatabaseReference databaseReference;
-    databaseReference = database.reference().child(
-        'flamelink/environments/$firebaseDb/content/lockScreen/en-US/lockApp');
+    databaseReference =
+        database.reference().child('$path/lockScreen/en-US/lockApp');
     databaseReference.onValue.listen((event) async {
       appLocked = await event.snapshot.value;
       print('APPLOCKED-XXXXX:$appLocked');
@@ -1479,10 +1499,8 @@ for( var i = 0 ; i < _list.length; i++){
   }
 
   void versionControl(BuildContext context) {
-    final FirebaseDatabase database = FirebaseDatabase.instance;
-    DatabaseReference databaseReference;
-    databaseReference = database.reference().child(
-        'flamelink/environments/$firebaseDb/content/lockScreen/en-US/version');
+    databaseReference =
+        database.reference().child('$path/lockScreen/en-US/version');
     databaseReference.onValue.listen((event) async {
       String version = await event.snapshot.value;
       //print('APPLOCKED-XXXXX:$appLocked');
@@ -1508,8 +1526,8 @@ for( var i = 0 ; i < _list.length; i++){
   Future<bool> leaderVerification(String distrId) async {
     String v;
 
-    http.Response response = await http.get(
-        'http://mywayindoapi.azurewebsites.net/api/leaderverification/${userInfo.distrId}/$distrId');
+    http.Response response = await http
+        .get('$httpath/leaderverification/${userInfo.distrId}/$distrId');
 
     if (response.statusCode == 200) {
       List vList = await json.decode(response.body);
@@ -1530,10 +1548,7 @@ for( var i = 0 ; i < _list.length; i++){
   //!--------*
   User userInfo;
   void userDetails() {
-    final FirebaseDatabase database = FirebaseDatabase.instance;
-    DatabaseReference databaseReference;
-    databaseReference = database.reference().child(
-        'flamelink/environments/$firebaseDb/content/users/en-US/${user.key}/');
+    database.reference().child('$path/users/en-US/${user.key}/');
     databaseReference.onValue.listen((event) async {
       userInfo = User.fromSnapshot(event.snapshot);
     });

@@ -21,7 +21,7 @@ class _LocalNotificationState extends State<LocalNotification> {
 
   List<Notify> notifyData = List();
   List<Notify> filteredNotify = [];
-  String path = 'flamelink/environments//en-US//content/tokens/en-US/';
+  String path = 'flamelink/environments/indoProduction/content/tokens/en-US/';
   FirebaseDatabase database = FirebaseDatabase.instance;
 
   DatabaseReference databaseReference;
@@ -197,7 +197,7 @@ class _LocalNotificationState extends State<LocalNotification> {
                                 style: TextStyle(
                                     color: Colors.pink[900],
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 14),
+                                    fontSize: 13),
                               ),
                               alignment: Alignment.center,
                               // margin:
@@ -208,10 +208,11 @@ class _LocalNotificationState extends State<LocalNotification> {
                             ),
                             Text(
                               note.body,
-                              textDirection: TextDirection.rtl,
+                              // textDirection: TextDirection.rtl,
                               softWrap: true,
                               style: TextStyle(
-                                  fontSize: 13, fontWeight: FontWeight.bold),
+                                fontSize: 12,
+                              ),
                             )
                           ],
                         )),

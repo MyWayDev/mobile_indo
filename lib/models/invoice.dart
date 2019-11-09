@@ -79,7 +79,7 @@ class Invoice {
         distrName: json['DISTR_NAME'],
         shipId: json['DS_SHIPMENT'],
         status: json['SHIPMENT_STATUS'],
-        shipper: json['COMP_NAME'],
+        shipper: json['COMP_NAME'] ?? '',
         dlvDate: json['DLV_DATE'],
         counter: json['COUNTER']);
   }

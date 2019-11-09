@@ -46,7 +46,7 @@ class User {
   factory User.formJson(Map<String, dynamic> json) {
     return User(
       distrId: json['DISTR_ID'],
-      name: json['ANAME'],
+      name: json['LNAME'],
       distrIdent: json['DISTR_IDENT'],
       email: json['E_MAIL'],
       phone: json['TELEPHONE'],
@@ -101,7 +101,7 @@ class NewMember {
   Map<String, dynamic> toJson() => {
         "SPONSOR_ID": sponsorId,
         "FAMILY_ANAME": familyName,
-        "ANAME": name,
+        "LNAME": name,
         "DISTR_IDENT": personalId,
         "BIRTH_DATE": birthDate,
         "E_MAIL": email,
@@ -113,6 +113,7 @@ class NewMember {
     final dyn = newMember.toJson();
     return json.encode(dyn);
   }
+  //!! refactor to new schema from api documentation;
 
   Future<http.Response> createPost(NewMember newMember, String user) async {
     final response = await http.put(

@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:mor_release/models/area.dart';
 import 'package:mor_release/models/courier.dart';
 import 'package:mor_release/models/user.dart';
-
 import 'package:mor_release/pages/order/widgets/order_courier.dart';
+import 'package:mor_release/pages/order/widgets/shipmentArea.dart';
 import 'package:mor_release/scoped/connected.dart';
+import 'package:mor_release/widgets/color_loader_2.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class NodeOrder extends StatefulWidget {
+  final MainModel model;
+  final int distrPoint;
+  NodeOrder(this.model, this.distrPoint);
   @override
   State<StatefulWidget> createState() {
     return _NodeOrder();
@@ -16,6 +22,44 @@ class NodeOrder extends StatefulWidget {
 
 @override
 class _NodeOrder extends State<NodeOrder> {
+  String type;
+  List<ShipmentArea> shipmentAreas = [];
+  List<Region> distrPoints = [];
+  bool isSelected = false;
+  void _valueChanged(bool v) {
+    setState(() {
+      isSelected = v;
+    });
+  }
+
+  bool _isloading = true;
+  bool _hasData = false;
+
+  hasData(bool data) {
+    setState(() {
+      _hasData = data;
+    });
+  }
+
+  void _setType(
+    String value,
+  ) {
+    setState(() {
+      type = value;
+      widget.model.shipmentArea = value;
+      widget.model.shipmentName = shipmentAreas
+          .where((a) => a.shipmentArea == value)
+          .first
+          .shipmentName;
+    });
+  }
+
+  isloading(bool loading) {
+    setState(() {
+      _isloading = loading;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -56,6 +100,9 @@ class _NodeOrder extends State<NodeOrder> {
   User _nodeData;
   Courier selectedCourier;
   List<Courier> shipment = [];
+  void initNodeCourierList(MainModel model) async {
+    shipment = await model.couriersList(model.shipmentArea, model.distrPoint);
+  }
 
   void resetVeri() {
     controller.clear();
@@ -127,6 +174,7 @@ class _NodeOrder extends State<NodeOrder> {
                             : Container(),
                     color: Colors.pink[900],
                     onPressed: () async {
+                      shipmentAreas = [];
                       if (!veri) {
                         isTyping = true;
                         getTyping(model);
@@ -139,7 +187,18 @@ class _NodeOrder extends State<NodeOrder> {
                               .nodeJson(controller.text.padLeft(8, '0'));
                           controller.text =
                               _nodeData.distrId + '    ' + _nodeData.name;
-                          shipment = await model.courierList(_nodeData.areaId);
+                          model.shipmentArea = '';
+                          /* showDialog(
+                              context: context,
+                              builder: (_) => ShipmentPlace(
+                                  model: model, memberId: _nodeData.distrId));
+                          print(shipment.length);*/
+                          //  await getAreas(_nodeData.distrId);
+
+                          showDialog(
+                              context: context,
+                              builder: (_) => ShipmentPlace(
+                                  model: model, memberId: _nodeData.distrId));
                         } else {
                           resetVeri();
                           isTyping = false;
@@ -155,37 +214,38 @@ class _NodeOrder extends State<NodeOrder> {
                   ),
                 ),
               ),
-              veri && controller.text.length >= 8 && shipment.length > 0
-                  ? Card(
-                      color: Colors.grey[100],
-                      child: Column(
-                        children: <Widget>[
-                          //Container(),
-                          Container(
-                            child: Row(
-                              children: <Widget>[
-                                Flexible(
-                                    flex: 1,
-                                    child: Column(
-                                      children: <Widget>[
-                                        CourierOrder(
-                                            shipment,
-                                            _nodeData.areaId,
-                                            _nodeData.distrId,
-                                            model.userInfo.distrId),
-                                      ],
-                                    ))
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                    )
-                  : Container(),
+              buildCourierOrder(context, model),
             ],
           ),
         ),
       );
     });
+  }
+
+  Widget buildCourierOrder(BuildContext context, MainModel model) {
+    initNodeCourierList(model);
+    return veri && controller.text.length >= 8 && shipment.length > 0
+        ? Card(
+            color: Colors.grey[100],
+            child: Column(
+              children: <Widget>[
+                Container(
+                  child: Row(
+                    children: <Widget>[
+                      Flexible(
+                          flex: 1,
+                          child: Column(
+                            children: <Widget>[
+                              CourierOrder(shipment, model.shipmentArea,
+                                  _nodeData.distrId, model.userInfo.distrId),
+                            ],
+                          ))
+                    ],
+                  ),
+                )
+              ],
+            ),
+          )
+        : Container();
   }
 }

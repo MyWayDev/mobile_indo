@@ -157,7 +157,8 @@ class _Report extends State<Report> {
                         if (veri) {
                           _nodeData = await model
                               .nodeJson(distrController.text.padLeft(8, '0'));
-                          distrController.text = _nodeData.distrId;
+                          distrController.text =
+                              _nodeData.distrId + '  ' + _nodeData.name;
                           memberReportSummary(_nodeData.distrId);
                         } else {
                           resetVeri();

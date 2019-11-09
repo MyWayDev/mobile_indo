@@ -67,9 +67,11 @@ class _ItemsPage extends State<ItemsPage> {
                       direction: Axis.horizontal,
                       children: <Widget>[
                         Chip(
-                          backgroundColor: Colors.grey[600],
+                          elevation: 5,
+                          shadowColor: Colors.black,
+                          backgroundColor: Colors.grey[350],
                           avatar: CircleAvatar(
-                            backgroundColor: Colors.green,
+                            backgroundColor: Colors.green[700],
                             child: Text('Rp',
                                 style: TextStyle(
                                     color: Colors.white,
@@ -79,13 +81,15 @@ class _ItemsPage extends State<ItemsPage> {
                           label: Text(
                             formatter.format(model.orderSum()),
                             style: TextStyle(
-                                color: Colors.greenAccent,
+                                color: Colors.green[700],
                                 fontSize: 15.0,
                                 fontWeight: FontWeight.bold),
                           ),
                         ),
                         Chip(
-                          backgroundColor: Colors.grey[600],
+                          elevation: 5,
+                          shadowColor: Colors.black,
+                          backgroundColor: Colors.grey[350],
                           avatar: CircleAvatar(
                             backgroundColor: Colors.pink[900],
                             child: Text('Bp',
@@ -97,15 +101,17 @@ class _ItemsPage extends State<ItemsPage> {
                           label: Text(
                             model.orderBp().toString(),
                             style: TextStyle(
-                                color: Colors.pink[100],
-                                fontSize: 16.0,
+                                color: Colors.pink[900],
+                                fontSize: 15.0,
                                 fontWeight: FontWeight.bold),
                           ),
                         ),
                         Chip(
-                          backgroundColor: Colors.grey[600],
+                          elevation: 5,
+                          shadowColor: Colors.black,
+                          backgroundColor: Colors.grey[350],
                           avatar: CircleAvatar(
-                            backgroundColor: Colors.yellow,
+                            backgroundColor: Colors.black,
                             child: Text('kg',
                                 style: TextStyle(
                                     color: Colors.white,
@@ -115,7 +121,7 @@ class _ItemsPage extends State<ItemsPage> {
                           label: Text(
                             formatWeight.format(model.orderWeight()),
                             style: TextStyle(
-                                color: Colors.yellowAccent,
+                                color: Colors.black,
                                 fontSize: 15.0,
                                 fontWeight: FontWeight.bold),
                           ),

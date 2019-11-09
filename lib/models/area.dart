@@ -23,3 +23,23 @@ class Area {
     };
   }
 }
+
+class Region {
+  String regionId;
+  String name;
+  bool distrPoint;
+  int id;
+  Region({this.regionId, this.name, this.id, this.distrPoint});
+  Region.fromSnapshot(DataSnapshot snapshot)
+      : regionId = snapshot.value['regionId'],
+        name = snapshot.value['name'],
+        id = snapshot.value['id'];
+
+  factory Region.json(Map<dynamic, dynamic> json) {
+    return Region(
+        id: json['id'],
+        regionId: json['regionId'],
+        name: json['name'],
+        distrPoint: json['distrPoint'] ?? false);
+  }
+}

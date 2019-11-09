@@ -5,7 +5,7 @@ import 'package:scoped_model/scoped_model.dart';
 
 class OrderSummary extends StatelessWidget {
   final String courierId;
-  final int courierFee;
+  final double courierFee;
   final String distrId;
   final String note;
   final formatter = new NumberFormat("#,###");
@@ -45,12 +45,30 @@ class OrderSummary extends StatelessWidget {
                       Container(
                           height: 27,
                           child: ListTile(
-                            leading: Text(model.orderBp().toString() + ' Bp'),
+                            title: Center(
+                              child:
+                                  Text(model.orderWeight().toString() + ' Kg'),
+                            ),
+                            trailing: Icon(
+                              Icons.save_alt,
+                              color: Colors.black,
+                            ),
+                            leading: Text(
+                              'Total Weight',
+                              // textDirection: TextDirection.rtl,
+                            ),
+                          )),
+                      Container(
+                          height: 27,
+                          child: ListTile(
+                            title: Center(
+                              child: Text(model.orderBp().toString() + ' Bp'),
+                            ),
                             trailing: Icon(
                               Icons.trending_up,
                               color: Colors.green,
                             ),
-                            title: Text(
+                            leading: Text(
                               'Total Poin',
                               // textDirection: TextDirection.rtl,
                             ),
@@ -58,12 +76,14 @@ class OrderSummary extends StatelessWidget {
                       Container(
                           height: 27,
                           child: ListTile(
-                            leading: Text(formatter.format(courierFee) + ' Rp'),
+                            title: Center(
+                              child: Text(formatter.format(courierFee) + ' Rp'),
+                            ),
                             trailing: Icon(
                               Icons.local_shipping,
                               color: Colors.pink[900],
                             ),
-                            title: Text(
+                            leading: Text(
                               'Biaya Kurir',
                               // textDirection: TextDirection.rtl,
                             ),
@@ -71,32 +91,34 @@ class OrderSummary extends StatelessWidget {
                       Container(
                           height: 27,
                           child: ListTile(
-                            leading: Text(
-                                formatter.format(model.orderSum()) + ' Rp'),
+                            title: Center(
+                              child: Text(
+                                  formatter.format(model.orderSum()) + ' Rp'),
+                            ),
                             trailing: Icon(
                               Icons.monetization_on,
                               color: Colors.pink[900],
                             ),
-                            title: Text(
+                            leading: Text(
                               'Total Tagihan',
                               // textDirection: TextDirection.rtl,
                             ),
                           )),
-                      Container(
+                      /* Container(
                           height: 27,
                           child: ListTile(
-                            leading: Text(
+                            title: Text(
                                 formatter.format(model.settings.adminFee) +
                                     ' Rp'),
                             trailing: Icon(
                               Icons.more_horiz,
                               color: Colors.pink[900],
                             ),
-                            title: Text(
+                            leading: Text(
                               'Biaya Admin',
                               //  textDirection: TextDirection.rtl,
                             ),
-                          )),
+                          )),*/
                     ],
                   ),
                 )

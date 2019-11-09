@@ -9,7 +9,7 @@ import 'package:scoped_model/scoped_model.dart';
 
 class SaveDialog extends StatefulWidget {
   final String courierId;
-  final int courierFee;
+  final double courierFee;
   final String distrId;
   final String note;
   final String areaId;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 import 'package:mor_release/models/courier.dart';
 import 'package:mor_release/pages/gift/gift.dart';
@@ -30,7 +31,7 @@ class _CourierOrder extends State<CourierOrder> {
   String areaId;
   Courier _chosenValue;
   Courier stateValue;
-  int courierFee;
+  double courierFee;
   @override
   void initState() {
     getinit();
@@ -46,6 +47,8 @@ class _CourierOrder extends State<CourierOrder> {
   void getinit() async {
     shipment = widget.couriers;
     areaId = widget.areaId;
+    shipment.forEach((s) => print(s.id));
+    print("$areaId");
   }
 
   TextEditingController controller = new TextEditingController();
@@ -141,7 +144,7 @@ class _CourierOrder extends State<CourierOrder> {
                                   decoration: InputDecoration(
                                     icon: Icon(Icons.local_shipping),
                                     labelText: stateValue == null
-                                        ? 'Tipe Pengiriman'
+                                        ? 'Tipe Pengiriman / ${model.shipmentName}'
                                         : '',
                                     errorText:
                                         state.hasError ? state.errorText : null,
@@ -162,21 +165,20 @@ class _CourierOrder extends State<CourierOrder> {
                                         });
 
                                         state.didChange(newValue);
+
                                         courierFee =
                                             await model.courierServiceFee(
-                                                newValue.id,
+                                                newValue.id.toString(),
                                                 areaId,
-                                                model.orderBp());
-                                        print('courierFees$courierFee');
-                                        print(areaId);
+                                                model.orderWeight());
 
-                                        print(newValue.courierId);
+                                        // print(newValue.id.toString());
                                       },
                                       items: shipment.map((Courier courier) {
                                         return DropdownMenuItem<Courier>(
                                           value: courier,
                                           child: Text(
-                                            courier.name,
+                                            "${courier.name} / ${model.shipmentName}",
                                             style: TextStyle(
                                                 color: Colors.pink[900],
                                                 fontWeight: FontWeight.bold),
@@ -190,32 +192,42 @@ class _CourierOrder extends State<CourierOrder> {
                             ),
                           )
                         : Container(),
-                    Container(
-                        height: 175,
-                        child: ListView(
-                          physics: ClampingScrollPhysics(),
-                          scrollDirection: Axis.vertical,
-                          children: <Widget>[
-                            stateValue != null &&
-                                    model.giftPacks.length == 0 &&
-                                    model.promoPacks.length == 0
-                                ? OrderSummary(stateValue.courierId, courierFee,
-                                    model.userInfo.distrId, controller.text)
-                                : Container(),
-                            courierFee != null &&
-                                    model.orderBp() > 0 &&
-                                    model.giftPacks.length == 0 &&
-                                    model.promoPacks.length == 0
-                                ? OrderSave(
-                                    stateValue.courierId,
-                                    courierFee,
-                                    widget.distrId,
-                                    controller.text,
-                                    widget.areaId,
-                                    widget.userId)
-                                : Container(),
-                          ],
-                        ))
+
+                    courierFee != null
+                        ? Container(
+                            height: 175,
+                            child: ModalProgressHUD(
+                                inAsyncCall: courierFee == null ? true : false,
+                                opacity: 0.6,
+                                progressIndicator: LinearProgressIndicator(),
+                                child: ListView(
+                                  physics: ClampingScrollPhysics(),
+                                  scrollDirection: Axis.vertical,
+                                  children: <Widget>[
+                                    stateValue != null &&
+                                            model.giftPacks.length == 0 &&
+                                            model.promoPacks.length == 0
+                                        ? OrderSummary(
+                                            stateValue.courierId,
+                                            courierFee,
+                                            model.userInfo.distrId,
+                                            controller.text)
+                                        : Container(),
+                                    courierFee != null &&
+                                            model.orderBp() > 0 &&
+                                            model.giftPacks.length == 0 &&
+                                            model.promoPacks.length == 0
+                                        ? OrderSave(
+                                            stateValue.courierId,
+                                            courierFee,
+                                            widget.distrId,
+                                            controller.text,
+                                            widget.areaId,
+                                            widget.userId)
+                                        : Container(),
+                                  ],
+                                )))
+                        : Container()
 
                     //! missing widgets goes here;
                   ],

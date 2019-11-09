@@ -29,13 +29,16 @@ class ItemsTabs extends StatelessWidget {
             AppBar(
               title: Text('MENU'),
             ),
-            ListTile(
+            /*  ListTile(
                 leading: Icon(Icons.settings),
                 title: Text('Profil'),
                 onTap: () {
                   //model.signOut();
-                  model.getIndoItems();
-                }),
+                  // model.getIndoItems();
+                  // model.courierList(model.userInfo.areaId);
+                  // model.getShipmentAreas('02000007');
+                 
+                }),*/
             ListTile(
                 leading: Icon(Icons.image),
                 title: Text('Katalog'),
@@ -121,7 +124,7 @@ class ItemsTabs extends StatelessWidget {
           body: TabBarView(
             children: <Widget>[
               ItemsPage(), // SwitchPage(ItemsPage()),
-              OrderPage(), //SwitchPage(OrderPage()),
+              OrderPage(model), //SwitchPage(OrderPage()),
               TrackTabs(),
               LocalNotification(
                 token: model.token,

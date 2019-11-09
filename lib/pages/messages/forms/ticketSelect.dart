@@ -47,7 +47,7 @@ class _TicketSelectState extends State<TicketSelect> {
                   builder:
                       (BuildContext context, Widget child, MainModel model) {
                     return Directionality(
-                      textDirection: TextDirection.rtl,
+                      textDirection: TextDirection.ltr,
                       child: DropdownButton(
                         isExpanded: true,
                         items: widget.types.map((option) {

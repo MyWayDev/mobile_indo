@@ -1,12 +1,20 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:mor_release/models/area.dart';
+import 'package:mor_release/models/courier.dart';
 import 'package:mor_release/pages/order/member_order.dart';
 import 'package:mor_release/pages/order/node_order.dart';
+import 'package:mor_release/pages/order/widgets/shipmentArea.dart';
+
 import 'package:mor_release/scoped/connected.dart';
 import 'package:mor_release/widgets/color_loader_2.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class EndOrder extends StatefulWidget {
+  final MainModel model;
+  EndOrder(this.model);
   State<StatefulWidget> createState() {
     return _EndOrder();
   }
@@ -14,12 +22,70 @@ class EndOrder extends StatefulWidget {
 
 @override
 class _EndOrder extends State<EndOrder> with SingleTickerProviderStateMixin {
+  final GlobalKey<FormBuilderState> _fbKey = GlobalKey<FormBuilderState>();
+  final GlobalKey<FormBuilderState> _fbKeyII = GlobalKey<FormBuilderState>();
+  String shipmetArea = '';
+  int distrpoint = 0;
   bool isOpened = false;
   AnimationController _animationController;
   Animation<Color> _animateColor;
   Animation<double> _animateIcon;
   Curve _curve = Curves.easeOut;
   NodeOrder nodeOrder;
+  bool _isloading = false;
+  bool isSelected = false;
+  bool _hasData = false;
+
+  List<Region> distrPoints = [];
+  List<ShipmentArea> shipmentAreas = [];
+
+  String type;
+  hasData(bool data) {
+    setState(() {
+      _hasData = data;
+    });
+  }
+
+  void _valueChanged(bool v) {
+    setState(() {
+      isSelected = v;
+    });
+  }
+
+  void _setType(
+    String value,
+  ) {
+    setState(() {
+      type = value;
+      widget.model.shipmentArea = value;
+      widget.model.shipmentName = shipmentAreas
+          .where((a) => a.shipmentArea == value)
+          .first
+          .shipmentName;
+    });
+  }
+
+  /* getAreas() async {
+    isloading(true);
+    shipmentAreas =
+        await widget.model.getShipmentAreas(widget.model.userInfo.distrId);
+    shipmentAreas.forEach((a) => print(a.shipmentArea));
+    distrPoints = await widget.model.getPoints();
+    print('distrPoints length:${distrPoints.length}');
+    if (shipmentAreas.length > 0) {
+      setState(() {
+        hasData(true);
+        isloading(false);
+        print('isloading:$_isloading');
+      });
+    } else {
+      setState(() {
+        hasData(false);
+        isloading(false);
+        print('isloading:$_isloading');
+      });
+    }
+  }*/
 
   @override
   initState() {
@@ -42,6 +108,8 @@ class _EndOrder extends State<EndOrder> with SingleTickerProviderStateMixin {
         curve: _curve,
       ),
     ));
+
+    // getAreas();
     super.initState();
   }
 
@@ -71,11 +139,17 @@ class _EndOrder extends State<EndOrder> with SingleTickerProviderStateMixin {
         );
   }
 
-  Widget toggle() {
+  Widget toggle(MainModel model) {
     return FloatingActionButton(
       elevation: 20,
       backgroundColor: _animateColor.value,
-      onPressed: animate,
+      onPressed: () {
+        animate();
+        setState(() {
+          model.shipmentArea = '';
+          model.shipmentName = '';
+        });
+      },
       tooltip: 'Toggle',
       child: AnimatedIcon(
         icon: AnimatedIcons.home_menu,
@@ -84,7 +158,6 @@ class _EndOrder extends State<EndOrder> with SingleTickerProviderStateMixin {
     );
   }
 
-  bool _isloading = false;
   void settings(MainModel model) async {
     await model.settingsData();
   }
@@ -95,6 +168,7 @@ class _EndOrder extends State<EndOrder> with SingleTickerProviderStateMixin {
     });
   }
 
+  @override
   TextEditingController controller = new TextEditingController();
   bool _isleader = false;
   @override
@@ -104,92 +178,129 @@ class _EndOrder extends State<EndOrder> with SingleTickerProviderStateMixin {
       _isleader = model.userInfo.isleader;
       model.rungiftState();
       settings(model);
+
       return Scaffold(
-        resizeToAvoidBottomPadding: false,
-        appBar: AppBar(
-          title: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  model.userInfo.name,
-                  style: TextStyle(
-                    fontSize: 15,
+          resizeToAvoidBottomPadding: false,
+          appBar: AppBar(
+            title: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    model.userInfo.name,
+                    style: TextStyle(
+                      fontSize: 15,
+                    ),
                   ),
-                ),
-              ]),
-          actions: <Widget>[],
-          leading: model.isTypeing
-              ? Container()
-              : !isOpened
+                ]),
+            actions: <Widget>[
+              !isOpened
                   ? IconButton(
                       icon: Icon(
-                        Icons.arrow_back,
+                        Icons.playlist_add,
+                        color: Colors.white,
+                        size: 34,
                       ),
-                      onPressed: () {
-                        model.isTypeing = false;
-                        Navigator.of(context).pop(null);
-                      })
-                  : Container(),
-        ),
-        floatingActionButton:
-            _isleader && !model.isTypeing ? toggle() : toggleii(),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
-        body: ModalProgressHUD(
-          child: Column(
-            children: <Widget>[
-              Card(
-                elevation: 5,
-                child: isOpened
-                    ? NodeOrder()
-                    : MemberOrder(model.courierList(model.userInfo.areaId),
-                        model.userInfo.areaId),
-              ),
+                      onPressed: () async {
+                        model.shipmentArea = '';
+                        // _hasData
+                        showDialog(
+                            context: context,
+                            builder: (_) => ShipmentPlace(
+                                  model: model,
+                                ));
+                        /*? : showDialog(
+                                context: context,
+                                builder: (_) => AlertDialog(
+                                      title: Text('Add Shipment Area'),
+                                    ));*/
+                      },
+                    )
+                  : Container()
             ],
+            leading: model.isTypeing
+                ? Container()
+                : !isOpened
+                    ? IconButton(
+                        icon: Icon(
+                          Icons.arrow_back,
+                        ),
+                        onPressed: () {
+                          model.isTypeing = false;
+                          Navigator.of(context).pop(null);
+                        })
+                    : Container(),
           ),
-          inAsyncCall: _isloading,
-          opacity: 0.6,
-          progressIndicator: ColorLoader2(),
-        ),
-      );
+          floatingActionButton:
+              _isleader && !model.isTypeing ? toggle(model) : toggleii(),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
+          floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
+          body: Card(
+            elevation: 5,
+            child: isOpened
+                ? NodeOrder(model, model.distrPoint)
+                : model.shipmentArea != '' && model.distrPoint != 0
+                    ? MemberOrder(model, model.shipmentArea, model.distrPoint)
+                    : Container(),
+          ));
     });
   }
-}
 /*
- appBar: AppBar(
-            title: _isleader
-                ? GridTileBar(
-                    title: Row(
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.only(left: 60.0),
-                        ),
-                        Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Center(
-                              child: Text(
-                                model.userInfo.name,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontStyle: FontStyle.italic,
-                                ),
-                              ),
-                            ))
-                        /* Switch(
-                          materialTapTargetSize:
-                              MaterialTapTargetSize.shrinkWrap,
-                          activeTrackColor: Colors.black38,
-                          activeColor: Colors.black,
-                          value: _leaderSwitch,
-                          onChanged: (bool value) {
-                            setState(() {
-                              _leaderSwitch = value;
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                  )
-                : Container()),*/
-*/
+  Widget distrPoint(BuildContext context) {
+    return AlertDialog(
+      content: FormBuilder(
+        key: _fbKey,
+        child: FormBuilderDropdown(
+          attribute: "Point",
+          decoration: InputDecoration(labelText: "Point"),
+          initialValue: distrPoints[0].id,
+          hint: Text('Select Point'),
+          validators: [FormBuilderValidators.required()],
+          onChanged: (value) {
+            print('dropdown value:$value');
+            setState(() {
+              distrpoint = value;
+            });
+          },
+          items: distrPoints
+              .map((region) => DropdownMenuItem(
+                  value: region.id, child: Text("${region.name}")))
+              .toList(),
+        ),
+      ),
+      actions: <Widget>[
+        IconButton(
+          icon: Icon(
+            Icons.close,
+            color: Colors.pink[900],
+            size: 34,
+          ),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        distrPoints.length > 0
+            ? IconButton(
+                icon: Icon(
+                  Icons.done,
+                  color: Colors.green,
+                  size: 34,
+                ),
+                onPressed: () async {
+                  _fbKey.currentState.save();
+                  setState(() {
+                    distrpoint = _fbKey.currentState.value.values.first.toInt();
+                  });
+
+                  Navigator.of(context).pop();
+                  showDialog(
+                      context: context,
+                      builder: (_) => ShipmentPlace(model: widget.model));
+                },
+              )
+            : Container(),
+      ],
+    );
+  }*/
+}
