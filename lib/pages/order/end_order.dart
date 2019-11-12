@@ -237,13 +237,58 @@ class _EndOrder extends State<EndOrder> with SingleTickerProviderStateMixin {
               FloatingActionButtonLocation.centerFloat,
           floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
           body: Card(
-            elevation: 5,
-            child: isOpened
-                ? NodeOrder(model, model.distrPoint)
-                : model.shipmentArea != '' && model.distrPoint != 0
-                    ? MemberOrder(model, model.shipmentArea, model.distrPoint)
-                    : Container(),
-          ));
+              elevation: 5,
+              child: isOpened
+                  ? NodeOrder(model, model.distrPoint)
+                  : model.shipmentArea != '' && model.distrPoint != 0
+                      ? MemberOrder(model, model.shipmentArea, model.distrPoint)
+                      : Container(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                'Press this Icon above to Complete Order',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13.5,
+                                    color: Colors.grey[500]),
+                              ),
+                              Center(
+                                  child: Icon(
+                                Icons.playlist_add,
+                                size: 70,
+                                color: Colors.grey[300],
+                              )),
+                              Padding(
+                                padding: EdgeInsets.only(top: 55),
+                              ),
+                              model.userInfo.isleader
+                                  ? Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        Text(
+                                          'Press Below to Complete Order for Downline',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 14,
+                                              color: Colors.grey[500]),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(top: 55),
+                                        ),
+                                        Center(
+                                            child: Icon(
+                                          Icons.arrow_downward,
+                                          size: 50,
+                                          color: Colors.grey[300],
+                                        )),
+                                      ],
+                                    )
+                                  : Container(),
+                            ],
+                          ),
+                        )));
     });
   }
 /*

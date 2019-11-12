@@ -246,7 +246,7 @@ class _SaveDialog extends State<SaveDialog> {
                         ),
                       ),
                       Container(
-                          height: 120.0,
+                          height: 125.0,
                           width: MediaQuery.of(context).size.width,
                           color: Colors.white,
                           child: Padding(
@@ -254,15 +254,19 @@ class _SaveDialog extends State<SaveDialog> {
                                 const EdgeInsets.only(left: 1.0, right: 1.0),
                             child: Column(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
+                                    MainAxisAlignment.spaceAround,
                                 children: [
-                                  Text(
-                                    'order telah diubah sesuai dengan ketersediaan saat ini',
-                                    textDirection: TextDirection.rtl,
-                                    style: TextStyle(
-                                        fontSize: 16.0,
-                                        color: Colors.grey,
-                                        fontWeight: FontWeight.bold),
+                                  Padding(
+                                    padding: EdgeInsets.all(10),
+                                    child: Text(
+                                      'order telah diubah sesuai dengan ketersediaan saat ini',
+                                      softWrap: true,
+                                      // textDirection: TextDirection.rtl,
+                                      style: TextStyle(
+                                          fontSize: 14.0,
+                                          color: Colors.grey,
+                                          fontWeight: FontWeight.bold),
+                                    ),
                                   ),
                                   RawMaterialButton(
                                     child: Icon(
@@ -283,7 +287,7 @@ class _SaveDialog extends State<SaveDialog> {
                                     'kebali ke modifikasi',
                                     textDirection: TextDirection.rtl,
                                     style: TextStyle(
-                                        fontSize: 16.0,
+                                        fontSize: 14.0,
                                         color: Colors.grey,
                                         fontWeight: FontWeight.bold),
                                   ),

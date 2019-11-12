@@ -32,6 +32,7 @@ class MainModel extends Model {
   final String httpath = 'http://mywayindoapi.azurewebsites.net/api';
   String shipmentName = '';
   String shipmentArea = '';
+  String shipmentAddress = '';
   int distrPoint = 0;
   int noteCount;
   List<Item> itemData = List();
@@ -1039,14 +1040,14 @@ class MainModel extends Model {
 
   Future<OrderMsg> saveOrder(String shipmentId, double courierfee,
       String distrId, String note, String areaId) async {
-    //itemorderlist.forEach((i)=>print({i.itemId:i.qty}));
-// giftorderList.forEach((p)=>print(p.pack.map((g)=>{g.itemId:p.qty})));
+    itemorderlist.forEach((i) => print({i.itemId: i.qty}));
+    giftorderList.forEach((p) => print(p.pack.map((g) => {g.itemId: p.qty})));
     print('OrderListLength:${itemorderlist.length}');
     //!! fix errors on bottom commentted block;
 
     //addCatToOrder(settings.catCode);
     //addAdminToOrder('91');
-    //print("courier fee test=> :$courierfee");
+    print("courier fee test=> :$courierfee");
 
     if (giftorderList.length > 0 || promoOrderList.length > 0) {
       giftorderList
@@ -1071,6 +1072,7 @@ class MainModel extends Model {
       total: orderSum(),
       totalBp: orderBp(),
       note: note,
+      address: shipmentAddress,
       courierId: shipmentId,
       areaId: areaId,
       order: itemorderlist,
@@ -1102,7 +1104,6 @@ class MainModel extends Model {
   }
 
 //!--------*Areas*---------////
-//**working here */
 //? Areaupdate to firebase..
 
   List<Area> areas;
@@ -1132,8 +1133,8 @@ for(var area in areas){
 
 //!--------*Courier*----------//
 
-  List<Courier> couriers;
-
+  // List<Courier> couriers;
+/*
   void getShipmentCompanies() async {
     final response = await http.get('$httpath/shipmentcompanies');
 
@@ -1152,7 +1153,7 @@ for(var area in areas){
       shipmentPushToFirebase(c.courierId, c);
     }
 //return couriers;
-  }
+  }*/
 
   Future<List<ShipmentArea>> getShipmentAreas(String distrId, int point) async {
     List<ShipmentArea> shipmentAreas = [];
@@ -1192,7 +1193,7 @@ for(var area in areas){
     for (var c in courierList.values) {
       //! add .values to courierlist to loop through values while firebase key is generated
       if (c != null) {
-        if (c['region'] == distrPoint) {
+        if (c['region'] == distrPoint && c['disabled'] != true) {
           for (var s in c['service']) {
             for (var a in s['areas']) {
               if (a.toString() == areaid) {

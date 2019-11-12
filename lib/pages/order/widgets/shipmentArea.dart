@@ -3,6 +3,7 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:mor_release/models/area.dart';
 import 'package:mor_release/models/courier.dart';
+import 'package:mor_release/pages/order/widgets/addAddress.dart';
 import 'package:mor_release/scoped/connected.dart';
 import 'package:mor_release/widgets/color_loader_2.dart';
 
@@ -72,6 +73,19 @@ class _ShipmentAreaState extends State<ShipmentPlace>
         isloading(false);
       });
     }
+    if (distrPoints.length == 1) {
+      setState(() {
+        distrpoint = distrPoints[0].id;
+      });
+      await getAreas();
+      if (shipmentAreas.length == 0) {
+        Navigator.of(context).pop();
+        showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (_) => AddRegion(widget.memberId));
+      }
+    }
   }
 
   getAreas() async {
@@ -99,7 +113,7 @@ class _ShipmentAreaState extends State<ShipmentPlace>
   @override
   void initState() {
     getDistrPoints();
-    // getAreas();
+
     super.initState();
   }
 
@@ -123,26 +137,31 @@ class _ShipmentAreaState extends State<ShipmentPlace>
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0)),
                 title: ListTile(
-                  contentPadding: EdgeInsets.all(10),
-                  leading: Text(
-                    'Pilih Area Pengiriman',
-                    style: TextStyle(fontSize: 15),
-                  ),
-                  trailing: IconButton(
-                    icon: Icon(
-                      Icons.add_location,
-                      color: Colors.pink[900],
-                      size: 34,
+                    contentPadding: EdgeInsets.all(10),
+                    leading: Text(
+                      'Pilih Area Pengiriman',
+                      style: TextStyle(fontSize: 14),
                     ),
-                    onPressed: () {
-                      showDialog(
-                          context: context,
-                          builder: (_) => AlertDialog(
-                                content: Text('Add Address'),
-                              ));
-                    },
-                  ),
-                ),
+                    trailing: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      children: <Widget>[
+                        IconButton(
+                          alignment: Alignment.center,
+                          icon: Icon(
+                            Icons.add_location,
+                            color: Colors.pink[900],
+                            size: 39,
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (_) => AddRegion(widget.memberId));
+                          },
+                        ),
+                      ],
+                    )),
                 content: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
@@ -152,19 +171,24 @@ class _ShipmentAreaState extends State<ShipmentPlace>
                         child: Column(
                           children: <Widget>[
                             FormBuilderDropdown(
-                              icon: Icon(Icons.location_searching),
+                              isExpanded: true,
+                              icon: Icon(
+                                Icons.location_searching,
+                                size: 30,
+                              ),
                               attribute: "Point",
-                              decoration: InputDecoration(labelText: "Point"),
+                              decoration: InputDecoration(
+                                  labelText: "Titik Distribusi"),
                               initialValue: distrPoints[0].id,
                               hint: Text('Select Point'),
                               validators: [FormBuilderValidators.required()],
-                              onChanged: (value) {
+                              onChanged: (value) async {
                                 print('dropdown value:$value');
                                 setState(() {
                                   distrpoint = value;
                                 });
-
-                                getAreas();
+                                await getAreas();
+                                checkAvalAddress();
                               },
                               items: distrPoints
                                   .map((region) => DropdownMenuItem(
@@ -183,31 +207,36 @@ class _ShipmentAreaState extends State<ShipmentPlace>
                                     ],
                                     formField: FormField(
                                         initialValue:
-                                            shipmentAreas[0].shipmentArea,
-                                        enabled: true,
+                                            shipmentAreas[0].shipmentId,
+                                        enabled: _hasData ? true : false,
                                         builder:
                                             (FormFieldState<dynamic> field) {
                                           return DropdownButton(
-                                            icon: Icon(Icons.location_on),
+                                            icon: Icon(
+                                              Icons.location_on,
+                                              size: 32,
+                                              color: Colors.black,
+                                            ),
                                             isExpanded: true,
                                             items: shipmentAreas.map((option) {
                                               return DropdownMenuItem(
                                                   child: Text(
-                                                    "${option.shipmentAddress} / ${option.shipmentName}",
+                                                    "${option.shipmentAddress}/${option.shipmentName}",
                                                     softWrap: true,
                                                     style:
                                                         TextStyle(fontSize: 13),
                                                   ),
-                                                  value: option.shipmentArea);
+                                                  value: option.shipmentId);
                                             }).toList(),
                                             value: field.value,
                                             onChanged: (value) async {
+                                              //!try to change value from shipment area but
+                                              //! get shipmennt area to model.shipmenntarea;
                                               field.didChange(value);
 
-                                              // _setType(value);
                                               _valueChanged(true);
                                               print('dropDown value:$value');
-                                              // int x = types.indexOf(value);
+                                              // int x = shipmentAreas.indexOf(value);
                                             },
                                           );
                                         }),
@@ -235,13 +264,28 @@ class _ShipmentAreaState extends State<ShipmentPlace>
                                 icon: Icon(
                                   Icons.done,
                                   color: Colors.green,
-                                  size: 34,
+                                  size: 32,
                                 ),
                                 onPressed: () async {
                                   _fbKey.currentState.save();
-                                  print(_fbKey.currentState.value.values.first);
-                                  _setType(
-                                      _fbKey.currentState.value.values.last);
+                                  print(_fbKey.currentState.value.values);
+                                  _setType(shipmentAreas
+                                      .where((s) =>
+                                          s.shipmentId ==
+                                          _fbKey.currentState.value.values.last)
+                                      .first
+                                      .shipmentArea);
+                                  setState(() {
+                                    widget.model.shipmentAddress = shipmentAreas
+                                        .where((id) =>
+                                            id.shipmentId ==
+                                            _fbKey
+                                                .currentState.value.values.last)
+                                        .first
+                                        .shipmentAddress;
+                                    print(
+                                        'shipment Address${widget.model.shipmentAddress}');
+                                  });
 
                                   Navigator.of(context).pop();
                                 },
@@ -266,7 +310,7 @@ class _ShipmentAreaState extends State<ShipmentPlace>
                                 icon: Icon(
                                   Icons.done,
                                   color: Colors.green,
-                                  size: 34,
+                                  size: 32,
                                 ),
                                 onPressed: () async {
                                   _fbKey.currentState.save();
@@ -274,11 +318,22 @@ class _ShipmentAreaState extends State<ShipmentPlace>
                                     distrpoint =
                                         _fbKey.currentState.value.values.first;
                                   });
-                                  getAreas();
+                                  await getAreas();
+                                  checkAvalAddress();
                                 },
                               )
                             : Container(),
                       ])
             : Container());
+  }
+
+  void checkAvalAddress() {
+    if (shipmentAreas.length == 0) {
+      Navigator.of(context).pop();
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (_) => AddRegion(widget.memberId));
+    }
   }
 }

@@ -100,9 +100,6 @@ class _NodeOrder extends State<NodeOrder> {
   User _nodeData;
   Courier selectedCourier;
   List<Courier> shipment = [];
-  void initNodeCourierList(MainModel model) async {
-    shipment = await model.couriersList(model.shipmentArea, model.distrPoint);
-  }
 
   void resetVeri() {
     controller.clear();
@@ -214,7 +211,10 @@ class _NodeOrder extends State<NodeOrder> {
                   ),
                 ),
               ),
-              buildCourierOrder(context, model),
+              veri && controller.text.length >= 8 && model.shipmentArea != ''
+                  ? BuildCourierOrder(model, _nodeData.distrId)
+                  : Container(),
+              // buildCourierOrder(context, model),
             ],
           ),
         ),
@@ -223,7 +223,6 @@ class _NodeOrder extends State<NodeOrder> {
   }
 
   Widget buildCourierOrder(BuildContext context, MainModel model) {
-    initNodeCourierList(model);
     return veri && controller.text.length >= 8 && shipment.length > 0
         ? Card(
             color: Colors.grey[100],
@@ -238,6 +237,64 @@ class _NodeOrder extends State<NodeOrder> {
                             children: <Widget>[
                               CourierOrder(shipment, model.shipmentArea,
                                   _nodeData.distrId, model.userInfo.distrId),
+                            ],
+                          ))
+                    ],
+                  ),
+                )
+              ],
+            ),
+          )
+        : Container();
+  }
+}
+
+class BuildCourierOrder extends StatefulWidget {
+  final MainModel model;
+  final String distrId;
+
+  BuildCourierOrder(this.model, this.distrId);
+
+  @override
+  _BuildCourierOrderState createState() => _BuildCourierOrderState();
+}
+
+class _BuildCourierOrderState extends State<BuildCourierOrder> {
+  List<Courier> shipment = [];
+  void initNodeCourierList(MainModel model) async {
+    shipment = await model.couriersList(model.shipmentArea, model.distrPoint);
+  }
+
+  @override
+  void initState() {
+    initNodeCourierList(widget.model);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return shipment.length > 0 && widget.model.shipmentArea != ''
+        ? Card(
+            color: Colors.grey[100],
+            child: Column(
+              children: <Widget>[
+                Container(
+                  child: Row(
+                    children: <Widget>[
+                      Flexible(
+                          flex: 1,
+                          child: Column(
+                            children: <Widget>[
+                              CourierOrder(
+                                  shipment,
+                                  widget.model.shipmentArea,
+                                  widget.distrId,
+                                  widget.model.userInfo.distrId),
                             ],
                           ))
                     ],

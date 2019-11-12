@@ -94,6 +94,7 @@ class SalesOrder {
   double total;
   int totalBp;
   String note;
+  String address;
   String amt;
   String so;
   List<ItemOrder> order;
@@ -107,6 +108,7 @@ class SalesOrder {
       this.courierId,
       this.areaId,
       this.note,
+      this.address,
       this.amt,
       this.so});
 
@@ -120,7 +122,8 @@ class SalesOrder {
           "NET_TOTAL": total,
           "DS_SHIPMENT_COMP": courierId,
           "DS_SHIPMENT_PLACE": areaId,
-          "AREMARKS": note,
+          "LREMARKS": note,
+          "DISC_NOTES": address,
         },
         "aadetail": order,
         "aqdetail": order,
