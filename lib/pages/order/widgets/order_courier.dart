@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
@@ -32,6 +34,14 @@ class _CourierOrder extends State<CourierOrder> {
   Courier _chosenValue;
   Courier stateValue;
   double courierFee;
+  double courierDiscount;
+  bool _loading = false;
+  isloading(bool l) {
+    setState(() {
+      _loading = l;
+    });
+  }
+
   @override
   void initState() {
     getinit();
@@ -47,8 +57,6 @@ class _CourierOrder extends State<CourierOrder> {
   void getinit() async {
     shipment = widget.couriers;
     areaId = widget.areaId;
-    shipment.forEach((s) => print(s.id));
-    print("$areaId");
   }
 
   TextEditingController controller = new TextEditingController();
@@ -162,16 +170,19 @@ class _CourierOrder extends State<CourierOrder> {
                                         }
                                         setState(() {
                                           stateValue = newValue;
+                                          _loading = true;
                                         });
-
                                         state.didChange(newValue);
-
                                         courierFee =
                                             await model.courierServiceFee(
                                                 newValue.id.toString(),
                                                 areaId,
                                                 model.orderWeight());
-
+                                        courierDiscount = 0.0;
+                                        var cd = await model.getCourierDiscount(
+                                            model.orderBp(), courierFee);
+                                        courierDiscount = cd;
+                                        isloading(false);
                                         // print(newValue.id.toString());
                                       },
                                       items: shipment.map((Courier courier) {
@@ -179,8 +190,10 @@ class _CourierOrder extends State<CourierOrder> {
                                           value: courier,
                                           child: Text(
                                             "${courier.name} / ${model.shipmentName}",
+                                            softWrap: true,
                                             style: TextStyle(
                                                 color: Colors.pink[900],
+                                                fontSize: 12.6,
                                                 fontWeight: FontWeight.bold),
                                           ),
                                         );
@@ -197,7 +210,8 @@ class _CourierOrder extends State<CourierOrder> {
                         ? Container(
                             height: 175,
                             child: ModalProgressHUD(
-                                inAsyncCall: courierFee == null ? true : false,
+                                inAsyncCall:
+                                    _loading, //courierFee == null ? true : false,
                                 opacity: 0.6,
                                 progressIndicator: LinearProgressIndicator(),
                                 child: ListView(
@@ -211,7 +225,8 @@ class _CourierOrder extends State<CourierOrder> {
                                             stateValue.courierId,
                                             courierFee,
                                             model.userInfo.distrId,
-                                            controller.text)
+                                            controller.text,
+                                            courierDiscount)
                                         : Container(),
                                     courierFee != null &&
                                             model.orderBp() > 0 &&
@@ -220,6 +235,7 @@ class _CourierOrder extends State<CourierOrder> {
                                         ? OrderSave(
                                             stateValue.courierId,
                                             courierFee,
+                                            courierDiscount,
                                             widget.distrId,
                                             controller.text,
                                             widget.areaId,

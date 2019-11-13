@@ -134,7 +134,7 @@ class _NodeOrder extends State<NodeOrder> {
                       color: Colors.black87,
                     ),
                     decoration: InputDecoration(
-                      hintText: 'ادخل رقم العضو',
+                      hintText: 'Masukkan ID member',
                       hintStyle: TextStyle(color: Colors.grey[400]),
 
                       //contentPadding: EdgeInsets.all(5.0),

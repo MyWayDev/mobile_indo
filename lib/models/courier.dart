@@ -75,6 +75,24 @@ class Service {
         areas = snapshot.value['areas'];
 }
 
+class CourierDiscount {
+  int discount;
+  int onBp;
+  int toBp;
+  bool enabled;
+
+  CourierDiscount({this.discount, this.onBp, this.toBp, this.enabled});
+
+  factory CourierDiscount.json(Map<dynamic, dynamic> json) {
+    return CourierDiscount(
+      discount: json['discount'],
+      onBp: json['onBp'],
+      toBp: json['toBp'],
+      enabled: json['enabled'],
+    );
+  }
+}
+
 class ShipmentArea {
   int shipmentId;
   String shipmentDistrId;

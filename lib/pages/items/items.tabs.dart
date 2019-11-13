@@ -29,15 +29,15 @@ class ItemsTabs extends StatelessWidget {
             AppBar(
               title: Text('MENU'),
             ),
-            /*  ListTile(
+            /*   ListTile(
                 leading: Icon(Icons.settings),
                 title: Text('Profil'),
                 onTap: () {
+                  model.getCourierDiscount(300, 105);
                   //model.signOut();
                   // model.getIndoItems();
                   // model.courierList(model.userInfo.areaId);
                   // model.getShipmentAreas('02000007');
-                 
                 }),*/
             ListTile(
                 leading: Icon(Icons.image),

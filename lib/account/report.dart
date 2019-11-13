@@ -130,7 +130,7 @@ class _Report extends State<Report> {
                         color: Colors.black87,
                         fontWeight: FontWeight.bold),
                     decoration: InputDecoration(
-                      hintText: ' Masukkan ID member',
+                      hintText: 'Masukkan ID member',
                       hintStyle: TextStyle(color: Colors.grey[400]),
                     ),
                     keyboardType: TextInputType.number,

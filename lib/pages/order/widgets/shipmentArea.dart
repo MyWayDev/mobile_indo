@@ -66,6 +66,7 @@ class _ShipmentAreaState extends State<ShipmentPlace>
     distrPoints = await widget.model.getPoints();
     if (distrPoints.length > 0) {
       setState(() {
+        widget.model.distrPoint = distrPoints[0].id;
         isloading(false);
       });
     } else {

@@ -9,14 +9,14 @@ class Gift {
   Gift({this.items, this.bp, this.imageUrl, this.desc});
 
   Gift.fromSnapshot(DataSnapshot snapshot)
-      : items = snapshot.value['items'],
-        bp = snapshot.value['bp'];
+      : items = snapshot.value['items'] ?? [],
+        bp = snapshot.value['bp'] ?? 0;
 
   factory Gift.fbList(Map<dynamic, dynamic> list) {
     return Gift(
-        bp: list['bp'],
+        bp: list['bp'] ?? 0,
         desc: list['desc'],
-        items: list['items'],
+        items: list['items'] ?? [],
         imageUrl: list['imageUrl']);
   }
 }

@@ -8,11 +8,15 @@ class OrderSummary extends StatelessWidget {
   final double courierFee;
   final String distrId;
   final String note;
+  final double courierDiscount;
   final formatter = new NumberFormat("#,###");
+  final doubleFormat = new NumberFormat("####.##");
 
-  OrderSummary(this.courierId, this.courierFee, this.distrId, this.note);
-  double orderTotal(MainModel model) {
-    return courierFee + model.orderSum() + model.settings.adminFee;
+  OrderSummary(this.courierId, this.courierFee, this.distrId, this.note,
+      this.courierDiscount);
+
+  double finalCourierFee() {
+    return courierFee - courierDiscount;
   }
 
   @override
@@ -46,45 +50,18 @@ class OrderSummary extends StatelessWidget {
                           height: 27,
                           child: ListTile(
                             title: Center(
-                              child:
-                                  Text(model.orderWeight().toString() + ' Kg'),
+                              child: Text(
+                                doubleFormat.format(model.orderWeight()) +
+                                    ' Kg',
+                                style: TextStyle(fontSize: 14),
+                              ),
                             ),
                             trailing: Icon(
                               Icons.save_alt,
                               color: Colors.black,
                             ),
                             leading: Text(
-                              'Total Weight',
-                              // textDirection: TextDirection.rtl,
-                            ),
-                          )),
-                      Container(
-                          height: 27,
-                          child: ListTile(
-                            title: Center(
-                              child: Text(model.orderBp().toString() + ' Bp'),
-                            ),
-                            trailing: Icon(
-                              Icons.trending_up,
-                              color: Colors.green,
-                            ),
-                            leading: Text(
-                              'Total Poin',
-                              // textDirection: TextDirection.rtl,
-                            ),
-                          )),
-                      Container(
-                          height: 27,
-                          child: ListTile(
-                            title: Center(
-                              child: Text(formatter.format(courierFee) + ' Rp'),
-                            ),
-                            trailing: Icon(
-                              Icons.local_shipping,
-                              color: Colors.pink[900],
-                            ),
-                            leading: Text(
-                              'Biaya Kurir',
+                              'Total Weight', style: TextStyle(fontSize: 14),
                               // textDirection: TextDirection.rtl,
                             ),
                           )),
@@ -93,14 +70,92 @@ class OrderSummary extends StatelessWidget {
                           child: ListTile(
                             title: Center(
                               child: Text(
-                                  formatter.format(model.orderSum()) + ' Rp'),
+                                model.orderBp().toString() + ' Bp',
+                                style: TextStyle(fontSize: 14),
+                              ),
+                            ),
+                            trailing: Icon(
+                              Icons.trending_up,
+                              color: Colors.green,
+                            ),
+                            leading: Text(
+                              'Total Poin', style: TextStyle(fontSize: 14),
+                              // textDirection: TextDirection.rtl,
+                            ),
+                          )),
+                      Container(
+                          height: 27,
+                          child: ListTile(
+                            title: Center(
+                              child: courierDiscount != null &&
+                                      courierDiscount > 0
+                                  ? Container(
+                                      color: Colors.yellow[100],
+                                      child: Row(
+                                        children: <Widget>[
+                                          Text(
+                                            "(" +
+                                                formatter
+                                                    .format(courierFee ?? 0) +
+                                                ' Rp',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                          Text(
+                                            " " +
+                                                "- " +
+                                                ((courierDiscount.toInt() /
+                                                            courierFee
+                                                                .toInt()) *
+                                                        100)
+                                                    .toInt()
+                                                    .toString() +
+                                                '%' +
+                                                ")",
+                                            style: TextStyle(
+                                                fontSize: 13.5,
+                                                color: Colors.pink[900]),
+                                          ),
+                                          Text(
+                                            "   " +
+                                                formatter.format(
+                                                    finalCourierFee() ?? 0) +
+                                                ' Rp',
+                                            softWrap: true,
+                                            style: TextStyle(fontSize: 14),
+                                          ),
+                                        ],
+                                      ))
+                                  : Text(
+                                      formatter.format(courierFee ?? 0) + ' Rp',
+                                      style: TextStyle(fontSize: 14),
+                                    ),
+                            ),
+                            trailing: Icon(
+                              Icons.local_shipping,
+                              color: Colors.pink[900],
+                            ),
+                            leading: Text(
+                              'Biaya Kurir', style: TextStyle(fontSize: 14),
+                              // textDirection: TextDirection.rtl,
+                            ),
+                          )),
+                      Container(
+                          height: 27,
+                          child: ListTile(
+                            title: Center(
+                              child: Text(
+                                formatter.format(model.orderSum()) + ' Rp',
+                                style: TextStyle(fontSize: 14),
+                              ),
                             ),
                             trailing: Icon(
                               Icons.monetization_on,
                               color: Colors.pink[900],
                             ),
                             leading: Text(
-                              'Total Tagihan',
+                              'Total Tagihan', style: TextStyle(fontSize: 14),
                               // textDirection: TextDirection.rtl,
                             ),
                           )),

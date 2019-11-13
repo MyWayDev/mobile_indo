@@ -86,18 +86,23 @@ class NewMember {
   String telephone;
   String address;
   String areaId;
+  String bankAccoutName;
+  String bankAccountNumber;
+  String taxNumber;
 
-  NewMember({
-    this.sponsorId,
-    this.familyName,
-    this.name,
-    this.personalId,
-    this.birthDate,
-    this.email,
-    this.telephone,
-    this.address,
-    this.areaId,
-  });
+  NewMember(
+      {this.sponsorId,
+      this.familyName,
+      this.name,
+      this.personalId,
+      this.birthDate,
+      this.email,
+      this.telephone,
+      this.address,
+      this.areaId,
+      this.bankAccoutName,
+      this.bankAccountNumber,
+      this.taxNumber});
   Map<String, dynamic> toJson() => {
         "SPONSOR_ID": sponsorId,
         "FAMILY_ANAME": familyName,
@@ -108,6 +113,9 @@ class NewMember {
         "TELEPHONE": telephone,
         "ADDRESS": address,
         "AREA_ID": areaId,
+        "NOTES": bankAccoutName,
+        "SM_ID": bankAccountNumber,
+        "AP_AC_ID": taxNumber
       };
   String postNewMemberToJson(NewMember newMember) {
     final dyn = newMember.toJson();
@@ -115,9 +123,10 @@ class NewMember {
   }
   //!! refactor to new schema from api documentation;
 
-  Future<http.Response> createPost(NewMember newMember, String user) async {
+  Future<http.Response> createPost(NewMember newMember, String user,
+      String shipmentPlace, String shipmentPlaceName) async {
     final response = await http.put(
-        'http://mywayindoapi.azurewebsites.net/api/memregister/$user',
+        'http://mywayindoapi.azurewebsites.net/api/memregister/$user/$shipmentPlace/$shipmentPlaceName',
         headers: {
           HttpHeaders.contentTypeHeader: 'application/json',
           //HttpHeaders.authorizationHeader: ''

@@ -9,16 +9,19 @@ import 'package:scoped_model/scoped_model.dart';
 class OrderSave extends StatelessWidget {
   final String courierId;
   final double courierFee;
+  final double courierDiscount;
   final String distrId;
   final String note;
   final String userId;
   final String areaId;
   final formatter = new NumberFormat("#,###");
 
-  OrderSave(this.courierId, this.courierFee, this.distrId, this.note,
-      this.areaId, this.userId);
+  OrderSave(this.courierId, this.courierFee, this.courierDiscount, this.distrId,
+      this.note, this.areaId, this.userId);
   double orderTotal(MainModel model) {
-    return courierFee + model.orderSum() + model.settings.adminFee;
+    return (courierFee - courierDiscount) +
+        model.orderSum() +
+        model.settings.adminFee;
   }
 
   @override
@@ -57,23 +60,42 @@ class OrderSave extends StatelessWidget {
                 Expanded(
                   child: Container(),
                 ),
-                Text(
-                  formatter.format(orderTotal(model)) + ' Rp',
-                  style: TextStyle(
-                      color: Colors.black, fontWeight: FontWeight.bold),
-                ),
+                Row(
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.only(right: 30),
+                      child: Text(
+                        "+10% PPN",
+                        style: TextStyle(
+                            color: Colors.pink[800],
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12),
+                      ),
+                    ),
+                    Text(
+                      formatter.format((orderTotal(model) * 1.1)) + ' Rp  ',
+                      style: TextStyle(
+                          color: Colors.black, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                )
               ],
             ),
             onPressed: () {
               model.isBalanceChecked = true;
 
-              model.promoOrderList.forEach(
-                  (f) => print('bp?:${model.orderBp() / f.bp} qty:${f.qty}'));
+              // model.promoOrderList.forEach(
+              //   (f) => print('bp?:${model.orderBp() / f.bp} qty:${f.qty}'));
               //model.isTypeing = false;
               showDialog(
                   context: context,
                   builder: (_) => SaveDialog(
-                      courierId, courierFee, distrId, note, areaId, userId));
+                      courierId,
+                      (courierFee - courierDiscount),
+                      distrId,
+                      note,
+                      areaId,
+                      userId));
             }));
   }
 }

@@ -439,7 +439,7 @@ class _TrackOrder extends State<TrackOrder> {
                                       child: Column(
                                         children: <Widget>[
                                           Text(
-                                            'Rp ${firstSorder[index].soTotal}',
+                                            'Rp ${(double.parse(firstSorder[index].soTotal) * 1.1).toString()}',
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               color: Colors.red[100],

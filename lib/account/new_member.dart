@@ -96,6 +96,9 @@ class _NewMemberPage extends State<NewMemberPage> {
     telephone: null,
     address: null,
     areaId: null,
+    bankAccoutName: null,
+    bankAccountNumber: null,
+    taxNumber: null,
   );
 
   Area stateValue;
@@ -254,7 +257,7 @@ class _NewMemberPage extends State<NewMemberPage> {
                                               child: Icon(
                                                 GroovinMaterialIcons
                                                     .calendar_check,
-                                                size: 26.0,
+                                                size: 25.0,
                                                 color: Colors.white,
                                               ),
                                               shape: CircleBorder(),
@@ -274,7 +277,7 @@ class _NewMemberPage extends State<NewMemberPage> {
                                                 : Text(''),
                                             subtitle: Padding(
                                               padding:
-                                                  EdgeInsets.only(right: 10),
+                                                  EdgeInsets.only(right: 8),
                                               child: selected == null
                                                   ? Text('Tanggal lahir')
                                                   : Text(''),
@@ -283,28 +286,15 @@ class _NewMemberPage extends State<NewMemberPage> {
                                             //trailing:
                                           ),
                                           Divider(
-                                            height: 6,
+                                            height: 4,
                                             color: Colors.black,
                                           ),
-                                          /*  TextFormField(
-                                    decoration: InputDecoration(
-                                        labelText: 'الاسم العائلي',
-                                        contentPadding: EdgeInsets.all(8.0),
-                                        icon: Icon(
-                                            GroovinMaterialIcons.format_size,
-                                            color: Colors.pink[500])),
-                                    validator: (value) {},
-                                    keyboardType: TextInputType.text,
-                                    onSaved: (String value) {
-                                      _newMemberForm.familyName = value;
-                                    },
-                                  ),*/
                                           TextFormField(
                                             autovalidate: true,
                                             decoration: InputDecoration(
                                                 labelText: 'Nama',
                                                 contentPadding:
-                                                    EdgeInsets.all(8.0),
+                                                    EdgeInsets.all(2.0),
                                                 icon: Icon(
                                                     GroovinMaterialIcons
                                                         .format_title,
@@ -327,7 +317,7 @@ class _NewMemberPage extends State<NewMemberPage> {
                                                 labelText:
                                                     'Nomor tanda pengenal',
                                                 contentPadding:
-                                                    EdgeInsets.all(8.0),
+                                                    EdgeInsets.all(4.0),
                                                 icon: Icon(Icons.assignment_ind,
                                                     color: Colors.pink[500])),
                                             validator: (value) {
@@ -352,7 +342,7 @@ class _NewMemberPage extends State<NewMemberPage> {
                                                 filled: true,
                                                 fillColor: Colors.transparent,
                                                 contentPadding:
-                                                    EdgeInsets.all(8.0),
+                                                    EdgeInsets.all(2.0),
                                                 icon: Icon(
                                                   Icons.phone,
                                                   color: Colors.pink[500],
@@ -371,28 +361,13 @@ class _NewMemberPage extends State<NewMemberPage> {
                                               _newMemberForm.telephone = value;
                                             },
                                           ),
-                                          /*  TextFormField(
-                                    decoration: InputDecoration(
-                                        labelText: 'Surel',
-                                        filled: true,
-                                        fillColor: Colors.transparent,
-                                        contentPadding: EdgeInsets.all(8.0),
-                                        icon: Icon(
-                                          Icons.email,
-                                          color: Colors.pink[500],
-                                        )),
-                                    keyboardType: TextInputType.emailAddress,
-                                    onSaved: (String value) {
-                                      _newMemberForm.email = value;
-                                    },
-                                  ),*/
                                           TextFormField(
                                             decoration: InputDecoration(
                                                 labelText: 'Alamat',
                                                 filled: true,
                                                 fillColor: Colors.transparent,
                                                 contentPadding:
-                                                    EdgeInsets.all(8.0),
+                                                    EdgeInsets.all(2.0),
                                                 icon: Icon(
                                                   GroovinMaterialIcons.home,
                                                   color: Colors.pink[500],
@@ -409,6 +384,80 @@ class _NewMemberPage extends State<NewMemberPage> {
                                               _newMemberForm.address = value;
                                             },
                                           ),
+                                          TextFormField(
+                                            decoration: InputDecoration(
+                                                labelText: 'Bank Account Name',
+                                                filled: true,
+                                                fillColor: Colors.transparent,
+                                                contentPadding:
+                                                    EdgeInsets.all(2.0),
+                                                icon: Icon(
+                                                  GroovinMaterialIcons.bank,
+                                                  color: Colors.pink[500],
+                                                )),
+                                            validator: (value) {
+                                              String _msg;
+                                              value.length < 3
+                                                  ? _msg = 'Name is too short'
+                                                  : _msg = null;
+                                              return _msg;
+                                            },
+                                            keyboardType: TextInputType.text,
+                                            onSaved: (String value) {
+                                              _newMemberForm.bankAccoutName =
+                                                  value;
+                                            },
+                                          ),
+                                          TextFormField(
+                                            decoration: InputDecoration(
+                                                labelText:
+                                                    'Bank Account Number',
+                                                filled: true,
+                                                fillColor: Colors.transparent,
+                                                contentPadding:
+                                                    EdgeInsets.all(2.0),
+                                                icon: Icon(
+                                                  GroovinMaterialIcons.numeric,
+                                                  color: Colors.pink[500],
+                                                )),
+                                            validator: (value) {
+                                              String _msg;
+                                              value.length < 16
+                                                  ? _msg =
+                                                      'Account# is too short'
+                                                  : _msg = null;
+                                              return _msg;
+                                            },
+                                            keyboardType: TextInputType.number,
+                                            onSaved: (String value) {
+                                              _newMemberForm.bankAccountNumber =
+                                                  value;
+                                            },
+                                          ),
+                                          TextFormField(
+                                            decoration: InputDecoration(
+                                                labelText: 'Tax Number',
+                                                filled: true,
+                                                fillColor: Colors.transparent,
+                                                contentPadding:
+                                                    EdgeInsets.all(2.0),
+                                                icon: Icon(
+                                                  GroovinMaterialIcons
+                                                      .tag_text_outline,
+                                                  color: Colors.pink[500],
+                                                )),
+                                            validator: (value) {
+                                              String _msg;
+                                              value.length < 12
+                                                  ? _msg = 'Tax is too short'
+                                                  : _msg = null;
+                                              return _msg;
+                                            },
+                                            keyboardType: TextInputType.number,
+                                            onSaved: (String value) {
+                                              _newMemberForm.taxNumber = value;
+                                            },
+                                          ),
                                           Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceEvenly,
@@ -417,14 +466,14 @@ class _NewMemberPage extends State<NewMemberPage> {
                                             children: <Widget>[
                                               Icon(
                                                 Icons.add_location,
-                                                size: 28,
+                                                size: 26,
                                                 color: Colors.pink[500],
                                               ),
                                               SearchableDropdown(
                                                 hint: Text('REGION'),
                                                 icon: Icon(
                                                   Icons.arrow_drop_down_circle,
-                                                  size: 30,
+                                                  size: 28,
                                                 ),
                                                 iconEnabledColor:
                                                     Colors.pink[200],
@@ -445,66 +494,6 @@ class _NewMemberPage extends State<NewMemberPage> {
                                               ),
                                             ],
                                           )
-
-                                          /*FormField<Area>(
-                                    initialValue: _newMemberForm.areaId = null,
-                                    onSaved: (val) =>
-                                        _newMemberForm.areaId = val.areaId,
-                                    validator: (val) => (val == null)
-                                        ? 'Please choose a area'
-                                        : null,
-                                    builder: (FormFieldState<Area> state) {
-                                      return InputDecorator(
-                                        textAlign: TextAlign.right,
-                                        decoration: InputDecoration(
-                                          icon: Icon(
-                                            GroovinMaterialIcons
-                                                .map_marker_radius,
-                                            color: Colors.pink[500],
-                                          ),
-                                          labelText: stateValue == null
-                                              ? 'Wilaya'
-                                              : '',
-                                          errorText: state.hasError
-                                              ? state.errorText
-                                              : null,
-                                        ),
-                                        isEmpty: state.value == null,
-                                        child: DropdownButtonHideUnderline(
-                                          child: DropdownButton<Area>(
-                                            // iconSize: 25.0,
-                                            // elevation: 5,
-                                            value: stateValue,
-                                            // isDense: true,
-                                            onChanged: (Area newValue) async {
-                                              if (newValue.areaId == '') {
-                                                newValue = null;
-                                              }
-                                              setState(() {
-                                                stateValue = newValue;
-                                              });
-
-                                              state.didChange(newValue);
-
-                                              print('AreaId${newValue.areaId}');
-                                            },
-                                            items:
-                                                widget.areas.map((Area area) {
-                                              return DropdownMenuItem<Area>(
-                                                value: area,
-                                                child: Text(
-                                                  area.name,
-                                                  style: TextStyle(
-                                                    color: Colors.pink[900],
-                                                  ),
-                                                ),
-                                              );
-                                            }).toList(),
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  ),*/
                                         ],
                                       ),
                                     )
@@ -528,7 +517,7 @@ class _NewMemberPage extends State<NewMemberPage> {
                                 child: Icon(
                                   Icons.check_circle,
                                   color: Colors.greenAccent[400],
-                                  size: 65,
+                                  size: 42,
                                 ),
                               ),
                               onPressed: () async {
@@ -564,7 +553,8 @@ class _NewMemberPage extends State<NewMemberPage> {
     String msg;
     isloading(true);
     print(_newMemberForm.postNewMemberToJson(_newMemberForm));
-    Response response = await _newMemberForm.createPost(_newMemberForm, user);
+    Response response = await _newMemberForm.createPost(
+        _newMemberForm, user, 'shipmentPlace', 'shipmentName');
     if (response.statusCode == 201) {
       body = Id.fromJson(json.decode(response.body));
       msg = body.id;

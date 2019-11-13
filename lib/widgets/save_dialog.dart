@@ -165,7 +165,8 @@ class _SaveDialog extends State<SaveDialog> {
                                                     widget.courierId,
                                                     widget.courierFee,
                                                     widget.distrId,
-                                                    widget.note,
+                                                    widget.note +
+                                                        model.shipmentAddress,
                                                     widget.areaId);
                                             if (model.orderBp() == 0 &&
                                                 getOrderList(model).length ==
@@ -352,8 +353,7 @@ class _SaveDialog extends State<SaveDialog> {
                   InkWell(
                     onTap: () {
                       Navigator.of(context).pop();
-                      print(
-                          'userId in BottomNav ReRoute in saveDialog :${widget.userId}');
+
                       Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(

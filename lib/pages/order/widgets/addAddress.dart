@@ -6,6 +6,7 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:mor_release/models/area.dart';
 import 'package:mor_release/models/courier.dart';
+import 'package:mor_release/pages/const.dart';
 import 'package:mor_release/pages/order/widgets/shipmentArea.dart';
 import 'package:mor_release/scoped/connected.dart';
 import 'package:mor_release/widgets/color_loader_2.dart';
@@ -51,7 +52,10 @@ class _AddRegionState extends State<AddRegion> {
           DropdownMenuItem(
               child: Text(
                 sValue,
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.pink[900]),
               ),
               value: sValue),
         );
@@ -78,9 +82,7 @@ class _AddRegionState extends State<AddRegion> {
             DropdownMenuItem(
                 child: Text(
                   aValue,
-                  style: TextStyle(
-                    fontSize: 12.5,
-                  ),
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
                 ),
                 value: aValue),
           );
@@ -152,12 +154,15 @@ class _AddRegionState extends State<AddRegion> {
               setState(() {});
             },
           ),
-          areas.length > 0
-              ? ModalProgressHUD(
-                  inAsyncCall: _isLoading,
-                  opacity: 0.65,
-                  progressIndicator: ColorLoader2(),
-                  child: AddAddress(widget.memberId, areas),
+          regionSplit != null
+              ? Container(
+                  child: areas.length > 0
+                      ? AddAddress(widget.memberId, areas)
+                      : Container(
+                          child: LinearProgressIndicator(
+                            backgroundColor: greyColor,
+                          ),
+                        ),
                 )
               : Container()
         ],
@@ -299,21 +304,29 @@ class _AddAddressState extends State<AddAddress> {
             isValid
                 ? ScopedModelDescendant<MainModel>(builder:
                     (BuildContext context, Widget child, MainModel model) {
-                    return IconButton(
-                      icon: Icon(Icons.check_circle_outline),
-                      onPressed: () async {
-                        String msg = "";
-                        String distrId;
-                        widget.memberId == null
-                            ? distrId = model.userInfo.distrId
-                            : distrId = widget.memberId;
+                    return ModalProgressHUD(
+                      inAsyncCall: _async,
+                      opacity: 0.65,
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.check_circle_outline,
+                          color: Colors.green,
+                          size: 42,
+                        ),
+                        onPressed: () async {
+                          String msg = "";
+                          String distrId;
+                          widget.memberId == null
+                              ? distrId = model.userInfo.distrId
+                              : distrId = widget.memberId;
 
-                        if (_validateAndSave(distrId)) {
-                          print(_newAddressForm
-                              .postAddressToJson(_newAddressForm));
-                          await _saveAddress(model, distrId);
-                        }
-                      },
+                          if (_validateAndSave(distrId)) {
+                            print(_newAddressForm
+                                .postAddressToJson(_newAddressForm));
+                            await _saveAddress(model, distrId);
+                          }
+                        },
+                      ),
                     );
                   })
                 : Container(),
@@ -341,6 +354,8 @@ class _AddAddressState extends State<AddAddress> {
   }
 
   Future _saveAddress(MainModel model, String memberId) async {
+    isAsync(true);
+    print('distrPoint:${model.distrPoint}');
     List<ShipmentArea> list =
         await model.getShipmentAreas(memberId, model.distrPoint);
     if (list.length == 3) {
@@ -349,7 +364,7 @@ class _AddAddressState extends State<AddAddress> {
           'http://mywayindoapi.azurewebsites.net/api/delete_distr_shipment_place_record/$delId');
     }
     String msg;
-    isAsync(true);
+
     http.Response response = await _newAddressForm.createPost(_newAddressForm);
     if (response.statusCode == 201) {
       msg = 'sukses';
@@ -388,6 +403,7 @@ class _AddAddressState extends State<AddAddress> {
                               context: context,
                               builder: (_) => ShipmentPlace(
                                     model: model,
+                                    memberId: memberId,
                                   ));
                         }
                       },
@@ -456,7 +472,7 @@ class _AddAddressState extends State<AddAddress> {
                           size: 24,
                         ),
                       ),
-                    ),
+                    )
                   ],
                 ),
               ),

@@ -1243,6 +1243,37 @@ for(var area in areas){
 
     return companies;
   }*/
+  Future<double> getCourierDiscount(int totalBp, double courierFeez) async {
+    double courierDiscount = 0.0;
+    DataSnapshot snapshot =
+        await database.reference().child('$path/courierDiscount/en-US/').once();
+    if (snapshot.value != null) {
+      Map<dynamic, dynamic> _courierDiscount = snapshot.value;
+      List list = _courierDiscount.values.toList();
+      bool _hasData = list
+          .map((f) => CourierDiscount.json(f))
+          .where((r) =>
+              r.enabled == true && totalBp >= r.onBp && totalBp <= r.toBp)
+          .isNotEmpty;
+
+      if (_hasData) {
+        courierDiscount = list
+                .map((f) => CourierDiscount.json(f))
+                .where((r) =>
+                    r.enabled == true && totalBp >= r.onBp && totalBp <= r.toBp)
+                .first
+                .discount /
+            100 *
+            courierFeez;
+
+        print('discount:${courierDiscount.abs()}');
+      } else {
+        print(courierFeez);
+      }
+    }
+
+    return courierDiscount.abs();
+  }
 
 //!--------*
   Future<List<Region>> getPoints() async {
