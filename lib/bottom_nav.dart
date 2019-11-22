@@ -50,7 +50,7 @@ class _BottomNav extends State<BottomNav> with SingleTickerProviderStateMixin {
 //! add admin conditions here for 1 to 5 users..
 
     // Initialize the Tab Controller
-    tabController = new TabController(length: 4, vsync: this);
+    tabController = new TabController(length: 3, vsync: this);
   }
 
   @override
@@ -82,7 +82,7 @@ class _BottomNav extends State<BottomNav> with SingleTickerProviderStateMixin {
           // Add tabs as widgets
           children: <Widget>[
             ItemsTabs(),
-            NewMemberPage(), // AccountTabs(),
+            // Container(), // NewMemberPage(),
             Tickets(
               distrId: int.parse(model.user.key),
             ),
@@ -113,14 +113,11 @@ class _BottomNav extends State<BottomNav> with SingleTickerProviderStateMixin {
                   color: Colors.pink[700],
                 ),
               ),
-              /*Tab(
-                icon: Icon(Icons.notifications,
-                    size: 32, color: Colors.pink[700]),
-              ),*/
-              Tab(
+
+              /* Tab(
                 icon: Icon(Icons.account_circle,
                     size: 32, color: Colors.pink[700]),
-              ),
+              ),*/
               Tab(
                   child: BadgeIconButton(
                 itemCount: _msgCount > 0 ? _msgCount : 0,

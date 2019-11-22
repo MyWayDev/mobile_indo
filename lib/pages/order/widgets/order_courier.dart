@@ -208,7 +208,7 @@ class _CourierOrder extends State<CourierOrder> {
 
                     courierFee != null
                         ? Container(
-                            height: 175,
+                            height: 180,
                             child: ModalProgressHUD(
                                 inAsyncCall:
                                     _loading, //courierFee == null ? true : false,

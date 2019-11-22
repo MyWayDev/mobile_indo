@@ -8,7 +8,6 @@ import 'package:mor_release/pages/items/items.dart';
 import 'package:mor_release/pages/items/items.tabs.dart';
 import 'package:mor_release/models/ticket.dart';
 import 'package:mor_release/pages/messages/local_note.dart';
-import 'package:mor_release/pages/order/end_order.dart';
 import 'package:mor_release/pages/order/order.dart';
 import 'package:mor_release/scoped/connected.dart';
 import './pages/user/registration_page.dart';
@@ -18,7 +17,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:mor_release/scoped/note_helper.dart' as note;
-//import 'package:device_info/device_info.dart';
 
 void main() {
   runApp(MyApp());
@@ -35,7 +33,7 @@ class _MyApp extends State<MyApp> {
   final MainModel model = MainModel();
 
   Random random = Random();
-  String pathLink =
+  final String pathLink =
       'flamelink/environments/indoProduction/content/tokens/en-US/';
   static final FirebaseDatabase database = FirebaseDatabase.instance;
   final DatabaseReference databaseReference = database.reference();
@@ -93,7 +91,7 @@ class _MyApp extends State<MyApp> {
           id: _random,
         );
 
-        print(" onLaunch called ${(msg)}");
+        // print(" onLaunch called ${(msg)}");
       },
       onResume: (Map<String, dynamic> msg) async {
         note.showOngoingNotification(
@@ -102,14 +100,14 @@ class _MyApp extends State<MyApp> {
           body: msg['notification']['body'],
           id: _random,
         );
-        print(" onResume called ${(msg)}");
+        //print(" onResume called ${(msg)}");
       },
     );
     firebaseMessaging.requestNotificationPermissions(
         const IosNotificationSettings(sound: true, alert: true, badge: true));
     firebaseMessaging.onIosSettingsRegistered
         .listen((IosNotificationSettings setting) {
-      print('IOS Setting Registed');
+      //print('IOS Setting Registed');
     });
     // firebaseMessaging.getToken().then((token) {});
   }
@@ -200,7 +198,6 @@ class _MyApp extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     model.settingsData();
-    //model.getTicketTypes();
     return ScopedModel<MainModel>(
       model: model,
       child: MaterialApp(

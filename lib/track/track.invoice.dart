@@ -22,6 +22,9 @@ class TrackInvoice extends StatefulWidget {
 class _TrackInvoice extends State<TrackInvoice> {
   List<Invoice> firstInvoice;
   final formatter = new NumberFormat("#,###");
+  double addPpnTax(int index) {
+    return firstInvoice[index].invocieTotal * 1.1;
+  }
 
   void _getInvoices(String userId) async {
     firstInvoice = [];
@@ -393,7 +396,7 @@ class _TrackInvoice extends State<TrackInvoice> {
                                           child: Column(
                                             children: <Widget>[
                                               Text(
-                                                'Rp ${formatter.format(firstInvoice[index].invocieTotal)}',
+                                                'Rp ${formatter.format(addPpnTax(index))}',
                                                 style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   color: Colors.pink[900],

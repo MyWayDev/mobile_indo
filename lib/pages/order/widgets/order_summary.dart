@@ -58,6 +58,7 @@ class OrderSummary extends StatelessWidget {
                             ),
                             trailing: Icon(
                               Icons.save_alt,
+                              size: 17,
                               color: Colors.black,
                             ),
                             leading: Text(
@@ -76,6 +77,7 @@ class OrderSummary extends StatelessWidget {
                             ),
                             trailing: Icon(
                               Icons.trending_up,
+                              size: 17,
                               color: Colors.green,
                             ),
                             leading: Text(
@@ -114,30 +116,31 @@ class OrderSummary extends StatelessWidget {
                                                 '%' +
                                                 ")",
                                             style: TextStyle(
-                                                fontSize: 13.5,
+                                                fontSize: 12,
                                                 color: Colors.pink[900]),
                                           ),
                                           Text(
-                                            "   " +
+                                            " " +
                                                 formatter.format(
                                                     finalCourierFee() ?? 0) +
-                                                ' Rp',
+                                                '  Rp',
                                             softWrap: true,
-                                            style: TextStyle(fontSize: 14),
+                                            style: TextStyle(fontSize: 12),
                                           ),
                                         ],
                                       ))
                                   : Text(
                                       formatter.format(courierFee ?? 0) + ' Rp',
-                                      style: TextStyle(fontSize: 14),
+                                      style: TextStyle(fontSize: 13),
                                     ),
                             ),
                             trailing: Icon(
                               Icons.local_shipping,
+                              size: 17,
                               color: Colors.pink[900],
                             ),
                             leading: Text(
-                              'Biaya Kurir', style: TextStyle(fontSize: 14),
+                              'Biaya Kurir', style: TextStyle(fontSize: 13),
                               // textDirection: TextDirection.rtl,
                             ),
                           )),
@@ -147,11 +150,12 @@ class OrderSummary extends StatelessWidget {
                             title: Center(
                               child: Text(
                                 formatter.format(model.orderSum()) + ' Rp',
-                                style: TextStyle(fontSize: 14),
+                                style: TextStyle(fontSize: 13),
                               ),
                             ),
                             trailing: Icon(
                               Icons.monetization_on,
+                              size: 17,
                               color: Colors.pink[900],
                             ),
                             leading: Text(

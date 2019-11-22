@@ -150,7 +150,7 @@ DEPENDENCIES:
   - sqflite (from `.symlinks/plugins/sqflite/ios`)
 
 SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
+  https://github.com/CocoaPods/Specs.git:
     - Firebase
     - FirebaseAnalytics
     - FirebaseAnalyticsInterop
@@ -239,4 +239,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 3389836f37640698630b8f0670315d626d5f1469
 
-COCOAPODS: 1.7.3
+COCOAPODS: 1.8.4

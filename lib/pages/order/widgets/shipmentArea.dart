@@ -10,8 +10,9 @@ import 'package:mor_release/widgets/color_loader_2.dart';
 class ShipmentPlace extends StatefulWidget {
   final MainModel model;
   final String memberId;
+  final bool isEdit;
 
-  ShipmentPlace({@required this.model, this.memberId});
+  ShipmentPlace({@required this.model, this.memberId, this.isEdit = false});
 
   @override
   _ShipmentAreaState createState() => _ShipmentAreaState();
@@ -287,6 +288,13 @@ class _ShipmentAreaState extends State<ShipmentPlace>
                                     print(
                                         'shipment Address${widget.model.shipmentAddress}');
                                   });
+                                  print(
+                                      '${widget.model.shipmentAddress}==>${widget.model.shipmentArea}=>${widget.model.shipmentName}');
+
+                                  widget.model.isBulk && !widget.isEdit
+                                      ? widget.model
+                                          .orderToBulk(widget.model.bulkDistrId)
+                                      : null;
 
                                   Navigator.of(context).pop();
                                 },

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:mor_release/models/item.dart';
 
@@ -24,6 +25,10 @@ class TrackOrder extends StatefulWidget {
 @override
 class _TrackOrder extends State<TrackOrder> {
   List<Sorder> firstSorder;
+  final formatter = new NumberFormat("#,###");
+  double addPpnTax(int index) {
+    return double.parse(firstSorder[index].soTotal) * 1.1;
+  }
 
   void isLoading(bool o, MainModel model) {
     setState(() {
@@ -51,8 +56,8 @@ class _TrackOrder extends State<TrackOrder> {
       isLoading(false, model);
       print('ERROR UPDATE SO!');
     }
-    _getSorders(widget.userId);
     isLoading(false, model);
+    _getSorders(widget.userId);
   }
 
   void _getSorders(String userId) async {
@@ -439,7 +444,7 @@ class _TrackOrder extends State<TrackOrder> {
                                       child: Column(
                                         children: <Widget>[
                                           Text(
-                                            'Rp ${(double.parse(firstSorder[index].soTotal) * 1.1).toString()}',
+                                            'Rp ${(formatter.format(addPpnTax(index)))}',
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               color: Colors.red[100],

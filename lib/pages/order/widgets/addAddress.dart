@@ -181,8 +181,7 @@ class _AddRegionState extends State<AddRegion> {
               showDialog(
                   context: context,
                   builder: (_) => ShipmentPlace(
-                        model: model,
-                      ));
+                      model: model, isEdit: model.isBulk ? true : false));
             },
           );
         })
@@ -404,6 +403,7 @@ class _AddAddressState extends State<AddAddress> {
                               builder: (_) => ShipmentPlace(
                                     model: model,
                                     memberId: memberId,
+                                    isEdit: model.isBulk ? true : false,
                                   ));
                         }
                       },
@@ -459,6 +459,7 @@ class _AddAddressState extends State<AddAddress> {
                               context: context,
                               builder: (_) => ShipmentPlace(
                                     model: model,
+                                    isEdit: model.isBulk ? true : false,
                                   ));
                         }
                       },

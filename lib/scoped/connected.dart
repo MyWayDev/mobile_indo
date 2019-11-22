@@ -23,7 +23,7 @@ import 'package:firebase_core/firebase_core.dart';
 class MainModel extends Model {
   // ** items //** */
   static String _version = '3.12r'; //!Modify for every release version./.
-  static String firebaseDb = "indoProduction";
+  static String firebaseDb = "indoStage"; //!modify back to indoProduction;
   static String stage = "indoStage";
   static String updateDb = "indoStage";
   final FirebaseDatabase database = FirebaseDatabase.instance;
@@ -33,6 +33,8 @@ class MainModel extends Model {
   String shipmentName = '';
   String shipmentArea = '';
   String shipmentAddress = '';
+  String bulkDistrId;
+  String shipmentCompanyId;
   int distrPoint = 0;
   int noteCount;
   List<Item> itemData = List();
@@ -41,7 +43,7 @@ class MainModel extends Model {
   //List<GiftPack> giftpacklist = [];
   List<GiftOrder> giftorderList = [];
   List<PromoOrder> promoOrderList = [];
-
+  bool isBulk = false;
   String token = '';
 
   bool loading = false;
@@ -205,7 +207,7 @@ class MainModel extends Model {
   Future<List<Item>> dbItemsList() async {
     List<Item> products;
     //List productlist;
-    final response = await http.get('$httpath/api/allitemdetails');
+    final response = await http.get('$httpath/allitemdetails');
     if (response.statusCode == 200) {
       final productlist = json.decode(response.body) as List;
 
@@ -541,10 +543,64 @@ class MainModel extends Model {
   /*List<GiftPack> get displayGiftOrder {
     return List.from(giftpacklist);
   }*/
+
+  double giftWeight() {
+    double w = 0;
+    if (giftorderList.length > 0) {
+      for (GiftOrder g in giftorderList) {
+        for (var p in g.pack) {
+          w += p.weight * g.qty;
+        }
+      }
+    }
+    return w;
+  }
+
+  double promoWeight() {
+    double w = 0;
+    if (promoOrderList.length > 0) {
+      for (PromoOrder g in promoOrderList) {
+        for (var p in g.promoPack) {
+          w += p.weight * g.qty;
+        }
+      }
+    }
+    return w;
+  }
+
   double orderWeight() {
     double x = 0;
     for (ItemOrder i in itemorderlist) {
       x += i.weight * i.qty;
+    }
+    notifyListeners();
+    x += promoWeight() + giftWeight();
+    return x;
+  }
+
+  double bulkOrderBp() {
+    double x = 0;
+    for (SalesOrder i in bulkOrder) {
+      x += i.totalBp;
+    }
+    notifyListeners();
+    return x;
+  }
+
+  double bulkOrderWeight() {
+    double x = 0;
+    for (SalesOrder o in bulkOrder) {
+      x += o.weight;
+    }
+
+    notifyListeners();
+    return x;
+  }
+
+  double bulkOrderSum() {
+    double x = 0;
+    for (SalesOrder i in bulkOrder) {
+      x += i.total;
     }
     notifyListeners();
     return x;
@@ -1037,6 +1093,32 @@ class MainModel extends Model {
   }
 
 //!-------------------------------------SaveOrder---------------------------------//
+  List<SalesOrder> bulkOrder = [];
+
+  void orderToBulk(String _distrId) {
+    SalesOrder order = SalesOrder(
+        distrId: _distrId,
+        userId: userInfo.distrId,
+        total: orderSum(),
+        totalBp: orderBp(),
+        note: 'note',
+        address: shipmentAddress,
+        courierId: 'shipmentId',
+        areaId: shipmentArea,
+        weight: orderWeight(),
+        order: itemorderlist,
+        gifts: giftorderList,
+        promos: promoOrderList);
+    bulkOrder.add(order);
+    itemorderlist = [];
+    giftorderList = [];
+    promoOrderList = [];
+
+    //
+    //giftorderList.clear();
+    //promoOrderList.clear();
+    //  bulkOrder.forEach((b) => b.order.forEach((o) => print(o.itemId)));
+  }
 
   Future<OrderMsg> saveOrder(String shipmentId, double courierfee,
       String distrId, String note, String areaId) async {
@@ -1354,7 +1436,7 @@ for( var i = 0 ; i < _list.length; i++){
 //!--------*Users/Members*-----------//
   void userPushToFirebase(String id, User user) {
     String memberId = int.parse(id).toString();
-    databaseReference = database.reference().child('$path/content/users/en-US');
+    databaseReference = database.reference().child('$path/users/en-US');
     databaseReference.child(memberId).set(user.toJson());
   }
 

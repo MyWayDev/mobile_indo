@@ -1,8 +1,9 @@
 import 'dart:async';
-
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:io';
+
+import 'package:mor_release/models/gift.order.dart';
 
 class ItemOrder {
   String itemId;
@@ -93,11 +94,14 @@ class SalesOrder {
   String areaId;
   double total;
   int totalBp;
+  double weight;
   String note;
   String address;
   String amt;
   String so;
   List<ItemOrder> order;
+  List<GiftOrder> gifts;
+  List<PromoOrder> promos;
 
   SalesOrder(
       {this.distrId,
@@ -105,12 +109,15 @@ class SalesOrder {
       this.total,
       this.totalBp,
       this.order,
+      this.weight,
       this.courierId,
       this.areaId,
       this.note,
       this.address,
       this.amt,
-      this.so});
+      this.so,
+      this.gifts,
+      this.promos});
 
   Map<String, dynamic> toJson() => {
         "a9master": {
