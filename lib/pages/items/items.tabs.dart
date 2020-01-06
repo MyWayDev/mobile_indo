@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:groovin_material_icons/groovin_material_icons.dart';
 import 'package:mor_release/pages/items/items.dart';
@@ -8,6 +10,7 @@ import 'package:mor_release/track/track.tabs.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:badges/badges.dart';
 import '../../cat.dart';
+import 'dart:math' as math;
 
 //////////////////////////////////////////////////////
 ///
@@ -29,11 +32,12 @@ class ItemsTabs extends StatelessWidget {
             AppBar(
               title: Text('MENU'),
             ),
-            /*   ListTile(
+            /* ListTile(
                 leading: Icon(Icons.settings),
                 title: Text('Profil'),
                 onTap: () {
-                  model.getCourierDiscount(300, 105);
+            
+                  // model.getCourierDiscount(300, 105);
                   //model.signOut();
                   // model.getIndoItems();
                   // model.courierList(model.userInfo.areaId);
@@ -75,18 +79,42 @@ class ItemsTabs extends StatelessWidget {
                   ),
                 ),
                 Tab(
-                  child: BadgeIconButton(
-                    itemCount: model.itemCount() < 0
-                        ? 0
-                        : model.itemCount(), // required
-                    icon: Icon(
-                      Icons.shopping_cart,
-                      color: Colors.grey[350],
-                      size: 26.0,
-                    ), // required
-                    //badgeColor: Colors.red, // default: Colors.red
-                    badgeTextColor: Colors.white, // default: Colors.white
-                    //hideZeroCount: true, // default: true
+                  child: Stack(
+                    alignment: AlignmentDirectional.center,
+                    children: <Widget>[
+                      Positioned(
+                        child: Opacity(
+                            opacity: model.itemCount() == 0 ? 1 : 0.50,
+                            child: BadgeIconButton(
+                              badgeColor: Colors.purple[800],
+                              itemCount: model.bulkOrder.length < 0
+                                  ? 0
+                                  : model.bulkOrder.length, // required
+                              icon: Icon(
+                                Icons.local_shipping,
+                                color: Colors.grey[350],
+                                size: 0,
+                              ), // required
+                              //badgeColor: Colors.red, // default: Colors.red
+                              badgeTextColor:
+                                  Colors.white, // default: Colors.white
+                              //hideZeroCount: true, // default: true
+                            )),
+                      ),
+                      BadgeIconButton(
+                        itemCount: model.itemCount() < 0
+                            ? 0
+                            : model.itemCount(), // required
+                        icon: Icon(
+                          Icons.shopping_cart,
+                          color: Colors.grey[350],
+                          size: 26.0,
+                        ), // required
+                        //badgeColor: Colors.red, // default: Colors.red
+                        badgeTextColor: Colors.white, // default: Colors.white
+                        //hideZeroCount: true, // default: true
+                      ),
+                    ],
                   ),
                   /* icon: new Stack(children: <Widget>[
                         Icon(

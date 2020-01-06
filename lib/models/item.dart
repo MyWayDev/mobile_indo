@@ -160,3 +160,13 @@ class Item {
     };
   }
 }
+
+class AggrItem {
+  String id;
+  int qty;
+
+  AggrItem({
+    this.id,
+    this.qty,
+  });
+}

@@ -87,6 +87,18 @@ class OrderMsg {
   }
 }
 
+class OrderBulkMsg {
+  List<dynamic> ids;
+  String error;
+
+  OrderBulkMsg({this.ids, this.error});
+  factory OrderBulkMsg.fromJson(Map<String, dynamic> msg) {
+    return OrderBulkMsg(
+      ids: msg['ids'],
+    );
+  }
+}
+
 class SalesOrder {
   String distrId;
   String userId;
@@ -99,6 +111,7 @@ class SalesOrder {
   String address;
   String amt;
   String so;
+  String projId;
   List<ItemOrder> order;
   List<GiftOrder> gifts;
   List<PromoOrder> promos;
@@ -116,6 +129,7 @@ class SalesOrder {
       this.address,
       this.amt,
       this.so,
+      this.projId,
       this.gifts,
       this.promos});
 
@@ -127,6 +141,7 @@ class SalesOrder {
         "apmaster": {
           "GROSS_TOTAL": total,
           "NET_TOTAL": total,
+          "PRJ_ID": projId,
           "DS_SHIPMENT_COMP": courierId,
           "DS_SHIPMENT_PLACE": areaId,
           "LREMARKS": note,
@@ -149,6 +164,32 @@ class SalesOrder {
               //HttpHeaders.authorizationHeader: ''
             },
             body: postOrderToJson(salesOrder));
+    return response;
+  }
+}
+
+class BulkSalesOrder {
+  List<SalesOrder> bulkSalesOrder;
+
+  BulkSalesOrder({
+    this.bulkSalesOrder,
+  });
+
+  Map<String, dynamic> toJson() => {"batch": bulkSalesOrder};
+
+  String postBulkOrderToJson(BulkSalesOrder bulkOrder) {
+    final dyn = bulkOrder.toJson();
+    return json.encode(dyn);
+  }
+
+  Future<http.Response> createBulkPost(BulkSalesOrder batch) async {
+    final response = await http.put(
+        'http://mywayindoapi.azurewebsites.net/api/insert_batch_sales_orders',
+        headers: {
+          HttpHeaders.contentTypeHeader: 'application/json',
+          //HttpHeaders.authorizationHeader: ''
+        },
+        body: postBulkOrderToJson(batch));
     return response;
   }
 }

@@ -1,14 +1,12 @@
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sliding_up_panel/sliding_up_panel_widget.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:intl/intl.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:mor_release/models/user.dart';
 import 'package:mor_release/pages/gift/gift_card.dart';
-import 'package:mor_release/pages/gift/gift_list.dart';
 import 'package:mor_release/pages/gift/promo/promo_card.dart';
-import 'package:mor_release/pages/gift/promo/promo_list.dart';
+import 'package:mor_release/pages/order/bulkOrder.dart';
 import 'package:mor_release/pages/order/end_order.dart';
 import 'package:mor_release/pages/order/widgets/shipmentArea.dart';
 import 'package:mor_release/scoped/connected.dart';
@@ -63,7 +61,7 @@ class _OrderPage extends State<OrderPage> {
   void _settingModalBottomSheet(context) {
     showModalBottomSheet(
         elevation: 8,
-        backgroundColor: Colors.blue[50],
+        backgroundColor: Colors.purple[50],
         context: context,
         builder: (BuildContext bc) {
           return ScopedModelDescendant<MainModel>(
@@ -93,29 +91,52 @@ class _OrderPage extends State<OrderPage> {
                       },
                     )),
                 Positioned(
-                  top: 35,
+                  top: 40,
                   left: MediaQuery.of(context).size.width / 10,
                   right: MediaQuery.of(context).size.width / 10,
                   child: Container(
                     width: MediaQuery.of(context).size.width / 2,
                     child: Row(
                       children: <Widget>[
-                        Icon(Icons.local_shipping),
                         Container(
-                            child: Text(
-                          '${model.shipmentAddress} / ${model.shipmentName}',
-                          textAlign: TextAlign.justify,
-                          maxLines: 3,
-                          softWrap: true,
-                          style: TextStyle(
-                              fontSize: 11, fontWeight: FontWeight.bold),
-                        )),
+                          //width: MediaQuery.of(context).size.width * 0.8,
+                          child: Flexible(
+                              flex: 1,
+                              child: Column(
+                                children: <Widget>[
+                                  Flex(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      direction: Axis.horizontal,
+                                      //  direction: Axis.horizontal,
+                                      children: <Widget>[
+                                        Expanded(
+                                            flex: 1,
+                                            // width: 113,
+                                            child: Padding(
+                                              padding:
+                                                  EdgeInsets.only(right: 8),
+                                              child: Text(
+                                                '${model.shipmentAddress}/${model.shipmentName}',
+                                                softWrap: true,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: TextStyle(
+                                                  fontSize: 13.0,
+                                                  color: Colors.grey[600],
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            )),
+                                      ]),
+                                ],
+                              )),
+                        ),
                       ],
                     ),
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(top: 85),
+                  padding: EdgeInsets.only(top: 68),
                   child: ListView.builder(
                     itemCount: model.bulkOrder.length,
                     itemBuilder: (context, index) {
@@ -165,6 +186,7 @@ class _OrderPage extends State<OrderPage> {
                             model.bulkOrder.length == 0
                                 ? model.shipmentAddress = ''
                                 : null;
+                            print(model.shipmentArea);
                             Navigator.of(context).pop();
                           }
                         },
@@ -208,7 +230,9 @@ class _OrderPage extends State<OrderPage> {
                             if (model.bulkOrder.length == 0) {
                               isBulk(false, model);
                               model.shipmentAddress = '';
+                              //model.shipmentArea = '';
                             }
+
                             Navigator.of(context).pop();
                           },
                           icon: Icon(Icons.delete_forever),
@@ -253,7 +277,7 @@ class _OrderPage extends State<OrderPage> {
                     ? Container(
                         height: 58,
                         child: Card(
-                          color: Colors.white70,
+                          color: Colors.grey[350],
                           elevation: 5,
                           child: ListTile(
                               leading: Container(
@@ -290,21 +314,46 @@ class _OrderPage extends State<OrderPage> {
                                 ),
                               ),
                               trailing: Padding(
-                                padding: EdgeInsets.only(bottom: 12),
-                                child: RawMaterialButton(
-                                  child: Icon(
-                                    Icons.send,
-                                    size: 24.0,
-                                    color: Colors.white,
-                                  ),
-                                  shape: CircleBorder(),
-                                  highlightColor: Colors.pink[900],
-                                  elevation: 3,
-                                  fillColor: Colors.green,
-                                  onPressed: () {},
-                                  splashColor: Colors.pink[900],
-                                ),
-                              )),
+                                  padding: EdgeInsets.only(bottom: 12),
+                                  child: model.itemorderlist.length == 0
+                                      ? RawMaterialButton(
+                                          child: Icon(
+                                            Icons.send,
+                                            size: 24.0,
+                                            color: Colors.white,
+                                          ),
+                                          shape: CircleBorder(),
+                                          highlightColor: Colors.pink[900],
+                                          elevation: 3,
+                                          fillColor: Colors.green,
+                                          onPressed: () {
+                                            model.loading = false;
+
+                                            Navigator.push(context,
+                                                MaterialPageRoute(builder: (_) {
+                                              return BulkOrder(
+                                                  model,
+                                                  model.shipmentArea,
+                                                  model.distrPoint);
+                                            }));
+                                          },
+                                          splashColor: Colors.pink[900],
+                                        )
+                                      : RawMaterialButton(
+                                          child: Icon(
+                                            Icons.block,
+                                            size: 24.0,
+                                            color: Colors.white,
+                                          ),
+                                          shape: CircleBorder(),
+                                          highlightColor: Colors.pink[900],
+                                          elevation: 3,
+                                          fillColor: Colors.red,
+                                          onPressed: () {
+                                            model.loading = false;
+                                          },
+                                          splashColor: Colors.pink[900],
+                                        ))),
                         ),
                       )
                     : Container(),
@@ -313,8 +362,8 @@ class _OrderPage extends State<OrderPage> {
                         height: 58,
                         // decoration: BoxDecoration(color: Colors.grey[350]),
                         child: Card(
-                            color: Colors.white54,
-                            elevation: 5,
+                            color: Colors.purple[50],
+                            elevation: 8,
                             child: ListTile(
                                 leading: Container(
                                   child: Column(
@@ -356,7 +405,7 @@ class _OrderPage extends State<OrderPage> {
                                     model.bulkOrder.length == 0 &&
                                             model.userInfo.isleader
                                         ? Transform.scale(
-                                            scale: 1.2,
+                                            scale: 1.5,
                                             child: Switch(
                                               inactiveTrackColor:
                                                   Colors.white70,
@@ -759,7 +808,7 @@ class _BulkGiftsAndPromosState extends State<BulkGiftsAndPromos> {
                                     child: Opacity(
                                   opacity: 0.9,
                                   child: CircleAvatar(
-                                    radius: 22,
+                                    radius: 24,
                                     backgroundColor: Colors.grey[300],
                                     backgroundImage: NetworkImage(
                                       widget.model.giftorderList[i].imageUrl,
@@ -816,7 +865,7 @@ class _BulkGiftsAndPromosState extends State<BulkGiftsAndPromos> {
                                     child: Opacity(
                                   opacity: 0.9,
                                   child: CircleAvatar(
-                                    radius: 22,
+                                    radius: 24,
                                     backgroundColor: Colors.grey[300],
                                     backgroundImage: NetworkImage(
                                       widget.model.promoOrderList[i].imageUrl,
@@ -973,7 +1022,7 @@ class _NodeDialogeState extends State<NodeDialoge> {
                           .nodeJson(controller.text.padLeft(8, '0'));
                       controller.text =
                           _nodeData.distrId + '    ' + _nodeData.name;
-                      widget.model.shipmentArea = '';
+
                       Navigator.of(context).pop();
                       setState(() {
                         widget.model.bulkDistrId = _nodeData.distrId;

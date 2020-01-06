@@ -159,7 +159,12 @@ class _StockDialog extends State<StockDialog> {
                         size: 33.0,
                         color: Colors.green,
                       ),
-                      onPressed: () async {
+                      onPressed: () {
+                        model.addItemOrder(itemData[index], _data.number);
+
+                        Navigator.pop(context);
+                      }
+                      /* onPressed: () async {
                         print(
                             'islimited = ${model.limited(int.parse(itemData[index].key))}');
                         bool _limited =
@@ -233,7 +238,8 @@ class _StockDialog extends State<StockDialog> {
                                 // ItemDetails(widget.itemData[widget.index])
                               ));
                         }
-                      },
+                      }*/
+                      ,
                     ),
                   ],
                 );

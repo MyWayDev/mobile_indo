@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:collection';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
@@ -47,6 +49,7 @@ class MainModel extends Model {
   String token = '';
 
   bool loading = false;
+  bool bulkLoading = false;
   bool isBalanceChecked = true;
   bool isTypeing = false;
   final List<Item> _recoImage = List();
@@ -56,13 +59,6 @@ class MainModel extends Model {
         .reference()
         .child('$path/items/en-US/$itemId')
         .update({"disable": false});
-  }
-
-  getIndoItems() {
-    List<Item> data =
-        itemData.where((i) => int.parse(i.itemId) > 5600).toList();
-    print(itemData.length);
-    itemData.forEach((i) => updateEnabledItems(i.itemId));
   }
 
   Item getRecoItem(Item item) {
@@ -265,7 +261,7 @@ class MainModel extends Model {
 
     void updateItemsToFirebase(int id, Item item) {
       databaseReference =
-          database.reference().child('f$path/items/en-US/${id.toString()}');
+          database.reference().child('$path/items/en-US/${id.toString()}');
       databaseReference.update(item.toJsonUpdate());
     }
 
@@ -431,6 +427,22 @@ class MainModel extends Model {
       itemorderlist.add(itemorder);
       notifyListeners();
     }
+  }
+
+  void addGiftToBlukOrder(Item item, int qty, SalesOrder order) {
+    final ItemOrder itemorder = ItemOrder(
+      itemId: item.itemId,
+      price: 0.0,
+      bp: 0,
+      bv: 0.0,
+      qty: qty,
+      name: item.name,
+      weight: item.weight,
+      img: item.imageUrl,
+    );
+
+    order.order.add(itemorder);
+    notifyListeners();
   }
 
 //!--------*
@@ -901,6 +913,7 @@ class MainModel extends Model {
   void rungiftState() {
     giftState();
     promoState();
+    notifyListeners();
   }
 
   void giftState() async {
@@ -1048,7 +1061,7 @@ class MainModel extends Model {
       String distrId, String note, String areaId) async {
     OrderMsg msg;
     List<ItemOrder> orderOutList = List();
-    print(itemorderlist.length);
+
     //promoOrderList.forEach((p) => print('bp:${p.bp}Qty:${p.qty}'));
     for (ItemOrder item in itemorderlist) {
       await getStock(item.itemId).then((i) {
@@ -1101,9 +1114,9 @@ class MainModel extends Model {
         userId: userInfo.distrId,
         total: orderSum(),
         totalBp: orderBp(),
-        note: 'note',
+        note: '',
         address: shipmentAddress,
-        courierId: 'shipmentId',
+        courierId: '',
         areaId: shipmentArea,
         weight: orderWeight(),
         order: itemorderlist,
@@ -1113,11 +1126,205 @@ class MainModel extends Model {
     itemorderlist = [];
     giftorderList = [];
     promoOrderList = [];
+  }
 
-    //
-    //giftorderList.clear();
-    //promoOrderList.clear();
-    //  bulkOrder.forEach((b) => b.order.forEach((o) => print(o.itemId)));
+  double reOrderWeight(List<ItemOrder> itemOrder) {
+    double x = 0;
+    for (ItemOrder i in itemOrder) {
+      x += i.weight * i.qty;
+    }
+    return x;
+  }
+
+  double reOrderSum(List<ItemOrder> itemOrder) {
+    double x = 0;
+    for (ItemOrder i in itemOrder) {
+      x += i.price * i.qty;
+    }
+
+    return x;
+  }
+
+  int reOrderBp(List<ItemOrder> itemOrder) {
+    int x = 0;
+    for (ItemOrder i in itemOrder) {
+      x += i.bp * i.qty;
+    }
+    return x;
+  }
+
+  List<AggrItem> bulkItemsGrouped = List();
+  List<String> bulkJitems;
+  void itemOrderAggrList(List<ItemOrder> itemOrders) {
+    for (var item in itemOrders) {
+      AggrItem aggrItem = AggrItem(id: item.itemId, qty: item.qty);
+
+      bulkItemsGrouped.add(aggrItem);
+    }
+    List<AggrItem> result =
+        LinkedHashSet<AggrItem>.from(bulkItemsGrouped).toList();
+
+    result.forEach((r) => print(r.id));
+  }
+
+  void bulkItemsList(List<SalesOrder> orders) {
+    bulkItemsGrouped = [];
+    List<ItemOrder> itemOrdersII = [];
+    // orders.forEach((o) => print({o.distrId: o.total}));
+    orders.forEach((so) => so.order.forEach((item) => itemOrdersII.add(item)));
+    orders.forEach(
+        (so) => so.order.forEach((item) => bulkJitems.add(item.itemId)));
+    itemOrderAggrList(itemOrdersII);
+  }
+
+  Future<List<ItemOrder>> bulkOrderBalanceCheck(List<SalesOrder> orders) async {
+    List<ItemOrder> orderOutList = List();
+
+    for (var order in orders) {
+      for (ItemOrder item in order.order) {
+        await getStock(item.itemId).then((i) {
+          if (i < item.qty) {
+            orderOutList.add(item);
+            orderOutList.last.qty = i;
+            print('OutListBelow:');
+            isBalanceChecked = false;
+            print({orderOutList.last.itemId: orderOutList.last.qty});
+          }
+        });
+      }
+    }
+
+    for (var order in orders) {
+      if (orderOutList.length > 0) {
+        for (ItemOrder item in orderOutList) {
+          order.order
+              .where((i) => i.itemId == item.itemId)
+              .forEach((f) => f.qty = item.qty);
+        }
+        //  orderOutList.clear();
+        order.gifts.clear();
+        order.promos.clear();
+        order.order.removeWhere((i) => i.qty <= 0 || i.bp <= 0);
+        bulkOrder.removeWhere((bulk) => bulk.order.length == 0);
+        isBalanceChecked = false;
+        for (var sOrder in bulkOrder) {
+          sOrder.total = reOrderSum(sOrder.order);
+          sOrder.totalBp = reOrderBp(sOrder.order);
+          sOrder.weight = reOrderWeight(sOrder.order);
+        }
+      } else {
+        isBalanceChecked = true;
+        // msg = await saveOrder(shipmentId, courierfee, distrId, note, areaId);
+      }
+    }
+
+    return orderOutList;
+  }
+
+  int getRandom() {
+    Random random = Random();
+    int _random = random.nextInt(10000);
+    int projId;
+    projId = _random.toString().length == 4 ? _random : getRandom();
+    return projId;
+  }
+
+  List<SalesOrder> prepareBulkOrder(List<SalesOrder> bulkOrders,
+      double courierFee, String note, String shipmentId, int ordersCount) {
+    List<SalesOrder> finalBulkOrders = [];
+
+    for (SalesOrder order in bulkOrders) {
+      if (order.gifts.length > 0) {
+        /* order.gifts.forEach((g) => g.pack.forEach((p) => {p.bp = 0: p.bv = 0.0}));
+      order.gifts.forEach((g) => g.pack.forEach((p) => p.price = 0.0));*/
+
+        order.gifts.forEach(
+            (g) => g.pack.forEach((p) => addGiftToBlukOrder(p, g.qty, order)));
+      }
+      if (order.promos.length > 0) {
+        /* order.promos
+          .forEach((g) => g.promoPack.forEach((p) => {p.bp = 0: p.bv = 0.0}));
+      order.promos.forEach((g) => g.promoPack.forEach((p) => p.price = 0.0));*/
+
+        order.promos.forEach((p) =>
+            p.promoPack.forEach((pp) => addGiftToBlukOrder(pp, p.qty, order)));
+      }
+      if (courierFee > 0) {
+        double courierPerOrderFee =
+            (order.weight / bulkOrderWeight()) * courierFee;
+
+        final ItemOrder itemorder = ItemOrder(
+          itemId: '90',
+          price: courierPerOrderFee.roundToDouble(),
+          bp: 0,
+          bv: 0,
+          qty: 1,
+          name: 'Biaya Courier',
+          weight: 0,
+          img: "",
+        );
+        order.order.add(itemorder);
+      }
+
+      SalesOrder salesOrder = SalesOrder(
+        distrId: order.distrId,
+        userId: userInfo.distrId,
+        total: order.total,
+        totalBp: order.totalBp,
+        note: getRandom().toString() +
+            '/' +
+            ordersCount.toString() +
+            '=>' +
+            order.address +
+            ': ' +
+            note, //?
+        projId: getRandom().toString(),
+        address: order.address,
+        courierId: shipmentId, //?
+        areaId: order.areaId,
+        order: order.order,
+      );
+      finalBulkOrders.add(salesOrder);
+    }
+
+    return finalBulkOrders;
+  }
+
+  int i = 0;
+
+  Future<List<ItemOrder>> putBulk(List<SalesOrder> orders) async {
+    List<ItemOrder> listOfIO = await bulkOrderBalanceCheck(orders);
+
+    if (listOfIO.length == 0) {
+      BulkSalesOrder bulk = BulkSalesOrder(bulkSalesOrder: orders);
+      print(bulk.postBulkOrderToJson(bulk));
+      Response response = await bulk.createBulkPost(bulk);
+      // List<String> idsList = [];
+      if (response.statusCode == 201) {
+        print('Order Msg:${response.body}!!');
+        bulkOrder.clear();
+        giftorderList.clear();
+        promoOrderList.clear();
+        isBulk = false;
+        //var ids = json.decode(response.body);
+        // idsList = ids.values;
+        return listOfIO = [];
+      } else {
+        //OrderBulkMsg errorMsg = OrderBulkMsg(error: 'operation failed');
+        // idsList.add(errorMsg.error);
+        return listOfIO;
+      }
+    }
+    return listOfIO;
+  }
+
+  //Future<OrderMsg>
+  Future<List<ItemOrder>> saveBulkOrders(List<SalesOrder> bulkSalesOrder,
+      double courierFee, String note, String shipmentId) async {
+    List<ItemOrder> listOfIO = [];
+    listOfIO = await putBulk(prepareBulkOrder(
+        bulkSalesOrder, courierFee, note, shipmentId, bulkOrder.length));
+    return listOfIO;
   }
 
   Future<OrderMsg> saveOrder(String shipmentId, double courierfee,
@@ -1129,7 +1336,7 @@ class MainModel extends Model {
 
     //addCatToOrder(settings.catCode);
     //addAdminToOrder('91');
-    print("courier fee test=> :$courierfee");
+    //print("courier fee test=> :$courierfee");
 
     if (giftorderList.length > 0 || promoOrderList.length > 0) {
       giftorderList
@@ -1148,6 +1355,7 @@ class MainModel extends Model {
     if (courierfee > 0) {
       addCourierToOrder('90', courierfee);
     }
+
     SalesOrder salesOrder = SalesOrder(
       distrId: distrId,
       userId: userInfo.distrId,

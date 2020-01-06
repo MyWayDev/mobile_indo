@@ -37,7 +37,7 @@ class _PromoCard extends State<PromoCard> {
               opacity: 1,
               child: CircleAvatar(
                 radius: 22.0,
-                backgroundColor: Colors.grey[200],
+                backgroundColor: Colors.white,
                 backgroundImage: NetworkImage(
                   widget.promoData[widget.index].imageUrl,
                 ),

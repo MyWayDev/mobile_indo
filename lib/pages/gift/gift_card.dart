@@ -37,7 +37,7 @@ class _GiftCard extends State<GiftCard> {
               opacity: 1,
               child: CircleAvatar(
                 radius: 22.0,
-                backgroundColor: Colors.grey[200],
+                backgroundColor: Colors.white,
                 backgroundImage: NetworkImage(
                   widget.giftData[widget.index].imageUrl,
                 ),

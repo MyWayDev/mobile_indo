@@ -1,30 +1,32 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:mor_release/bottom_nav.dart';
 import 'package:mor_release/models/item.order.dart';
+import 'package:mor_release/pages/order/bulkOrder.dart';
 import 'package:mor_release/scoped/connected.dart';
 import 'package:mor_release/widgets/color_loader_2.dart';
 import 'package:scoped_model/scoped_model.dart';
 
-class SaveDialog extends StatefulWidget {
+class SaveBulkDialog extends StatefulWidget {
   final String courierId;
   final double courierFee;
   final String distrId;
   final String note;
   final String areaId;
   final String userId;
+  const SaveBulkDialog(this.courierId, this.courierFee, this.distrId, this.note,
+      this.areaId, this.userId,
+      {Key key})
+      : super(key: key);
 
-  SaveDialog(this.courierId, this.courierFee, this.distrId, this.note,
-      this.areaId, this.userId);
   @override
-  State<StatefulWidget> createState() {
-    return _SaveDialog();
-  }
+  _SaveBulkDialogState createState() => _SaveBulkDialogState();
 }
 
-@override
-class _SaveDialog extends State<SaveDialog> {
+class _SaveBulkDialogState extends State<SaveBulkDialog> {
+  List<ItemOrder> balanceCheckOutPut = [];
+  List<ItemOrder> msg = List();
   @override
   void initState() {
     super.initState();
@@ -41,8 +43,12 @@ class _SaveDialog extends State<SaveDialog> {
     });
   }
 
-  List<ItemOrder> getOrderList(MainModel model) {
-    return model.itemorderlist.where((test) => test.bp != 0).toList();
+  double orderTotal(MainModel model) {
+    return widget.courierFee + model.orderSum() + model.settings.adminFee;
+  }
+
+  double bulkOrderTotal(MainModel model) {
+    return widget.courierFee + model.bulkOrderSum() + model.settings.adminFee;
   }
 
   @override
@@ -105,7 +111,7 @@ class _SaveDialog extends State<SaveDialog> {
                         height: 300,
                         width: 275,
                         child: ListView.builder(
-                          itemCount: getOrderList(model).length,
+                          itemCount: model.bulkOrder.length,
                           itemBuilder: (context, i) {
                             return orderCard(context, model, i);
                           },
@@ -150,34 +156,52 @@ class _SaveDialog extends State<SaveDialog> {
                                           elevation: 3,
                                           fillColor: Colors.green,
                                           onPressed: () async {
-                                            isLoading(true, model);
+                                            model
+                                                .bulkItemsList(model.bulkOrder);
+                                            /* isLoading(true, model);
+                                            msg = await model.saveBulkOrders(
+                                              model.bulkOrder,
+                                              widget.courierFee,
+                                              widget.note +
+                                                  model.shipmentAddress,
+                                              widget.courierId,
+                                            );
 
-                                            OrderMsg msg =
-                                                await model.orderBalanceCheck(
-                                                    widget.courierId,
-                                                    widget.courierFee,
-                                                    widget.distrId,
-                                                    widget.note +
-                                                        model.shipmentAddress,
-                                                    widget.areaId);
-                                            if (model.orderBp() == 0 &&
-                                                getOrderList(model).length ==
-                                                    0) {
+                                            print(
+                                                'bulkOrderBp:${model.bulkOrderBp()}');
+                                            if (model.bulkOrderBp() == 0 &&
+                                                model.bulkOrder.length ==
+                                                    0) if (model.loading) {
                                               model.isTypeing = false;
                                               Navigator.pop(context);
-                                              isLoading(false, model);
-                                              showReview(context, msg.soid,
-                                                  msg.amt, msg.error);
-                                              model.isTypeing = false;
+                                              isLoading(false, model);*/
+                                            /* showReview(
+                                                  context, msg, msg.first);*/
+                                            /* model.isTypeing = false;
                                             } else {
                                               isLoading(false, model);
-                                            }
+                                            }*/
                                           },
                                           splashColor: Colors.pink[900],
                                         )
                                       : Container(),
                                 ]),
                           )),
+                      Container(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            Text(
+                              formatter.format((bulkOrderTotal(model) * 1.1)) +
+                                  ' Rp',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      )
                     ],
                   ),
                 ),
@@ -191,6 +215,7 @@ class _SaveDialog extends State<SaveDialog> {
                   decoration:
                       BoxDecoration(borderRadius: BorderRadius.circular(20.0)),
                   child: Column(
+                    mainAxisSize: MainAxisSize.max,
                     children: <Widget>[
                       Card(
                         elevation: 3,
@@ -202,7 +227,7 @@ class _SaveDialog extends State<SaveDialog> {
                               Padding(
                                 padding: EdgeInsets.only(right: 10),
                                 child: Text(
-                                  'Jumlah',
+                                  '',
                                   style: TextStyle(
                                       color: Colors.black,
                                       fontWeight: FontWeight.bold),
@@ -211,7 +236,7 @@ class _SaveDialog extends State<SaveDialog> {
                               Padding(
                                 padding: EdgeInsets.only(right: 10),
                                 child: Text(
-                                  'Kode',
+                                  '',
                                   style: TextStyle(
                                       color: Colors.black,
                                       fontWeight: FontWeight.bold),
@@ -220,7 +245,7 @@ class _SaveDialog extends State<SaveDialog> {
                               Padding(
                                 padding: EdgeInsets.only(right: 8),
                                 child: Text(
-                                  '#',
+                                  '',
                                   style: TextStyle(
                                       color: Colors.black,
                                       fontWeight: FontWeight.bold),
@@ -228,16 +253,27 @@ class _SaveDialog extends State<SaveDialog> {
                               ),
                             ]),
                       ),
-                      Container(
-                        height: 300,
-                        width: 275,
-                        child: ListView.builder(
-                          itemCount: getOrderList(model).length,
-                          itemBuilder: (context, i) {
-                            return orderCard(context, model, i);
-                          },
-                        ),
-                      ),
+                      balanceCheckOutPut.length == 0
+                          ? Container(
+                              height: 300,
+                              width: 275,
+                              child: ListView.builder(
+                                itemCount: model.bulkOrder.length,
+                                itemBuilder: (context, i) {
+                                  return orderCard(context, model, i);
+                                },
+                              ),
+                            )
+                          : Container(
+                              height: 300,
+                              width: 275,
+                              child: ListView.builder(
+                                itemCount: balanceCheckOutPut.length,
+                                itemBuilder: (context, i) {
+                                  return orderOutCard(context, model, i);
+                                },
+                              ),
+                            ),
                       Container(
                           height: 125.0,
                           width: MediaQuery.of(context).size.width,
@@ -252,11 +288,12 @@ class _SaveDialog extends State<SaveDialog> {
                                   Padding(
                                     padding: EdgeInsets.all(10),
                                     child: Text(
-                                      'order telah diubah sesuai dengan ketersediaan saat ini',
+                                      'order telah diubah sesuai' +
+                                          ' dengan ketersediaan saat ini',
+                                      overflow: TextOverflow.clip,
                                       softWrap: true,
-                                      // textDirection: TextDirection.rtl,
                                       style: TextStyle(
-                                          fontSize: 14.0,
+                                          fontSize: 12.0,
                                           color: Colors.grey,
                                           fontWeight: FontWeight.bold),
                                     ),
@@ -273,32 +310,106 @@ class _SaveDialog extends State<SaveDialog> {
                                     fillColor: Colors.yellow[900],
                                     onPressed: () {
                                       Navigator.of(context).pop();
+                                      /*  Navigator.pushReplacement(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (_) => BulkOrder(
+                                                          model,
+                                                          model.shipmentArea,
+                                                          model.distrPoint)));*/
                                     },
                                     splashColor: Colors.pink[900],
                                   ),
-                                  Text(
-                                    'kebali ke modifikasi',
-                                    textDirection: TextDirection.rtl,
-                                    style: TextStyle(
-                                        fontSize: 14.0,
-                                        color: Colors.grey,
-                                        fontWeight: FontWeight.bold),
-                                  ),
+                                  Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: <Widget>[
+                                        Text(
+                                          'kebali ke modifikasi',
+                                          //textDirection: TextDirection.ltr,
+                                          style: TextStyle(
+                                              fontSize: 14.0,
+                                              color: Colors.grey,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ]),
                                 ]),
                           )),
                     ],
                   ),
                 ),
               ),
-        inAsyncCall: model.loading,
+        inAsyncCall: false, // model.loading,
         opacity: 0.6,
         progressIndicator: ColorLoader2(),
       );
     });
   }
 
+  final formatter = new NumberFormat("#,###");
+  Widget orderCard(BuildContext context, MainModel model, int i) {
+    return Container(
+      height: 50,
+      child: Card(
+        color: Color(0xFFFFFFF1),
+        elevation: 5,
+        child: ListTile(
+          leading: Text(
+            int.parse(model.bulkOrder[i].distrId).toString(),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+          ),
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text(
+                'Rp ${formatter.format(model.bulkOrder[i].total)}',
+                style: TextStyle(color: Colors.green[700], fontSize: 12),
+              ),
+              Text(
+                'Bp ${model.bulkOrder[i].totalBp.toStringAsFixed(2)}',
+                style: TextStyle(color: Colors.red[900], fontSize: 12),
+              ),
+            ],
+          ),
+          trailing: Text(
+            'Kg ${model.bulkOrder[i].weight.toStringAsFixed(2)}',
+            style: TextStyle(color: Colors.black, fontSize: 12),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget orderOutCard(BuildContext context, MainModel model, int i) {
+    return Container(
+      height: 50,
+      child: Card(
+        color: Color(0xFFFFFFF1),
+        elevation: 5,
+        child: ListTile(
+          leading: Text(
+            balanceCheckOutPut[i].itemId,
+            style: TextStyle(color: Colors.green[700], fontSize: 12),
+          ),
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text(
+                balanceCheckOutPut[i].qty.toString(),
+                style: TextStyle(color: Colors.red[900], fontSize: 12),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Future<bool> showReview(
-      BuildContext context, String soid, double amt, String error) {
+      BuildContext context, List<String> ids, String error) {
     return showDialog(
         context: context,
         barrierDismissible: false,
@@ -306,100 +417,55 @@ class _SaveDialog extends State<SaveDialog> {
           return Dialog(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0)),
-            child: Container(
-              height: 110.0,
-              width: 110.0,
-              decoration:
-                  BoxDecoration(borderRadius: BorderRadius.circular(20.0)),
-              child: Column(
-                children: <Widget>[
-                  soid != null || amt != 0 || soid != ''
-                      ? Column(
-                          children: <Widget>[
-                            Text(
-                              '$soid: nomor order',
-                              textDirection: TextDirection.rtl,
-                              style: TextStyle(
-                                  fontSize: 16.0,
-                                  color: Colors.grey,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              '$amt :total biaya',
-                              textDirection: TextDirection.rtl,
-                              style: TextStyle(
-                                  fontSize: 16.0,
-                                  color: Colors.grey,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        )
-                      : Column(
-                          children: <Widget>[
-                            Text(
-                              '$error',
-                              style: TextStyle(fontSize: 14, color: Colors.red),
-                            ),
-                          ],
-                        ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.of(context).pop();
-
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => BottomNav(widget.userId),
-                            // ItemDetails(widget.itemData[widget.index])
-                          ),
-                          (_) => false);
-                    },
-                    child: Container(
-                      height: 35.0,
-                      width: 35.0,
-                      color: Colors.white,
-                      child: Icon(
-                        Icons.close,
-                        color: Colors.grey,
-                        size: 24,
-                      ),
+            child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+              Container(
+                  height: 300,
+                  width: 275,
+                  child: SingleChildScrollView(
+                    child: ListView.builder(
+                      itemCount: ids.length,
+                      itemBuilder: (context, i) {
+                        return ids != null || ids != []
+                            ? Text(
+                                '$ids: nomor order',
+                                style: TextStyle(
+                                    fontSize: 16.0,
+                                    color: Colors.grey,
+                                    fontWeight: FontWeight.bold),
+                              )
+                            : Text(
+                                '$error',
+                                style:
+                                    TextStyle(fontSize: 14, color: Colors.red),
+                              );
+                      },
                     ),
+                  )),
+              InkWell(
+                onTap: () {
+                  Navigator.of(context).pop();
+
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => BottomNav(widget.userId),
+                        // ItemDetails(widget.itemData[widget.index])
+                      ),
+                      (_) => false);
+                },
+                child: Container(
+                  height: 35.0,
+                  width: 35.0,
+                  color: Colors.white,
+                  child: Icon(
+                    Icons.close,
+                    color: Colors.grey,
+                    size: 24,
                   ),
-                ],
+                ),
               ),
-            ),
+            ]),
           );
         });
-  }
-
-  Widget orderCard(BuildContext context, MainModel model, int i) {
-    return Container(
-      height: 60,
-      child: Card(
-        color: Color(0xFFFFFFF1),
-        elevation: 5,
-        child: ListTile(
-          leading: Padding(
-            padding: EdgeInsets.only(left: 25),
-            child: Text(
-              getOrderList(model)[i].qty.toString(),
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
-          title: Center(
-            child: Text(
-              getOrderList(model)[i].itemId,
-              style: TextStyle(color: Color(0xFFFF8C00)),
-            ),
-          ),
-          trailing: CircleAvatar(
-            backgroundColor: Colors.grey[100],
-            backgroundImage: NetworkImage(
-              getOrderList(model)[i].img,
-            ),
-          ),
-        ),
-      ),
-    );
   }
 }

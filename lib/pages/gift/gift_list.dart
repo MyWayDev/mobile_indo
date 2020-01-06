@@ -30,7 +30,7 @@ class _GiftList extends State<GiftList> {
       // model.rungiftState();
 
       return Card(
-        color: Color(0xFFFFFFF1),
+        color: Colors.purple[50],
         elevation: 5,
         child: Row(
           children: <Widget>[

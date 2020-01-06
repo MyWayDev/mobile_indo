@@ -73,9 +73,9 @@ class _CourierOrder extends State<CourierOrder> {
                     Container(
                       height: 38,
                       child: TextField(
-                        textAlign: TextAlign.right,
+                        textAlign: TextAlign.left,
                         maxLines: 1,
-                        textDirection: TextDirection.rtl,
+                        textDirection: TextDirection.ltr,
                         controller: controller,
                         decoration: InputDecoration(
                           fillColor: Colors.lightBlue,
@@ -137,7 +137,9 @@ class _CourierOrder extends State<CourierOrder> {
                             ],
                           )
                         : Container(),
-                    model.giftPacks.length == 0 && model.promoPacks.length == 0
+                    model.giftPacks.length == 0 &&
+                            model.promoPacks.length == 0 &&
+                            !model.isBulk
                         ? Container(
                             height: 62,
                             child: FormField<Courier>(
@@ -206,7 +208,7 @@ class _CourierOrder extends State<CourierOrder> {
                           )
                         : Container(),
 
-                    courierFee != null
+                    courierFee != null && !model.isBulk
                         ? Container(
                             height: 180,
                             child: ModalProgressHUD(
@@ -230,6 +232,115 @@ class _CourierOrder extends State<CourierOrder> {
                                         : Container(),
                                     courierFee != null &&
                                             model.orderBp() > 0 &&
+                                            model.giftPacks.length == 0 &&
+                                            model.promoPacks.length == 0
+                                        ? OrderSave(
+                                            stateValue.courierId,
+                                            courierFee,
+                                            courierDiscount,
+                                            widget.distrId,
+                                            controller.text,
+                                            widget.areaId,
+                                            widget.userId)
+                                        : Container(),
+                                  ],
+                                )))
+                        : Container(),
+                    model.giftPacks.length == 0 &&
+                            model.promoPacks.length == 0 &&
+                            model.isBulk
+                        ? Container(
+                            height: 62,
+                            child: FormField<Courier>(
+                              initialValue: _chosenValue = null,
+                              onSaved: (val) => _chosenValue = val,
+                              validator: (val) => (val == null)
+                                  ? 'Please choose a Courier'
+                                  : null,
+                              builder: (FormFieldState<Courier> state) {
+                                return InputDecorator(
+                                  textAlign: TextAlign.right,
+                                  decoration: InputDecoration(
+                                    icon: Icon(Icons.local_shipping),
+                                    labelText: stateValue == null
+                                        ? 'Tipe Pengiriman / ${model.shipmentName}'
+                                        : '',
+                                    errorText:
+                                        state.hasError ? state.errorText : null,
+                                  ),
+                                  isEmpty: state.value == null,
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton<Courier>(
+                                      // iconSize: 25.0,
+                                      // elevation: 5,
+                                      value: stateValue,
+                                      isDense: true,
+                                      onChanged: (Courier newValue) async {
+                                        if (newValue.courierId == '') {
+                                          newValue = null;
+                                        }
+                                        setState(() {
+                                          stateValue = newValue;
+                                          _loading = true;
+                                        });
+                                        state.didChange(newValue);
+                                        courierFee =
+                                            await model.courierServiceFee(
+                                                newValue.id.toString(),
+                                                areaId,
+                                                model.bulkOrderWeight());
+                                        courierDiscount = 0.0;
+                                        var cd = await model.getCourierDiscount(
+                                            model.bulkOrderBp().toInt(),
+                                            courierFee);
+                                        courierDiscount = cd;
+                                        isloading(false);
+                                        // print(newValue.id.toString());
+                                      },
+                                      items: shipment.map((Courier courier) {
+                                        return DropdownMenuItem<Courier>(
+                                          value: courier,
+                                          child: Text(
+                                            "${courier.name} / ${model.shipmentName}",
+                                            softWrap: true,
+                                            style: TextStyle(
+                                                color: Colors.pink[900],
+                                                fontSize: 12.6,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        );
+                                      }).toList(),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          )
+                        : Container(),
+                    courierFee != null && model.isBulk
+                        ? Container(
+                            height: 180,
+                            child: ModalProgressHUD(
+                                inAsyncCall:
+                                    _loading, //courierFee == null ? true : false,
+                                opacity: 0.6,
+                                progressIndicator: LinearProgressIndicator(),
+                                child: ListView(
+                                  physics: ClampingScrollPhysics(),
+                                  scrollDirection: Axis.vertical,
+                                  children: <Widget>[
+                                    stateValue != null &&
+                                            model.giftPacks.length == 0 &&
+                                            model.promoPacks.length == 0
+                                        ? OrderSummary(
+                                            stateValue.courierId,
+                                            courierFee,
+                                            model.userInfo.distrId,
+                                            controller.text,
+                                            courierDiscount)
+                                        : Container(),
+                                    courierFee != null &&
+                                            model.bulkOrderBp() > 0 &&
                                             model.giftPacks.length == 0 &&
                                             model.promoPacks.length == 0
                                         ? OrderSave(
