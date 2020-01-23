@@ -78,45 +78,62 @@ class ItemsTabs extends StatelessWidget {
                     color: Colors.grey[350],
                   ),
                 ),
-                Tab(
-                  child: Stack(
-                    alignment: AlignmentDirectional.center,
-                    children: <Widget>[
-                      Positioned(
-                        child: Opacity(
-                            opacity: model.itemCount() == 0 ? 1 : 0.50,
-                            child: BadgeIconButton(
-                              badgeColor: Colors.purple[800],
-                              itemCount: model.bulkOrder.length < 0
+                model.bulkOrder.length != 0
+                    ? Tab(
+                        child: Stack(
+                          alignment: AlignmentDirectional.topStart,
+                          children: <Widget>[
+                            BadgeIconButton(
+                              itemCount: model.itemCount() < 0
                                   ? 0
-                                  : model.bulkOrder.length, // required
+                                  : model.itemCount(), // required
                               icon: Icon(
-                                Icons.local_shipping,
+                                Icons.shopping_cart,
                                 color: Colors.grey[350],
-                                size: 0,
+                                size: 26.0,
                               ), // required
                               //badgeColor: Colors.red, // default: Colors.red
                               badgeTextColor:
                                   Colors.white, // default: Colors.white
                               //hideZeroCount: true, // default: true
-                            )),
-                      ),
-                      BadgeIconButton(
-                        itemCount: model.itemCount() < 0
-                            ? 0
-                            : model.itemCount(), // required
-                        icon: Icon(
-                          Icons.shopping_cart,
-                          color: Colors.grey[350],
-                          size: 26.0,
-                        ), // required
-                        //badgeColor: Colors.red, // default: Colors.red
-                        badgeTextColor: Colors.white, // default: Colors.white
-                        //hideZeroCount: true, // default: true
-                      ),
-                    ],
-                  ),
-                  /* icon: new Stack(children: <Widget>[
+                            ),
+                            Positioned(
+                              child: Opacity(
+                                  opacity: model.itemCount() == 0 ? 1 : 0.70,
+                                  child: BadgeIconButton(
+                                    badgeColor: Colors.purple[800],
+                                    itemCount: model.bulkOrder.length < 0
+                                        ? 0
+                                        : model.bulkOrder.length, // required
+                                    icon: Icon(
+                                      Icons.local_shipping,
+                                      color: Colors.grey[350],
+                                      size: 0.1,
+                                    ), // required
+                                    //badgeColor: Colors.red, // default: Colors.red
+                                    badgeTextColor:
+                                        Colors.white, // default: Colors.white
+                                    //hideZeroCount: true, // default: true
+                                  )),
+                            ),
+                          ],
+                        ),
+                      )
+                    : Tab(
+                        child: BadgeIconButton(
+                          itemCount: model.itemCount() < 0
+                              ? 0
+                              : model.itemCount(), // required
+                          icon: Icon(
+                            Icons.shopping_cart,
+                            color: Colors.grey[350],
+                            size: 26.0,
+                          ), // required
+                          //badgeColor: Colors.red, // default: Colors.red
+                          badgeTextColor: Colors.white, // default: Colors.white
+                          //hideZeroCount: true, // default: true
+                        ),
+                        /* icon: new Stack(children: <Widget>[
                         Icon(
                           Icons.shopping_cart,
                           size: 35.0,
@@ -126,9 +143,9 @@ class ItemsTabs extends StatelessWidget {
                             bottom: 0.0,
                             child: )
                       ]),*/
-                ),
+                      ),
                 Tab(
-                  icon: new Icon(
+                  icon: Icon(
                     GroovinMaterialIcons.file_find,
                     size: 26.0,
                     color: Colors.grey[350],
@@ -153,6 +170,7 @@ class ItemsTabs extends StatelessWidget {
             children: <Widget>[
               ItemsPage(), // SwitchPage(ItemsPage()),
               OrderPage(model), //SwitchPage(OrderPage()),
+              //   model.bulkOrder.length != 0 ? OrderPage(model) : null,
               TrackTabs(),
               LocalNotification(
                 token: model.token,

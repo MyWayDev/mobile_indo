@@ -472,7 +472,7 @@ class _TicketsState extends State<Tickets> {
           ),
           Text(
             ticket.content,
-            textDirection: TextDirection.rtl,
+            textDirection: TextDirection.ltr,
             softWrap: true,
             style: TextStyle(fontSize: 14, wordSpacing: 0.1),
           ),

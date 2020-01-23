@@ -1154,7 +1154,7 @@ class MainModel extends Model {
   }
 
   List<AggrItem> bulkItemsGrouped = List();
-  List<String> bulkJitems;
+  List<String> bulkJitems = [];
   void itemOrderAggrList(List<ItemOrder> itemOrders) {
     for (var item in itemOrders) {
       AggrItem aggrItem = AggrItem(id: item.itemId, qty: item.qty);

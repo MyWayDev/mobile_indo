@@ -13,6 +13,7 @@ import 'package:mor_release/scoped/connected.dart';
 import 'package:mor_release/widgets/stock_dialog.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:grafpix/icons.dart';
 
 class OrderPage extends StatefulWidget {
   final MainModel model;
@@ -313,6 +314,13 @@ class _OrderPage extends State<OrderPage> {
                                   ],
                                 ),
                               ),
+                              title: Icon(
+                                PixIcon.fa_boxes,
+                                color: Colors.grey,
+                                size: 30,
+                              ), // required
+                              //badgeColor: Colors.red, // default: Colors.red
+
                               trailing: Padding(
                                   padding: EdgeInsets.only(bottom: 12),
                                   child: model.itemorderlist.length == 0
@@ -425,7 +433,11 @@ class _OrderPage extends State<OrderPage> {
                                                   'assets/images/box.png'),
                                             ),
                                           )
-                                        : Container()
+                                        : Icon(
+                                            PixIcon.fa_box_open,
+                                            color: Colors.grey,
+                                            size: 30,
+                                          ),
                                   ],
                                 ),
                                 trailing: !model.isBulk

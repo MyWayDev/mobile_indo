@@ -715,10 +715,10 @@ class ChatScreenState extends State<ChatScreen> {
               children: <Widget>[
                 // Button send image
                 Material(
-                  child: new Container(
-                    margin: new EdgeInsets.symmetric(horizontal: 1.0),
-                    child: new IconButton(
-                      icon: new Icon(
+                  child: Container(
+                    margin: EdgeInsets.symmetric(horizontal: 1.0),
+                    child: IconButton(
+                      icon: Icon(
                         Icons.image,
                         size: 28,
                       ),

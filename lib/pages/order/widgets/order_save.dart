@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:mor_release/bottom_nav.dart';
 import 'package:mor_release/widgets/save_bulk_dialog.dart';
-
 import 'package:mor_release/widgets/save_dialog.dart';
-
 import 'package:mor_release/scoped/connected.dart';
 import 'package:scoped_model/scoped_model.dart';
 
@@ -26,10 +23,14 @@ class OrderSave extends StatelessWidget {
         model.settings.adminFee;
   }
 
+  double bulkOrderCourierFee(MainModel model) {
+    double finalCourierFee = courierFee - courierDiscount;
+    return finalCourierFee;
+  }
+
   double bulkOrderTotal(MainModel model) {
-    return (courierFee - courierDiscount) +
-        model.bulkOrderSum() +
-        model.settings.adminFee;
+    double finalBulkOrderSum = model.bulkOrderSum() + model.settings.adminFee;
+    return finalBulkOrderSum;
   }
 
   @override
@@ -149,7 +150,8 @@ class OrderSave extends StatelessWidget {
                             child: Container(),
                           ),
                           Text(
-                            formatter.format((bulkOrderTotal(model) * 1.1)) +
+                            formatter.format((bulkOrderTotal(model) * 1.1) +
+                                    bulkOrderCourierFee(model) * 1.01) +
                                 ' Rp',
                             style: TextStyle(
                                 color: Colors.black,

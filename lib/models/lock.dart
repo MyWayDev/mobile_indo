@@ -13,18 +13,19 @@ class Lock {
   int maxLimited;
   String pdfUrl;
   List limitedItem;
+  String bankInfo;
 
-  Lock({
-    this.id,
-    this.lockApp = false,
-    this.catCode,
-    this.version,
-    this.adminFee,
-    this.safetyStock,
-    this.maxOrder,
-    this.pdfUrl,
-    this.maxLimited,
-  });
+  Lock(
+      {this.id,
+      this.lockApp = false,
+      this.catCode,
+      this.version,
+      this.adminFee,
+      this.safetyStock,
+      this.maxOrder,
+      this.pdfUrl,
+      this.maxLimited,
+      this.bankInfo});
 
   Lock.fromSnapshot(DataSnapshot snapshot)
       : id = snapshot.value['id'],
@@ -37,6 +38,7 @@ class Lock {
         safetyStock = snapshot.value['safetyStock'],
         maxOrder = snapshot.value['maxOrder'],
         maxLimited = snapshot.value['maxLimited'],
-        pdfUrl = snapshot.value['pdfUrl'],
-        limitedItem = snapshot.value['limtedItem'];
+        pdfUrl = snapshot.value['pdfUrl'] ?? '',
+        limitedItem = snapshot.value['limtedItem'] ?? [],
+        bankInfo = snapshot.value['bankInfo'] ?? '';
 }

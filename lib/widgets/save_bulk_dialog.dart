@@ -1,9 +1,11 @@
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
+import 'package:groovin_material_icons/groovin_material_icons.dart';
 import 'package:intl/intl.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:mor_release/bottom_nav.dart';
 import 'package:mor_release/models/item.order.dart';
-import 'package:mor_release/pages/order/bulkOrder.dart';
+import 'package:mor_release/pages/order/widgets/payment.dart';
 import 'package:mor_release/scoped/connected.dart';
 import 'package:mor_release/widgets/color_loader_2.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -27,6 +29,7 @@ class SaveBulkDialog extends StatefulWidget {
 class _SaveBulkDialogState extends State<SaveBulkDialog> {
   List<ItemOrder> balanceCheckOutPut = [];
   List<ItemOrder> msg = List();
+
   @override
   void initState() {
     super.initState();
@@ -65,7 +68,7 @@ class _SaveBulkDialogState extends State<SaveBulkDialog> {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0)),
                 child: Container(
-                  height: 475.0,
+                  height: 530,
                   width: 310.0,
                   decoration:
                       BoxDecoration(borderRadius: BorderRadius.circular(20.0)),
@@ -118,6 +121,7 @@ class _SaveBulkDialogState extends State<SaveBulkDialog> {
                         ),
                       ),
                       SizedBox(height: 20.0),
+                      Text('Silahkan Lakukan Pembayaran Melalui'),
                       Container(
                           height: 50.0,
                           width: MediaQuery.of(context).size.width,
@@ -144,10 +148,11 @@ class _SaveBulkDialogState extends State<SaveBulkDialog> {
                                     },
                                     splashColor: Colors.pink[900],
                                   ),
+                                  PaymentInfo(model),
                                   !model.loading
                                       ? RawMaterialButton(
                                           child: Icon(
-                                            Icons.done_all,
+                                            Icons.done,
                                             size: 24.0,
                                             color: Colors.white,
                                           ),
@@ -156,6 +161,50 @@ class _SaveBulkDialogState extends State<SaveBulkDialog> {
                                           elevation: 3,
                                           fillColor: Colors.green,
                                           onPressed: () async {
+                                            Navigator.of(context).pop();
+                                            Flushbar(
+                                              isDismissible: true,
+                                              flushbarPosition:
+                                                  FlushbarPosition.BOTTOM,
+                                              flushbarStyle:
+                                                  FlushbarStyle.FLOATING,
+                                              reverseAnimationCurve:
+                                                  Curves.decelerate,
+                                              forwardAnimationCurve:
+                                                  Curves.elasticOut,
+                                              mainButton: FlatButton(
+                                                onPressed: () =>
+                                                    Navigator.of(context).pop(),
+                                                child: Icon(
+                                                  Icons.done_all,
+                                                  color: Colors
+                                                      .lightGreenAccent[400],
+                                                ),
+                                              ),
+                                              margin: EdgeInsets.all(8),
+                                              borderRadius: 8,
+                                              title: model.settings.bankInfo,
+                                              message:
+                                                  'Silahkan Lakukan Pembayaran Melalui',
+                                              icon: Icon(
+                                                GroovinMaterialIcons.bank,
+                                                color: Colors.greenAccent,
+                                              ),
+                                              boxShadows: [
+                                                BoxShadow(
+                                                  color: Colors.red[800],
+                                                  offset: Offset(0.0, 2.0),
+                                                  blurRadius: 3.0,
+                                                )
+                                              ],
+                                            ).show(context);
+                                            /* Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        PaymentInfo(model)
+                                                    // ItemDetails(widget.itemData[widget.index])
+                                                    ));*/
                                             model
                                                 .bulkItemsList(model.bulkOrder);
                                             /* isLoading(true, model);
@@ -201,7 +250,17 @@ class _SaveBulkDialogState extends State<SaveBulkDialog> {
                             ),
                           ],
                         ),
-                      )
+                      ),
+
+                      /* Card(
+                          elevation: 8,
+                          child: Padding(
+                            padding: EdgeInsets.all(12),
+                            child: Text(
+                              model.settings.bankInfo,
+                              style: TextStyle(fontSize: 13),
+                            ),
+                          ))*/
                     ],
                   ),
                 ),

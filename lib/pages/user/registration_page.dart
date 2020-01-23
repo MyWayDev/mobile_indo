@@ -4,6 +4,7 @@ import 'package:mor_release/widgets/color_loader_2.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:mor_release/scoped/connected.dart';
 import '../../models/user.dart';
+import 'package:mobile_number/mobile_number.dart';
 
 class RegistrationPage extends StatefulWidget {
   State<StatefulWidget> createState() {
@@ -14,8 +15,10 @@ class RegistrationPage extends StatefulWidget {
 //final FirebaseDatabase dataBase = FirebaseDatabase.instance;
 @override
 class _RegistrationPage extends State<RegistrationPage> {
+  String _mobileNumber = '';
   @override
   void initState() {
+    fillMobileNumber();
     super.initState();
   }
 
@@ -37,7 +40,6 @@ class _RegistrationPage extends State<RegistrationPage> {
   };
 
   User _legacyData;
-
   bool _isloading = false;
 
   void isloading(bool i) {
@@ -54,6 +56,22 @@ class _RegistrationPage extends State<RegistrationPage> {
     }
 
     return _legacyDataExits = true;
+  }
+
+  Future<void> fillMobileNumber() async {
+    String mobileNumber = '';
+    try {
+      mobileNumber = await MobileNumber.mobileNumber;
+    } catch (e) {
+      print(e);
+      setState(() {
+        _mobileNumber = 'error';
+      });
+    }
+
+    setState(() {
+      _mobileNumber = mobileNumber;
+    });
   }
 
   Future initlegacyData(String distrid) async {
@@ -192,6 +210,7 @@ class _RegistrationPage extends State<RegistrationPage> {
                       },
                     ),
                     TextFormField(
+                      initialValue: '',
                       decoration: InputDecoration(
                           labelText: 'Nomor Telepon',
                           contentPadding: EdgeInsets.all(8.0),
