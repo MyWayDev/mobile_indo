@@ -219,13 +219,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.1.3"
-  grafpix:
-    dependency: "direct main"
-    description:
-      name: grafpix
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.2.2"
   groovin_material_icons:
     dependency: "direct main"
     description:

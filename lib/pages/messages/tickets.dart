@@ -295,6 +295,7 @@ class _TicketsState extends State<Tickets> {
                                 inUse: true,
                                 isOpen: ticket.open,
                                 type: ticket.type,
+                                content: ticket.content,
                                 peerId: int.parse(ticket.member),
                                 peerAvatar:
                                     "https://firebasestorage.googleapis.com/v0/b/mobile-coco.appspot.com/o/flamelink%2Fmedia%2F1568595588253_account-img.png?alt=media&token=3d4fa5c4-5099-49ac-b621-96b5ea4cd5bd",
@@ -385,6 +386,7 @@ class _TicketsState extends State<Tickets> {
                           builder: (context) => Chat(
                                 isOpen: ticket.open,
                                 type: ticket.type,
+                                content: ticket.content,
                                 peerId: 1,
                                 peerAvatar:
                                     "https://firebasestorage.googleapis.com/v0/b/mobile-coco.appspot.com/o/flamelink%2Fmedia%2F1568468553357_myway.png?alt=media&token=bd51c423-9967-4075-bb8b-3f2fbee1e9dd",

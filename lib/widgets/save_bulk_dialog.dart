@@ -62,6 +62,35 @@ class _SaveBulkDialogState extends State<SaveBulkDialog> {
   Widget _saveDialog(BuildContext context) {
     return ScopedModelDescendant<MainModel>(
         builder: (BuildContext context, Widget child, MainModel model) {
+      Flushbar flush = Flushbar(
+        isDismissible: true,
+        flushbarPosition: FlushbarPosition.BOTTOM,
+        flushbarStyle: FlushbarStyle.FLOATING,
+        reverseAnimationCurve: Curves.decelerate,
+        forwardAnimationCurve: Curves.elasticOut,
+        mainButton: FlatButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Icon(
+            Icons.done_all,
+            color: Colors.lightGreenAccent[400],
+          ),
+        ),
+        margin: EdgeInsets.all(8),
+        borderRadius: 8,
+        title: model.settings.bankInfo,
+        message: 'Silahkan Lakukan Pembayaran Melalui',
+        icon: Icon(
+          GroovinMaterialIcons.bank,
+          color: Colors.greenAccent,
+        ),
+        boxShadows: [
+          BoxShadow(
+            color: Colors.red[800],
+            offset: Offset(0.0, 2.0),
+            blurRadius: 3.0,
+          )
+        ],
+      );
       return ModalProgressHUD(
         child: model.giftPacks.length == 0 && model.isBalanceChecked
             ? Dialog(
@@ -121,7 +150,7 @@ class _SaveBulkDialogState extends State<SaveBulkDialog> {
                         ),
                       ),
                       SizedBox(height: 20.0),
-                      Text('Silahkan Lakukan Pembayaran Melalui'),
+                    //  Text('Silahkan Lakukan Pembayaran Melalui'),
                       Container(
                           height: 50.0,
                           width: MediaQuery.of(context).size.width,
@@ -148,7 +177,7 @@ class _SaveBulkDialogState extends State<SaveBulkDialog> {
                                     },
                                     splashColor: Colors.pink[900],
                                   ),
-                                  PaymentInfo(model),
+                                  // PaymentInfo(model),
                                   !model.loading
                                       ? RawMaterialButton(
                                           child: Icon(
@@ -161,43 +190,9 @@ class _SaveBulkDialogState extends State<SaveBulkDialog> {
                                           elevation: 3,
                                           fillColor: Colors.green,
                                           onPressed: () async {
-                                            Navigator.of(context).pop();
-                                            Flushbar(
-                                              isDismissible: true,
-                                              flushbarPosition:
-                                                  FlushbarPosition.BOTTOM,
-                                              flushbarStyle:
-                                                  FlushbarStyle.FLOATING,
-                                              reverseAnimationCurve:
-                                                  Curves.decelerate,
-                                              forwardAnimationCurve:
-                                                  Curves.elasticOut,
-                                              mainButton: FlatButton(
-                                                onPressed: () =>
-                                                    Navigator.of(context).pop(),
-                                                child: Icon(
-                                                  Icons.done_all,
-                                                  color: Colors
-                                                      .lightGreenAccent[400],
-                                                ),
-                                              ),
-                                              margin: EdgeInsets.all(8),
-                                              borderRadius: 8,
-                                              title: model.settings.bankInfo,
-                                              message:
-                                                  'Silahkan Lakukan Pembayaran Melalui',
-                                              icon: Icon(
-                                                GroovinMaterialIcons.bank,
-                                                color: Colors.greenAccent,
-                                              ),
-                                              boxShadows: [
-                                                BoxShadow(
-                                                  color: Colors.red[800],
-                                                  offset: Offset(0.0, 2.0),
-                                                  blurRadius: 3.0,
-                                                )
-                                              ],
-                                            ).show(context);
+                                            // Navigator.of(context).pop();
+                                            flush.dismiss(context);
+                                            flush.show(context);
                                             /* Navigator.push(
                                                 context,
                                                 MaterialPageRoute(

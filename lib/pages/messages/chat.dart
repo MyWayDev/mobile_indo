@@ -3,8 +3,10 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:groovin_material_icons/groovin_material_icons.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:mor_release/scoped/connected.dart';
@@ -18,6 +20,7 @@ class Chat extends StatelessWidget {
   final String peerAvatar;
   final int ticketId;
   final String type;
+  final String content;
   final bool isOpen;
   final bool inUse;
 
@@ -26,6 +29,7 @@ class Chat extends StatelessWidget {
       @required this.peerId,
       @required this.peerAvatar,
       @required this.ticketId,
+      this.content,
       this.isOpen,
       this.inUse = false,
       this.type})
@@ -33,15 +37,55 @@ class Chat extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Flushbar flush = Flushbar(
+      messageText: Text(content,
+          style: TextStyle(fontSize: 15, color: Colors.limeAccent[100])),
+      isDismissible: true,
+      flushbarPosition: FlushbarPosition.TOP,
+      flushbarStyle: FlushbarStyle.FLOATING,
+      reverseAnimationCurve: Curves.decelerate,
+      forwardAnimationCurve: Curves.elasticOut,
+      mainButton: FlatButton(
+        onPressed: () => Navigator.of(context).pop(),
+        child: Icon(
+          Icons.close,
+          color: Colors.red[400],
+        ),
+      ),
+      margin: EdgeInsets.all(8),
+      borderRadius: 8,
+      title: "Id: ${peerId.toString()}",
+      message: content,
+      icon: Icon(
+        Icons.chat,
+        color: Colors.greenAccent,
+      ),
+      boxShadows: [
+        BoxShadow(
+          color: Colors.red[800],
+          offset: Offset(0.0, 2.0),
+          blurRadius: 3.0,
+        )
+      ],
+    );
     return ScopedModelDescendant<MainModel>(
         builder: (BuildContext context, Widget child, MainModel model) {
       return Scaffold(
           appBar: AppBar(
             title: Text(
-              "${ticketId.toString()}  $type",
-              style: TextStyle(color: Colors.white),
+              type,
+              style: TextStyle(color: Colors.white, fontSize: 16),
             ),
             centerTitle: true,
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(Icons.chat),
+                onPressed: () {
+                  flush.dismiss(context);
+                  flush.show(context);
+                },
+              ),
+            ],
           ),
           body: ChatScreen(
             id: int.parse(model.user.key) >= 5 ? model.user.key : '1',

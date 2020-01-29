@@ -41,6 +41,7 @@ class Invoice {
   String dlvDate;
   String shipper;
   String counter;
+  String refNo;
   List<InvoiceItem> invoiceItems;
 
   double get invocieTotal {
@@ -69,6 +70,7 @@ class Invoice {
       this.dlvDate,
       this.shipper,
       this.counter,
+      this.refNo,
       this.invoiceItems});
 
   factory Invoice.fromJson(Map<String, dynamic> json) {
@@ -81,6 +83,7 @@ class Invoice {
         status: json['SHIPMENT_STATUS'],
         shipper: json['COMP_NAME'] ?? '',
         dlvDate: json['DLV_DATE'],
-        counter: json['COUNTER']);
+        counter: json['COUNTER'],
+        refNo: json['REF_NO'] ?? '');
   }
 }

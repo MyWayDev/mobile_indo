@@ -13,7 +13,6 @@ import 'package:mor_release/scoped/connected.dart';
 import 'package:mor_release/widgets/stock_dialog.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:grafpix/icons.dart';
 
 class OrderPage extends StatefulWidget {
   final MainModel model;
@@ -315,7 +314,7 @@ class _OrderPage extends State<OrderPage> {
                                 ),
                               ),
                               title: Icon(
-                                PixIcon.fa_boxes,
+                                Icons.add_box,
                                 color: Colors.grey,
                                 size: 30,
                               ), // required
@@ -434,7 +433,7 @@ class _OrderPage extends State<OrderPage> {
                                             ),
                                           )
                                         : Icon(
-                                            PixIcon.fa_box_open,
+                                            Icons.account_box,
                                             color: Colors.grey,
                                             size: 30,
                                           ),
@@ -455,7 +454,6 @@ class _OrderPage extends State<OrderPage> {
                                           fillColor: Colors.green,
                                           onPressed: () async {
                                             model.loading = false;
-
                                             Navigator.push(context,
                                                 MaterialPageRoute(builder: (_) {
                                               return EndOrder(model);

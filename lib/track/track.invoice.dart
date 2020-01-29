@@ -28,8 +28,8 @@ class _TrackInvoice extends State<TrackInvoice> {
 
   void _getInvoices(String userId) async {
     firstInvoice = [];
-    final http.Response response = await http
-        .get('http://mywayindoapi.azurewebsites.net/api/userinvoices/$userId');
+    final http.Response response = await http.get(
+        'http://mywayindoapi.azurewebsites.net/api/userinvoices/02011140'); // sample distrid =>$userId
     if (response.statusCode == 200 && firstInvoice.length == 0) {
       print('getInvoice ok');
       List<dynamic> invoiceList = json.decode(response.body);
@@ -364,8 +364,18 @@ class _TrackInvoice extends State<TrackInvoice> {
                                                       color: Colors.grey[800])),
                                               Text(firstInvoice[index].shipper,
                                                   style: TextStyle(
-                                                      fontSize: 15,
-                                                      color: Colors.grey[800]))
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 14,
+                                                      color: Colors.grey[700])),
+                                              Text(
+                                                  'Track # ${firstInvoice[index].refNo}',
+                                                  style: TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors
+                                                          .limeAccent[400]))
                                             ],
                                           ),
                                         ),

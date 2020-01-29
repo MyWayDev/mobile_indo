@@ -55,7 +55,6 @@ dependencies:
   flutter_form_builder: ^3.3.0
   flutter_sliding_up_panel: ^0.0.3
   rxdart: ^0.22.6
-  grafpix: ^1.2.2
   mobile_number: ^0.0.4
 
 dev_dependencies:
