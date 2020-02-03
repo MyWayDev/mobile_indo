@@ -1141,7 +1141,6 @@ class MainModel extends Model {
     for (ItemOrder i in itemOrder) {
       x += i.price * i.qty;
     }
-
     return x;
   }
 
@@ -1158,13 +1157,12 @@ class MainModel extends Model {
   void itemOrderAggrList(List<ItemOrder> itemOrders) {
     for (var item in itemOrders) {
       AggrItem aggrItem = AggrItem(id: item.itemId, qty: item.qty);
-
       bulkItemsGrouped.add(aggrItem);
     }
     List<AggrItem> result =
         LinkedHashSet<AggrItem>.from(bulkItemsGrouped).toList();
 
-    result.forEach((r) => print(r.id));
+    //result.forEach((r) => print('linkedHash:${r.id}:${r.qty}'));
   }
 
   void bulkItemsList(List<SalesOrder> orders) {
@@ -1182,15 +1180,17 @@ class MainModel extends Model {
 
     for (var order in orders) {
       for (ItemOrder item in order.order) {
-        await getStock(item.itemId).then((i) {
-          if (i < item.qty) {
-            orderOutList.add(item);
-            orderOutList.last.qty = i;
-            print('OutListBelow:');
-            isBalanceChecked = false;
-            print({orderOutList.last.itemId: orderOutList.last.qty});
-          }
-        });
+        item.itemId != '90'
+            ? await getStock(item.itemId).then((i) {
+                if (i < item.qty) {
+                  orderOutList.add(item);
+                  orderOutList.last.qty = i;
+                  print('BulkOutListBelow:');
+                  isBalanceChecked = false;
+                  print({orderOutList.last.itemId: orderOutList.last.qty});
+                }
+              })
+            : null;
       }
     }
 
@@ -1290,7 +1290,7 @@ class MainModel extends Model {
     return finalBulkOrders;
   }
 
-  int i = 0;
+  // int i = 0; //?  commented because not implementatio
 
   Future<List<ItemOrder>> putBulk(List<SalesOrder> orders) async {
     List<ItemOrder> listOfIO = await bulkOrderBalanceCheck(orders);
@@ -1318,6 +1318,34 @@ class MainModel extends Model {
     return listOfIO;
   }
 
+  Future<BulkSalesOrder> mockPutBulk(List<SalesOrder> orders) async {
+    BulkSalesOrder bulk = BulkSalesOrder(bulkSalesOrder: orders);
+    print(bulk.postBulkOrderToJson(bulk));
+    bulkOrder.clear();
+    giftorderList.clear();
+    promoOrderList.clear();
+    isBulk = false;
+
+    return bulk;
+  }
+
+  //! commented now
+  Future<BulkSalesOrder> mockSaveBulkOrders(
+      //* mock balance check on putBulk function
+      List<SalesOrder> bulkSalesOrder,
+      double courierFee, // * mock function to test bulk order prepare
+      String note,
+      String shipmentId) async {
+    BulkSalesOrder bulkOfSO;
+
+    bulkOfSO = await mockPutBulk(prepareBulkOrder(
+        bulkSalesOrder, courierFee, note, shipmentId, bulkOrder.length));
+
+    bulkOfSO.bulkSalesOrder.forEach((o) => o.order.forEach((i) => print(
+        'bulk Order Details => itemId:${i.itemId}:price ${i.price}: qty:${i.qty}')));
+    return bulkOfSO;
+  }
+
   //Future<OrderMsg>
   Future<List<ItemOrder>> saveBulkOrders(List<SalesOrder> bulkSalesOrder,
       double courierFee, String note, String shipmentId) async {
@@ -1326,6 +1354,8 @@ class MainModel extends Model {
         bulkSalesOrder, courierFee, note, shipmentId, bulkOrder.length));
     return listOfIO;
   }
+
+//!-----------------------orders starts here ----------------------
 
   Future<OrderMsg> saveOrder(String shipmentId, double courierfee,
       String distrId, String note, String areaId) async {
@@ -1373,7 +1403,7 @@ class MainModel extends Model {
     Response response = await salesOrder.createPost(salesOrder);
 
     if (response.statusCode == 201) {
-      print('Order Msg:${response.body}!!');
+      print('Bulk Order Msg:${response.body}!!');
       itemorderlist.clear();
       giftorderList.clear();
       promoOrderList.clear();

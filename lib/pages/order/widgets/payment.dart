@@ -9,13 +9,16 @@ class PaymentInfo extends StatelessWidget {
   Flushbar flushAction(BuildContext context) {
     Flushbar flush = Flushbar(
       isDismissible: true,
-      flushbarPosition: FlushbarPosition.BOTTOM,
-      flushbarStyle: FlushbarStyle.FLOATING,
-      reverseAnimationCurve: Curves.bounceInOut,
+      flushbarPosition: FlushbarPosition.TOP,
+      flushbarStyle: FlushbarStyle.GROUNDED,
+      reverseAnimationCurve: Curves.decelerate,
       forwardAnimationCurve: Curves.elasticOut,
       mainButton: FlatButton(
-        onPressed: () => Navigator.pop(context),
-        child: Icon(Icons.done_all),
+        onPressed: () => Navigator.of(context).pop(),
+        child: Icon(
+          GroovinMaterialIcons.close_circle_outline,
+          color: Colors.red,
+        ),
       ),
       margin: EdgeInsets.all(8),
       borderRadius: 8,
@@ -38,15 +41,6 @@ class PaymentInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-        onTap: () {
-          flushAction(context).dismiss(context);
-          flushAction(context).show(context);
-        },
-        child: Icon(
-          GroovinMaterialIcons.help_circle,
-          color: Colors.black,
-          size: 25,
-        ));
+    return flushAction(context);
   }
 }

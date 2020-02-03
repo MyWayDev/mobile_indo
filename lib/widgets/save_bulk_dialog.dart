@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:mor_release/bottom_nav.dart';
 import 'package:mor_release/models/item.order.dart';
+import 'package:mor_release/pages/order/widgets/outStockDialog.dart';
 import 'package:mor_release/pages/order/widgets/payment.dart';
 import 'package:mor_release/scoped/connected.dart';
 import 'package:mor_release/widgets/color_loader_2.dart';
@@ -28,6 +29,7 @@ class SaveBulkDialog extends StatefulWidget {
 
 class _SaveBulkDialogState extends State<SaveBulkDialog> {
   List<ItemOrder> balanceCheckOutPut = [];
+  BulkSalesOrder bulkSalesOrder;
   List<ItemOrder> msg = List();
 
   @override
@@ -62,10 +64,10 @@ class _SaveBulkDialogState extends State<SaveBulkDialog> {
   Widget _saveDialog(BuildContext context) {
     return ScopedModelDescendant<MainModel>(
         builder: (BuildContext context, Widget child, MainModel model) {
-      Flushbar flush = Flushbar(
+      Flushbar fu = Flushbar(
         isDismissible: true,
-        flushbarPosition: FlushbarPosition.BOTTOM,
-        flushbarStyle: FlushbarStyle.FLOATING,
+        flushbarPosition: FlushbarPosition.TOP,
+        flushbarStyle: FlushbarStyle.GROUNDED,
         reverseAnimationCurve: Curves.decelerate,
         forwardAnimationCurve: Curves.elasticOut,
         mainButton: FlatButton(
@@ -150,7 +152,7 @@ class _SaveBulkDialogState extends State<SaveBulkDialog> {
                         ),
                       ),
                       SizedBox(height: 20.0),
-                    //  Text('Silahkan Lakukan Pembayaran Melalui'),
+                      //  Text('Silahkan Lakukan Pembayaran Melalui'),
                       Container(
                           height: 50.0,
                           width: MediaQuery.of(context).size.width,
@@ -177,7 +179,6 @@ class _SaveBulkDialogState extends State<SaveBulkDialog> {
                                     },
                                     splashColor: Colors.pink[900],
                                   ),
-                                  // PaymentInfo(model),
                                   !model.loading
                                       ? RawMaterialButton(
                                           child: Icon(
@@ -191,8 +192,25 @@ class _SaveBulkDialogState extends State<SaveBulkDialog> {
                                           fillColor: Colors.green,
                                           onPressed: () async {
                                             // Navigator.of(context).pop();
-                                            flush.dismiss(context);
-                                            flush.show(context);
+                                            // fu.dismiss(context);
+                                            //fu.show(context);
+                                            isLoading(true, model);
+                                            balanceCheckOutPut = await model
+                                                .bulkOrderBalanceCheck(
+                                                    model.bulkOrder);
+                                            isLoading(false, model);
+                                            if (balanceCheckOutPut.length ==
+                                                0) {
+                                              bulkSalesOrder = await model
+                                                  .mockPutBulk(model.bulkOrder);
+                                              PaymentInfo(model)
+                                                  .flushAction(context)
+                                                  .show(context);
+                                              /*OutStock(balanceCheckOutPut)
+                                                  .flushAction(context)
+                                                  .show(context);*/
+                                            }
+
                                             /* Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
@@ -202,6 +220,7 @@ class _SaveBulkDialogState extends State<SaveBulkDialog> {
                                                     ));*/
                                             model
                                                 .bulkItemsList(model.bulkOrder);
+
                                             /* isLoading(true, model);
                                             msg = await model.saveBulkOrders(
                                               model.bulkOrder,
