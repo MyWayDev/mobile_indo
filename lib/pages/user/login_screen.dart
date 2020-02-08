@@ -310,26 +310,26 @@ class _LoginScreen extends State<LoginScreen> {
                 registration_button.RegistrationButton(),
 
                 Padding(
-                    padding: EdgeInsets.only(top: 40),
+                    padding: EdgeInsets.only(top: 16),
                     child: Center(
                         child: Column(
                       children: <Widget>[
                         Text('Untuk bantuan aplikasi hubungi',
                             style: TextStyle(
-                                color: Colors.grey,
+                                color: Colors.grey[600],
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold)),
-                        SizedBox(height: 5),
+                        SizedBox(height: 3),
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
                             Icon(GroovinMaterialIcons.whatsapp,
-                                size: 34, color: Colors.greenAccent[400]),
+                                size: 28, color: Colors.greenAccent[400]),
+                            SizedBox(width: 8.0),
                             Text('081-1186-245',
                                 style: TextStyle(
-                                    fontSize: 14.5,
-                                    fontWeight: FontWeight.bold))
+                                    fontSize: 15, fontWeight: FontWeight.bold))
                           ],
                         )
                       ],

@@ -1152,26 +1152,31 @@ class MainModel extends Model {
     return x;
   }
 
-  List<AggrItem> bulkItemsGrouped = List();
-  List<String> bulkJitems = [];
+  List<AggrItem> bulkItemsjoin = List();
+
   void itemOrderAggrList(List<ItemOrder> itemOrders) {
+    bulkItemsjoin = [];
+
     for (var item in itemOrders) {
       AggrItem aggrItem = AggrItem(id: item.itemId, qty: item.qty);
-      bulkItemsGrouped.add(aggrItem);
+      if (bulkItemsjoin.length == 0) {
+        bulkItemsjoin.add(aggrItem);
+      } else {
+        if (bulkItemsjoin.where((i) => i.id == aggrItem.id).length > 0) {
+          bulkItemsjoin.firstWhere((i) => i.id == item.itemId).qty += item.qty;
+        } else {
+          bulkItemsjoin.add(aggrItem);
+        }
+      }
     }
-    List<AggrItem> result =
-        LinkedHashSet<AggrItem>.from(bulkItemsGrouped).toList();
-
-    //result.forEach((r) => print('linkedHash:${r.id}:${r.qty}'));
+    bulkItemsjoin.forEach((i) => print('${i.id}:${i.qty}'));
   }
 
   void bulkItemsList(List<SalesOrder> orders) {
-    bulkItemsGrouped = [];
     List<ItemOrder> itemOrdersII = [];
     // orders.forEach((o) => print({o.distrId: o.total}));
     orders.forEach((so) => so.order.forEach((item) => itemOrdersII.add(item)));
-    orders.forEach(
-        (so) => so.order.forEach((item) => bulkJitems.add(item.itemId)));
+
     itemOrderAggrList(itemOrdersII);
   }
 

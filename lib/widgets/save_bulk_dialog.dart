@@ -416,6 +416,21 @@ class _SaveBulkDialogState extends State<SaveBulkDialog> {
                               },
                               splashColor: Colors.pink[900],
                             ),
+                            RawMaterialButton(
+                              child: Icon(
+                                Icons.queue,
+                                size: 21.0,
+                                color: Colors.white,
+                              ),
+                              shape: CircleBorder(),
+                              highlightColor: Colors.pink[900],
+                              elevation: 3,
+                              fillColor: Colors.black,
+                              onPressed: () {
+                                model.bulkItemsList(model.bulkOrder);
+                              },
+                              splashColor: Colors.pink[900],
+                            ),
                             !model.loading && bulkIds.ids.length == 0
                                 ? RawMaterialButton(
                                     child: Icon(
@@ -461,7 +476,6 @@ class _SaveBulkDialogState extends State<SaveBulkDialog> {
                                                         PaymentInfo(model)
                                                     // ItemDetails(widget.itemData[widget.index])
                                                     ));*/
-                                      model.bulkItemsList(model.bulkOrder);
 
                                       /* isLoading(true, model);
                                             msg = await model.saveBulkOrders(
