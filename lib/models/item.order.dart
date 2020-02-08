@@ -94,7 +94,8 @@ class OrderBulkMsg {
   OrderBulkMsg({this.ids, this.error});
   factory OrderBulkMsg.fromJson(Map<String, dynamic> msg) {
     return OrderBulkMsg(
-      ids: msg['ids'],
+      ids: msg['ids'] ?? [],
+      error: msg['error'] ?? '',
     );
   }
 }

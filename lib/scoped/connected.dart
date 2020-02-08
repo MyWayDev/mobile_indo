@@ -1177,7 +1177,7 @@ class MainModel extends Model {
 
   Future<List<ItemOrder>> bulkOrderBalanceCheck(List<SalesOrder> orders) async {
     List<ItemOrder> orderOutList = List();
-
+    loading = true;
     for (var order in orders) {
       for (ItemOrder item in order.order) {
         item.itemId != '90'
@@ -1205,8 +1205,9 @@ class MainModel extends Model {
         order.gifts.clear();
         order.promos.clear();
         order.order.removeWhere((i) => i.qty <= 0 || i.bp <= 0);
-        bulkOrder.removeWhere((bulk) => bulk.order.length == 0);
+        // bulkOrder.removeWhere((bulk) => bulk.order.length == 0);
         isBalanceChecked = false;
+
         for (var sOrder in bulkOrder) {
           sOrder.total = reOrderSum(sOrder.order);
           sOrder.totalBp = reOrderBp(sOrder.order);
@@ -1217,7 +1218,7 @@ class MainModel extends Model {
         // msg = await saveOrder(shipmentId, courierfee, distrId, note, areaId);
       }
     }
-
+    loading = false;
     return orderOutList;
   }
 
@@ -1318,32 +1319,45 @@ class MainModel extends Model {
     return listOfIO;
   }
 
-  Future<BulkSalesOrder> mockPutBulk(List<SalesOrder> orders) async {
+  Future<OrderBulkMsg> mockPutBulk(List<SalesOrder> orders) async {
     BulkSalesOrder bulk = BulkSalesOrder(bulkSalesOrder: orders);
     print(bulk.postBulkOrderToJson(bulk));
-    bulkOrder.clear();
-    giftorderList.clear();
-    promoOrderList.clear();
-    isBulk = false;
+    Response response = await bulk.createBulkPost(bulk);
+    if (response.statusCode == 201) {
+      //print('Order Msg:${response.body}!!');
 
-    return bulk;
+      bulkOrder.clear();
+      giftorderList.clear();
+      promoOrderList.clear();
+      isBulk = false;
+
+      OrderBulkMsg bulkMsg = OrderBulkMsg.fromJson(json.decode(response.body));
+      bulkMsg.ids.forEach((id) => print(id.toString()));
+      return bulkMsg;
+    } else {
+      OrderBulkMsg errorMsg = OrderBulkMsg(error: 'operation failed');
+      return errorMsg;
+    }
   }
 
-  //! commented now
-  Future<BulkSalesOrder> mockSaveBulkOrders(
+  deleteEmptyOrders() {
+    bulkOrder.removeWhere((o) => o.order.length == 0);
+  }
+
+  Future<OrderBulkMsg> mockSaveBulkOrders(
       //* mock balance check on putBulk function
       List<SalesOrder> bulkSalesOrder,
       double courierFee, // * mock function to test bulk order prepare
       String note,
       String shipmentId) async {
-    BulkSalesOrder bulkOfSO;
+    OrderBulkMsg bulkOrderIds;
 
-    bulkOfSO = await mockPutBulk(prepareBulkOrder(
+    bulkSalesOrder.removeWhere((o) => o.order.length == 0);
+
+    bulkOrderIds = await mockPutBulk(prepareBulkOrder(
         bulkSalesOrder, courierFee, note, shipmentId, bulkOrder.length));
 
-    bulkOfSO.bulkSalesOrder.forEach((o) => o.order.forEach((i) => print(
-        'bulk Order Details => itemId:${i.itemId}:price ${i.price}: qty:${i.qty}')));
-    return bulkOfSO;
+    return bulkOrderIds;
   }
 
   //Future<OrderMsg>

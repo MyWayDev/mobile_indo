@@ -114,7 +114,7 @@ class _BottomNav extends State<BottomNav> with SingleTickerProviderStateMixin {
                 ),
               ),
               Tab(
-                icon: Icon(Icons.account_circle,
+                icon: Icon(GroovinMaterialIcons.account_plus,
                     size: 32, color: Colors.pink[700]),
               ),
               Tab(

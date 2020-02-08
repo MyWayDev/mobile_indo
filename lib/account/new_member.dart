@@ -297,14 +297,14 @@ class _NewMemberPage extends State<NewMemberPage> {
                                                     GroovinMaterialIcons
                                                         .format_title,
                                                     color: Colors.pink[500])),
-                                            validator: (value) {
+                                            /* validator: (value) {
                                               String _msg;
-                                              value.length < 9
+                                              value.length > 6
                                                   ? _msg =
                                                       'Nama anggota tidak valid'
                                                   : _msg = null;
                                               return _msg;
-                                            },
+                                            },*/
                                             keyboardType: TextInputType.text,
                                             onSaved: (String value) {
                                               _newMemberForm.name = value;
@@ -318,14 +318,14 @@ class _NewMemberPage extends State<NewMemberPage> {
                                                     EdgeInsets.all(4.0),
                                                 icon: Icon(Icons.assignment_ind,
                                                     color: Colors.pink[500])),
-                                            validator: (value) {
+                                            /*  'validator: (value) {
                                               String _msg;
-                                              value.length < 5
+                                              value.length <=16
                                                   ? _msg =
                                                       'خطأ فى حفظ الرقم الوطنى'
                                                   : _msg = null;
                                               return _msg;
-                                            },
+                                            },*/
                                             autocorrect: true,
                                             textCapitalization:
                                                 TextCapitalization.sentences,
@@ -418,14 +418,14 @@ class _NewMemberPage extends State<NewMemberPage> {
                                                   GroovinMaterialIcons.numeric,
                                                   color: Colors.pink[500],
                                                 )),
-                                            validator: (value) {
+                                            /*  validator: (value) {
                                               String _msg;
                                               value.length < 16
                                                   ? _msg =
                                                       'Account# is too short'
                                                   : _msg = null;
                                               return _msg;
-                                            },
+                                            },*/
                                             keyboardType: TextInputType.number,
                                             onSaved: (String value) {
                                               _newMemberForm.bankAccountNumber =
@@ -444,13 +444,13 @@ class _NewMemberPage extends State<NewMemberPage> {
                                                       .tag_text_outline,
                                                   color: Colors.pink[500],
                                                 )),
-                                            validator: (value) {
+                                            /*  validator: (value) {
                                               String _msg;
                                               value.length < 12
                                                   ? _msg = 'Tax is too short'
                                                   : _msg = null;
                                               return _msg;
-                                            },
+                                            },*/
                                             keyboardType: TextInputType.number,
                                             onSaved: (String value) {
                                               _newMemberForm.taxNumber = value;
@@ -552,7 +552,7 @@ class _NewMemberPage extends State<NewMemberPage> {
     isloading(true);
     print(_newMemberForm.postNewMemberToJson(_newMemberForm));
     Response response = await _newMemberForm.createPost(
-        _newMemberForm, user, 'shipmentPlace', 'shipmentName');
+        _newMemberForm, user, '022705', 'JAKARTA');
     if (response.statusCode == 201) {
       body = Id.fromJson(json.decode(response.body));
       msg = body.id;
@@ -585,10 +585,10 @@ class _NewMemberPage extends State<NewMemberPage> {
                   Column(
                     children: <Widget>[
                       Text(
-                        ' Nomor yang menyala: $msg ',
+                        ' Member ID baru: $msg ',
                         style: TextStyle(
                             fontSize: 16.0,
-                            color: Colors.grey,
+                            color: Colors.pink[900],
                             fontWeight: FontWeight.bold),
                       ),
                     ],

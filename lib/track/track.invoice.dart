@@ -29,7 +29,7 @@ class _TrackInvoice extends State<TrackInvoice> {
   void _getInvoices(String userId) async {
     firstInvoice = [];
     final http.Response response = await http.get(
-        'http://mywayindoapi.azurewebsites.net/api/userinvoices/02011140'); // sample distrid =>$userId
+        'http://mywayindoapi.azurewebsites.net/api/userinvoices/$userId'); // sample distrid =>$userId
     if (response.statusCode == 200 && firstInvoice.length == 0) {
       print('getInvoice ok');
       List<dynamic> invoiceList = json.decode(response.body);

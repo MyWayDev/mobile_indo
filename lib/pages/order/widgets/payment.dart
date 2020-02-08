@@ -9,7 +9,7 @@ class PaymentInfo extends StatelessWidget {
   Flushbar flushAction(BuildContext context) {
     Flushbar flush = Flushbar(
       isDismissible: true,
-      flushbarPosition: FlushbarPosition.TOP,
+      flushbarPosition: FlushbarPosition.BOTTOM,
       flushbarStyle: FlushbarStyle.GROUNDED,
       reverseAnimationCurve: Curves.decelerate,
       forwardAnimationCurve: Curves.elasticOut,

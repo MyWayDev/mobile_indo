@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:groovin_material_icons/groovin_material_icons.dart';
 import 'package:mor_release/bottom_nav.dart';
 import 'package:mor_release/models/lock.dart';
 import '../../widgets/login/login_screen_banner.dart' as banner;
@@ -248,64 +249,91 @@ class _LoginScreen extends State<LoginScreen> {
                     )),
 
                 Container(
-                  margin: EdgeInsets.only(top: 5.0),
-                  padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-                  child: new Row(
-                    children: <Widget>[
-                      Expanded(child: ScopedModelDescendant<MainModel>(builder:
-                          (BuildContext context, Widget child,
-                              MainModel model) {
-                        return FlatButton(
-                            shape: new RoundedRectangleBorder(
-                                borderRadius: new BorderRadius.circular(30.0)),
-                            splashColor: Theme.of(context).primaryColor,
-                            color: Theme.of(context).primaryColor,
-                            child: Row(
-                              children: <Widget>[
-                                new Padding(
-                                  padding: const EdgeInsets.only(left: 20.0),
-                                  child: Text(
-                                    "Masuk",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16.0,
-                                        color: Colors.white),
+                    margin: EdgeInsets.only(top: 5.0),
+                    padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+                    child: new Row(
+                      children: <Widget>[
+                        Expanded(child: ScopedModelDescendant<MainModel>(
+                            builder: (BuildContext context, Widget child,
+                                MainModel model) {
+                          return FlatButton(
+                              shape: new RoundedRectangleBorder(
+                                  borderRadius:
+                                      new BorderRadius.circular(30.0)),
+                              splashColor: Theme.of(context).primaryColor,
+                              color: Theme.of(context).primaryColor,
+                              child: Row(
+                                children: <Widget>[
+                                  new Padding(
+                                    padding: const EdgeInsets.only(left: 20.0),
+                                    child: Text(
+                                      "Masuk",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16.0,
+                                          color: Colors.white),
+                                    ),
                                   ),
-                                ),
-                                new Expanded(
-                                  child: Container(),
-                                ),
-                                new Transform.translate(
-                                  offset: Offset(15.0, 0.0),
-                                  child: new Container(
-                                    padding: const EdgeInsets.all(5.0),
-                                    child: FlatButton(
-                                        shape: new RoundedRectangleBorder(
-                                            borderRadius:
-                                                new BorderRadius.circular(
-                                                    28.0)),
-                                        splashColor: Colors.white,
-                                        color: Colors.white,
-                                        child: Icon(
-                                          Icons.arrow_forward,
-                                          color: Theme.of(context).primaryColor,
-                                        ),
-                                        onPressed: () {
-                                          _loginPressed(model, context);
-                                        }),
+                                  new Expanded(
+                                    child: Container(),
                                   ),
-                                )
-                              ],
-                            ),
-                            onPressed: () {
-                              _loginPressed(model, context);
-                            });
-                      })),
-                    ],
-                  ),
-                ),
+                                  new Transform.translate(
+                                    offset: Offset(15.0, 0.0),
+                                    child: new Container(
+                                      padding: const EdgeInsets.all(5.0),
+                                      child: FlatButton(
+                                          shape: new RoundedRectangleBorder(
+                                              borderRadius:
+                                                  new BorderRadius.circular(
+                                                      28.0)),
+                                          splashColor: Colors.white,
+                                          color: Colors.white,
+                                          child: Icon(
+                                            Icons.arrow_forward,
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                          ),
+                                          onPressed: () {
+                                            _loginPressed(model, context);
+                                          }),
+                                    ),
+                                  )
+                                ],
+                              ),
+                              onPressed: () {
+                                _loginPressed(model, context);
+                              });
+                        })),
+                      ],
+                    )),
                 //!! registraion button here..
                 registration_button.RegistrationButton(),
+
+                Padding(
+                    padding: EdgeInsets.only(top: 40),
+                    child: Center(
+                        child: Column(
+                      children: <Widget>[
+                        Text('Untuk bantuan aplikasi hubungi',
+                            style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold)),
+                        SizedBox(height: 5),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Icon(GroovinMaterialIcons.whatsapp,
+                                size: 34, color: Colors.greenAccent[400]),
+                            Text('081-1186-245',
+                                style: TextStyle(
+                                    fontSize: 14.5,
+                                    fontWeight: FontWeight.bold))
+                          ],
+                        )
+                      ],
+                    ))),
               ],
             ),
           ]),

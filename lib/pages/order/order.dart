@@ -150,7 +150,9 @@ class _OrderPage extends State<OrderPage> {
                                 context: context,
                                 builder: (BuildContext context) {
                                   return AlertDialog(
-                                    title: Text('delete CURRENT ORDER'),
+                                    title: Text('Hapus pesanan di keranjang ?',
+                                        style:
+                                            TextStyle(color: Colors.pink[900])),
                                     actions: <Widget>[
                                       IconButton(
                                         icon: Icon(Icons.close),
