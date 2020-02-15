@@ -8,6 +8,8 @@ import 'package:mor_release/pages/items/items.dart';
 import 'package:mor_release/pages/items/items.tabs.dart';
 import 'package:mor_release/models/ticket.dart';
 import 'package:mor_release/pages/messages/local_note.dart';
+import 'package:mor_release/pages/order/bulkOrder.dart';
+import 'package:mor_release/pages/order/end_order.dart';
 import 'package:mor_release/pages/order/order.dart';
 import 'package:mor_release/scoped/connected.dart';
 import './pages/user/registration_page.dart';
@@ -228,10 +230,12 @@ class _MyApp extends State<MyApp> {
           //  BottomNav(model.userInfo.distrId),
           '/login': (BuildContext context) => LoginScreen(),
           '/registration': (BuildContext context) => RegistrationPage(),
+          '/bulkOrder': (BuildContext context) =>
+              BulkOrder(model, model.shipmentArea, model.distrPoint),
           //'/welcome': (BuildContext context) => Welcome(),
           '/itemstabs': (BuildContext context) => ItemsTabs(),
           '/itemspage': (BuildContext context) => ItemsPage(),
-          // '/endorder': (BuildContext context) => EndOrder(),
+          '/endorder': (BuildContext context) => EndOrder(model),
           '/order': (BuildContext context) => OrderPage(model),
 
           // '/savedialog':(BuildContext context) => SaveDialog(),

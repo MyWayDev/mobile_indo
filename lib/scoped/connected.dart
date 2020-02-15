@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:collection';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -25,7 +24,7 @@ import 'package:firebase_core/firebase_core.dart';
 class MainModel extends Model {
   // ** items //** */
   static String _version = '3.12r'; //!Modify for every release version./.
-  static String firebaseDb = "indoStage"; //!modify back to indoProduction;
+  static String firebaseDb = "indoProduction"; //!modify back to indoProduction;
   static String stage = "indoStage";
   static String updateDb = "indoStage";
   final FirebaseDatabase database = FirebaseDatabase.instance;
@@ -1152,10 +1151,10 @@ class MainModel extends Model {
     return x;
   }
 
-  List<AggrItem> bulkItemsjoin = List();
+  // List<AggrItem> bulkItemsjoin = List();
 
-  void itemOrderAggrList(List<ItemOrder> itemOrders) {
-    bulkItemsjoin = [];
+  List<AggrItem> itemOrderAggrList(List<ItemOrder> itemOrders) {
+    List<AggrItem> bulkItemsjoin = [];
 
     for (var item in itemOrders) {
       AggrItem aggrItem = AggrItem(id: item.itemId, qty: item.qty);
@@ -1170,14 +1169,75 @@ class MainModel extends Model {
       }
     }
     bulkItemsjoin.forEach((i) => print('${i.id}:${i.qty}'));
+    return bulkItemsjoin;
   }
 
-  void bulkItemsList(List<SalesOrder> orders) {
+  List<AggrItem> bulkItemsList(List<SalesOrder> orders) {
     List<ItemOrder> itemOrdersII = [];
     // orders.forEach((o) => print({o.distrId: o.total}));
     orders.forEach((so) => so.order.forEach((item) => itemOrdersII.add(item)));
 
-    itemOrderAggrList(itemOrdersII);
+    return itemOrderAggrList(itemOrdersII);
+  }
+
+  int getItemBulkQty(Item item) {
+    List<AggrItem> itemBulkQty = bulkItemsList(bulkOrder);
+    int x;
+    bool y = itemBulkQty.where((i) => i.id == item.itemId).isNotEmpty;
+    if (y) {
+      x = itemBulkQty.where((i) => i.id == item.itemId).first.qty;
+      print("ItemId${item.itemId}: BulkQty:$x");
+    } else {
+      x = 0;
+    }
+    return x;
+  }
+
+  Future<List<AggrItem>> mockBulkOrderBalanceCheck(
+      List<SalesOrder> orders, List<AggrItem> aggrItem) async {
+    // List<ItemOrder> orderOutList = List();
+    List<AggrItem> itemOutList = List();
+    loading = true;
+    for (var item in aggrItem) {
+      item.id != '90'
+          ? await getStock(item.id).then((i) {
+              if (i < item.qty) {
+                itemOutList.add(item);
+                itemOutList.last.qtyOut = i;
+                print('BulkOutListBelow:');
+                isBalanceChecked = false;
+                print({itemOutList.last.id: itemOutList.last.qty});
+              }
+            })
+          : null;
+    }
+
+    // for (var order in orders) {
+    if (itemOutList.length > 0) {
+      /* for (var item in itemOutList) {
+          order.order
+              .where((i) => i.itemId == item.id)
+              .forEach((f) => f.qty = item.qty);
+        }
+        //  orderOutList.clear();
+        order.gifts.clear();
+        order.promos.clear();
+        order.order.removeWhere((i) => i.qty <= 0 || i.bp <= 0);
+        // bulkOrder.removeWhere((bulk) => bulk.order.length == 0);
+
+        for (var sOrder in bulkOrder) {
+          sOrder.total = reOrderSum(sOrder.order);
+          sOrder.totalBp = reOrderBp(sOrder.order);
+          sOrder.weight = reOrderWeight(sOrder.order);
+        }*/
+      isBalanceChecked = false;
+    } else {
+      isBalanceChecked = true;
+      // msg = await saveOrder(shipmentId, courierfee, distrId, note, areaId);
+    }
+    //  }
+    loading = false;
+    return itemOutList;
   }
 
   Future<List<ItemOrder>> bulkOrderBalanceCheck(List<SalesOrder> orders) async {

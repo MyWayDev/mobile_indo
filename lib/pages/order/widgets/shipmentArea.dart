@@ -235,7 +235,8 @@ class _ShipmentAreaState extends State<ShipmentPlace>
                                               //!try to change value from shipment area but
                                               //! get shipmennt area to model.shipmenntarea;
                                               field.didChange(value);
-
+                                              shipmentAreas.forEach((i) =>
+                                                  print(i.shipmentAddress));
                                               _valueChanged(true);
                                               print('dropDown value:$value');
                                               // int x = shipmentAreas.indexOf(value);

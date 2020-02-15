@@ -10,6 +10,8 @@ import 'package:mor_release/pages/messages/tickets.dart';
 import 'package:mor_release/scoped/connected.dart';
 import 'package:scoped_model/scoped_model.dart';
 
+import 'account/report.tabs.dart';
+
 class BottomNav extends StatefulWidget {
   final String user;
   BottomNav(this.user);
@@ -86,7 +88,8 @@ class _BottomNav extends State<BottomNav> with SingleTickerProviderStateMixin {
             Tickets(
               distrId: int.parse(model.user.key),
             ),
-            Report(model.user.distrId),
+            ReportTabs()
+            //Report(model.user.distrId),
             //  Cat(pdfUrl: model.settings.pdfUrl)
           ],
 

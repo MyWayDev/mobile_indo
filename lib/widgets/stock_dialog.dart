@@ -40,6 +40,7 @@ class _StockDialog extends State<StockDialog> {
   bool _loading = false;
 
   final ModelData _data = ModelData.empty();
+
   Future<bool> isGetStock(MainModel model, String itemId) async {
     bool _loading;
     int x = await model.getStock(itemId);
@@ -159,14 +160,82 @@ class _StockDialog extends State<StockDialog> {
                         size: 33.0,
                         color: Colors.green,
                       ),
-                      /*PaddingonPressed: () {
-                        model.addItemOrder(itemData[index], _data.number);
+                      /*  onPressed: () async {
+                          //  model.addItemOrder(itemData[index], _data.number);
+                          bool _limited =
+                              model.limited(int.parse(itemData[index].key));
+                          if (_data.number > 0) {
+                            bool t = true;
+                            isLoading(t);
+                            bool x =
+                                await isGetStock(model, itemData[index].itemId);
+                            int _stock =
+                                await model.getStock(itemData[index].itemId);
+                            if (!_limited) {
+                              if (_data.number != 0 &&
+                                  _stock >= 1 &&
+                                  _stock - model.settings.safetyStock >=
+                                      _data.number +
+                                          model.getItemOrderQty(
+                                              itemData[index]) +
+                                          model.getItemBulkQty(
+                                              itemData[index]) &&
+                                  _data.number +
+                                          model.getItemOrderQty(
+                                              itemData[index]) +
+                                          model.getItemBulkQty(
+                                              itemData[index]) <=
+                                      model.settings.maxOrder) {
+                                model.addItemOrder(
+                                    itemData[index], _data.number);
 
-                        Navigator.pop(context);
-                      }*/
+                                Navigator.pop(context);
+                                isLoading(x);
+                              } else {
+                                Navigator.pop(context);
+                                _stockAlert(
+                                    context,
+                                    _stock,
+                                    model.settings.maxOrder,
+                                    model.settings.safetyStock,
+                                    model.getItemOrderQty(itemData[index]) +
+                                        model.getItemBulkQty(itemData[index]));
+                              }
+                            } else {
+                              if (_data.number != 0 &&
+                                  _stock >= 1 &&
+                                  _stock - model.settings.safetyStock >=
+                                      _data.number +
+                                          model.getItemOrderQty(
+                                              itemData[index]) +
+                                          model.getItemBulkQty(
+                                              itemData[index]) &&
+                                  _data.number +
+                                          model.getItemOrderQty(
+                                              itemData[index]) +
+                                          model.getItemBulkQty(
+                                              itemData[index]) <=
+                                      model.settings.maxLimited) {
+                                model.addItemOrder(
+                                    itemData[index], _data.number);
+
+                                Navigator.pop(context);
+                                isLoading(x);
+                              } else {
+                                Navigator.pop(context);
+                                _stockAlert(
+                                    context,
+                                    _stock,
+                                    model.settings.maxLimited,
+                                    model.settings.safetyStock,
+                                    model.getItemOrderQty(itemData[index]) +
+                                        model.getItemBulkQty(itemData[index]));
+                              }
+                            }
+                          }
+                          // Navigator.pop(context);
+                        }*/
                       onPressed: () async {
-                        print(
-                            'islimited = ${model.limited(int.parse(itemData[index].key))}');
                         bool _limited =
                             model.limited(int.parse(itemData[index].key));
                         if (_data.number > 0) {
@@ -179,6 +248,11 @@ class _StockDialog extends State<StockDialog> {
                           if (!_limited) {
                             if (_data.number != 0 &&
                                 _stock >= 1 &&
+                                _stock >=
+                                    _data.number +
+                                        model.getItemBulkQty(itemData[index]) +
+                                        model
+                                            .getItemOrderQty(itemData[index]) &&
                                 _stock - model.settings.safetyStock >=
                                     _data.number +
                                         model
@@ -203,6 +277,11 @@ class _StockDialog extends State<StockDialog> {
                           } else {
                             if (_data.number != 0 &&
                                 _stock >= 1 &&
+                                _stock >=
+                                    _data.number +
+                                        model.getItemBulkQty(itemData[index]) +
+                                        model
+                                            .getItemOrderQty(itemData[index]) &&
                                 _stock - model.settings.safetyStock >=
                                     _data.number +
                                         model

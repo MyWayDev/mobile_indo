@@ -1,6 +1,7 @@
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sliding_up_panel/sliding_up_panel_widget.dart';
+import 'package:groovin_material_icons/groovin_material_icons.dart';
 import 'package:intl/intl.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:mor_release/models/user.dart';
@@ -61,7 +62,7 @@ class _OrderPage extends State<OrderPage> {
   void _settingModalBottomSheet(context) {
     showModalBottomSheet(
         elevation: 8,
-        backgroundColor: Colors.purple[50],
+        backgroundColor: Colors.deepPurple[50],
         context: context,
         builder: (BuildContext bc) {
           return ScopedModelDescendant<MainModel>(
@@ -316,9 +317,9 @@ class _OrderPage extends State<OrderPage> {
                                 ),
                               ),
                               title: Icon(
-                                Icons.add_box,
+                                GroovinMaterialIcons.format_list_checks,
                                 color: Colors.grey,
-                                size: 30,
+                                size: 34,
                               ), // required
                               //badgeColor: Colors.red, // default: Colors.red
 
@@ -435,9 +436,9 @@ class _OrderPage extends State<OrderPage> {
                                             ),
                                           )
                                         : Icon(
-                                            Icons.account_box,
+                                            GroovinMaterialIcons.cart_plus,
                                             color: Colors.grey,
-                                            size: 30,
+                                            size: 32,
                                           ),
                                   ],
                                 ),

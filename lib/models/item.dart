@@ -84,7 +84,6 @@ class Item {
         weight = snapshot.value['weight'];
 
   factory Item.fromJson(Map<String, dynamic> json) {
-    //! was Map<string, dynamic>
     return Item(
       id: json[''],
       key: json['ITEM_ID'],
@@ -164,9 +163,11 @@ class Item {
 class AggrItem {
   String id;
   int qty;
+  int qtyOut;
 
   AggrItem({
     this.id,
     this.qty,
+    this.qtyOut,
   });
 }

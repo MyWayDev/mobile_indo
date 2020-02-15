@@ -4,7 +4,10 @@ import 'package:groovin_material_icons/groovin_material_icons.dart';
 import 'package:intl/intl.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:mor_release/bottom_nav.dart';
+import 'package:mor_release/models/item.dart';
 import 'package:mor_release/models/item.order.dart';
+import 'package:mor_release/pages/order/bulkOrder.dart';
+import 'package:mor_release/pages/order/order.dart';
 import 'package:mor_release/pages/order/widgets/outStockDialog.dart';
 import 'package:mor_release/pages/order/widgets/payment.dart';
 import 'package:mor_release/scoped/connected.dart';
@@ -29,7 +32,7 @@ class SaveBulkDialog extends StatefulWidget {
 }
 
 class _SaveBulkDialogState extends State<SaveBulkDialog> {
-  List<ItemOrder> balanceCheckOutPut = [];
+  List<AggrItem> balanceCheckOutPut = [];
   OrderBulkMsg bulkIds = new OrderBulkMsg(ids: [], error: '');
 
   List<ItemOrder> msg = List();
@@ -163,16 +166,20 @@ class _SaveBulkDialogState extends State<SaveBulkDialog> {
         elevation: 5,
         child: ListTile(
           leading: Text(
-            balanceCheckOutPut[i].itemId,
-            style: TextStyle(color: Colors.green[700], fontSize: 12),
+            balanceCheckOutPut[i].id,
+            style: TextStyle(fontSize: 13),
           ),
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Text(
+                balanceCheckOutPut[i].qtyOut.toString(),
+                style: TextStyle(color: Colors.red[900], fontSize: 13),
+              ),
+              Text(
                 balanceCheckOutPut[i].qty.toString(),
-                style: TextStyle(color: Colors.red[900], fontSize: 12),
+                style: TextStyle(color: Colors.green[900], fontSize: 13),
               ),
             ],
           ),
@@ -268,15 +275,14 @@ class _SaveBulkDialogState extends State<SaveBulkDialog> {
                           elevation: 3,
                           fillColor: Colors.yellow[900],
                           onPressed: () {
-                            Navigator.of(context).pop();
                             model.deleteEmptyOrders();
-                            /*  Navigator.pushReplacement(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (_) => BulkOrder(
-                                                          model,
-                                                          model.shipmentArea,
-                                                          model.distrPoint)));*/
+                            Navigator.of(context).pop();
+
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) =>
+                                        BottomNav(model.userInfo.distrId)));
                           },
                           splashColor: Colors.pink[900],
                         ),
@@ -448,8 +454,10 @@ class _SaveBulkDialogState extends State<SaveBulkDialog> {
                                       //fu.show(context);
                                       isLoading(true, model);
                                       balanceCheckOutPut =
-                                          await model.bulkOrderBalanceCheck(
-                                              model.bulkOrder);
+                                          await model.mockBulkOrderBalanceCheck(
+                                              model.bulkOrder,
+                                              model.bulkItemsList(
+                                                  model.bulkOrder));
                                       isLoading(false, model);
                                       if (balanceCheckOutPut.length == 0) {
                                         isLoading(true, model);

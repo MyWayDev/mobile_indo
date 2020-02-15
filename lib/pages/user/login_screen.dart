@@ -110,7 +110,7 @@ class _LoginScreen extends State<LoginScreen> {
                     : Container(),
 
                 SizedBox(
-                  height: 5.0,
+                  height: 10.0,
                 ),
                 /*Padding(
                   padding: const EdgeInsets.only(left: 40.0),
@@ -128,7 +128,7 @@ class _LoginScreen extends State<LoginScreen> {
                     borderRadius: BorderRadius.circular(20.0),
                   ),
                   margin: const EdgeInsets.symmetric(
-                      vertical: 10.0, horizontal: 20.0),
+                      vertical: 8.0, horizontal: 20.0),
                   child: Row(
                     children: <Widget>[
                       Padding(
@@ -141,7 +141,7 @@ class _LoginScreen extends State<LoginScreen> {
                         ),
                       ),
                       Container(
-                        height: 30.0,
+                        height: 28.0,
                         width: 1.0,
                         color: Colors.grey.withOpacity(0.5),
                         margin: const EdgeInsets.only(left: 00.0, right: 10.0),
@@ -188,7 +188,7 @@ class _LoginScreen extends State<LoginScreen> {
                     borderRadius: BorderRadius.circular(20.0),
                   ),
                   margin: const EdgeInsets.symmetric(
-                      vertical: 10.0, horizontal: 20.0),
+                      vertical: 8.0, horizontal: 20.0),
                   child: Row(
                     children: <Widget>[
                       new Padding(
@@ -249,7 +249,7 @@ class _LoginScreen extends State<LoginScreen> {
                     )),
 
                 Container(
-                    margin: EdgeInsets.only(top: 5.0),
+                    margin: EdgeInsets.only(top: 3.0),
                     padding: const EdgeInsets.only(left: 20.0, right: 20.0),
                     child: new Row(
                       children: <Widget>[
@@ -280,7 +280,7 @@ class _LoginScreen extends State<LoginScreen> {
                                   new Transform.translate(
                                     offset: Offset(15.0, 0.0),
                                     child: new Container(
-                                      padding: const EdgeInsets.all(5.0),
+                                      padding: const EdgeInsets.all(1.0),
                                       child: FlatButton(
                                           shape: new RoundedRectangleBorder(
                                               borderRadius:
@@ -310,7 +310,7 @@ class _LoginScreen extends State<LoginScreen> {
                 registration_button.RegistrationButton(),
 
                 Padding(
-                    padding: EdgeInsets.only(top: 16),
+                    padding: EdgeInsets.only(top: 8),
                     child: Center(
                         child: Column(
                       children: <Widget>[
@@ -326,7 +326,7 @@ class _LoginScreen extends State<LoginScreen> {
                           children: <Widget>[
                             Icon(GroovinMaterialIcons.whatsapp,
                                 size: 28, color: Colors.greenAccent[400]),
-                            SizedBox(width: 8.0),
+                            SizedBox(width: 2.0),
                             Text('081-1186-245',
                                 style: TextStyle(
                                     fontSize: 15, fontWeight: FontWeight.bold))

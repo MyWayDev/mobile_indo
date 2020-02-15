@@ -99,7 +99,7 @@ class ItemsTabs extends StatelessWidget {
                             ),
                             Positioned(
                               child: Opacity(
-                                  opacity: model.itemCount() == 0 ? 1 : 0.70,
+                                  opacity: 1,
                                   child: BadgeIconButton(
                                     badgeColor: Colors.purple[800],
                                     itemCount: model.bulkOrder.length < 0

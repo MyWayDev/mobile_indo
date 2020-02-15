@@ -249,13 +249,26 @@ class _NewMemberPage extends State<NewMemberPage> {
                               child: veri
                                   ? Container(
                                       child: Column(
+                                        mainAxisSize: MainAxisSize.max,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.stretch,
                                         children: <Widget>[
                                           ListTile(
+                                            trailing: Text('30,000 RP',
+                                                style: TextStyle(
+                                                    color:
+                                                        Colors.lightGreen[900],
+                                                    fontSize: 15,
+                                                    fontStyle: FontStyle.italic,
+                                                    fontWeight:
+                                                        FontWeight.bold)),
                                             leading: RawMaterialButton(
                                               child: Icon(
                                                 GroovinMaterialIcons
                                                     .calendar_check,
-                                                size: 25.0,
+                                                size: 24.0,
                                                 color: Colors.white,
                                               ),
                                               shape: CircleBorder(),
@@ -268,14 +281,18 @@ class _NewMemberPage extends State<NewMemberPage> {
                                               },
                                               splashColor: Colors.pink[900],
                                             ),
-                                            title: selected != null
-                                                ? Text(DateFormat('yyyy-MM-dd')
-                                                    .format(selected)
-                                                    .toString())
-                                                : Text(''),
+                                            title: Padding(
+                                              padding: EdgeInsets.only(top: 30),
+                                              child: selected != null
+                                                  ? Text(
+                                                      DateFormat('yyyy-MM-dd')
+                                                          .format(selected)
+                                                          .toString())
+                                                  : Text(''),
+                                            ),
                                             subtitle: Padding(
                                               padding:
-                                                  EdgeInsets.only(right: 8),
+                                                  EdgeInsets.only(right: 1),
                                               child: selected == null
                                                   ? Text('Tanggal lahir')
                                                   : Text(''),

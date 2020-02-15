@@ -14,7 +14,7 @@ class LoginBanner extends StatelessWidget {
         clipper: MyClipper(),
         child: Container(
           decoration: BoxDecoration(
-            image: new DecorationImage(
+            image: DecorationImage(
               image: model.appLocked
                   ? NetworkImage(
                       'https://pngimage.net/wp-content/uploads/' +
@@ -23,7 +23,7 @@ class LoginBanner extends StatelessWidget {
                     )
                   : NetworkImage(this.bannerUrl,
                       scale:
-                          1.0), //AssetImage("assets/images/adbanner.png"), //!! need to change it to networkImagae & make it dynamic
+                          0.5), //AssetImage("assets/images/adbanner.png"), //!! need to change it to networkImagae & make it dynamic
               // fit: BoxFit.cover,
               /* */
             ),
@@ -33,19 +33,20 @@ class LoginBanner extends StatelessWidget {
           child: Column(
             children: <Widget>[
               Text(
+                "Beta 3.20 ",
+                textDirection: TextDirection.ltr,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey[300],
+                ),
+              ),
+              Text(
                 "",
                 style: TextStyle(
                     fontSize: 70.0,
                     fontWeight: FontWeight.bold,
                     color: Theme.of(context).primaryColor),
-              ),
-              Text(
-                "Versi demo beta-3.1r ",
-                textDirection: TextDirection.rtl,
-                style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black),
               ),
             ],
           ),
