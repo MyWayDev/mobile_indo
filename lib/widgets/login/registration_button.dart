@@ -45,12 +45,14 @@ class RegistrationButton extends StatelessWidget {
                             color: Theme.of(context).primaryColor,
                           ),
                           onPressed: () =>
-                              Navigator.pushNamed(context, '/registration')),
+                              Navigator.pushNamed(context, '/phoneAuth')),
+                      // Navigator.pushNamed(context, '/registration')),
                     ),
                   )
                 ],
               ),
-              onPressed: () => Navigator.pushNamed(context, '/registration'),
+              onPressed: () => Navigator.pushNamed(context, '/phoneAuth'),
+              // Navigator.pushNamed(context, '/registration'),
             ),
           ),
         ],

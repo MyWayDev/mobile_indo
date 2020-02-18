@@ -58,20 +58,9 @@ class _RegistrationPage extends State<RegistrationPage> {
     return _legacyDataExits = true;
   }
 
-  Future<void> fillMobileNumber() async {
-    String mobileNumber = '';
-    try {
-      mobileNumber = await MobileNumber.mobileNumber;
-    } catch (e) {
-      print(e);
-      setState(() {
-        _mobileNumber = 'error';
-      });
-    }
-
-    setState(() {
-      _mobileNumber = mobileNumber;
-    });
+  Future<String> fillMobileNumber() async {
+    final String mobileNumber = await MobileNumber.mobileNumber;
+    return mobileNumber;
   }
 
   Future initlegacyData(String distrid) async {
@@ -212,7 +201,7 @@ class _RegistrationPage extends State<RegistrationPage> {
                     TextFormField(
                       initialValue: '',
                       decoration: InputDecoration(
-                          labelText: 'Nomor Telepon',
+                          labelText: _mobileNumber, // 'Nomor Telepon',
                           contentPadding: EdgeInsets.all(8.0),
                           icon: Icon(Icons.phone, color: Colors.pink[500])),
                       onSaved: (String value) {
@@ -307,7 +296,8 @@ class _RegistrationPage extends State<RegistrationPage> {
                                   color: Theme.of(context).primaryColor,
                                 ),
                                 onPressed: () async {
-                                  _regPressed();
+                                  await fillMobileNumber();
+                                  // _regPressed();
                                   //model.fbItemsUpdateFromDb();
                                 },
                               ),
@@ -316,7 +306,8 @@ class _RegistrationPage extends State<RegistrationPage> {
                         ],
                       ),
                       onPressed: () async {
-                        _regPressed();
+                        await fillMobileNumber();
+                        // _regPressed();
                         // model.fbItemsUpdateFromDb();
                       },
                     ),

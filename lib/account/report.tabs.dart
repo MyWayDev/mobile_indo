@@ -10,25 +10,25 @@ class ReportTabs extends StatelessWidget {
   final AppBar _appBar = AppBar(
     leading: Container(),
     bottomOpacity: 0.0,
-    backgroundColor: Colors.transparent,
+    backgroundColor: Colors.pink[900],
     elevation: 20,
     ///////////////////////Top Tabs Navigation Widget//////////////////////////////
     title: TabBar(
-      indicatorColor: Colors.grey,
-      indicatorWeight: 4,
+      indicatorColor: Colors.grey[900],
+      indicatorWeight: 6,
       indicatorSize: TabBarIndicatorSize.tab,
       tabs: <Widget>[
         Tab(
           icon: Icon(
             GroovinMaterialIcons.account_card_details,
             size: 29.0,
-            color: Colors.pink[700],
+            color: Colors.blueAccent[100],
           ),
         ),
         Tab(
           icon: Icon(
             GroovinMaterialIcons.account_plus,
-            color: Colors.green[900],
+            color: Colors.greenAccent[400],
             size: 29.0,
           ),
           // required
@@ -51,14 +51,14 @@ class ReportTabs extends StatelessWidget {
           icon: Icon(
             GroovinMaterialIcons.account_star,
             size: 29.0,
-            color: Colors.amberAccent[400],
+            color: Color(0xFFFFD700),
           ),
         ),
         Tab(
           icon: Icon(
             GroovinMaterialIcons.account_group,
             size: 29.0,
-            color: Colors.black,
+            color: Colors.white,
           ),
         ),
       ],

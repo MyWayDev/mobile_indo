@@ -11,6 +11,7 @@ import 'package:mor_release/pages/messages/local_note.dart';
 import 'package:mor_release/pages/order/bulkOrder.dart';
 import 'package:mor_release/pages/order/end_order.dart';
 import 'package:mor_release/pages/order/order.dart';
+import 'package:mor_release/pages/user/phoneAuth.dart';
 import 'package:mor_release/scoped/connected.dart';
 import './pages/user/registration_page.dart';
 import './pages/user/login_screen.dart';
@@ -237,6 +238,7 @@ class _MyApp extends State<MyApp> {
           '/itemspage': (BuildContext context) => ItemsPage(),
           '/endorder': (BuildContext context) => EndOrder(model),
           '/order': (BuildContext context) => OrderPage(model),
+          '/phoneAuth': (BuildContext context) => PhoneAuth(title: 'Reg'),
 
           // '/savedialog':(BuildContext context) => SaveDialog(),
           //'/lockpage': (BuildContext context) => LockScreen(),
