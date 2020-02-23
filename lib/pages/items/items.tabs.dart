@@ -24,6 +24,7 @@ class ItemsTabs extends StatelessWidget {
     return ScopedModelDescendant<MainModel>(
         builder: (BuildContext context, Widget child, MainModel model) {
       model.userDetails();
+
       return DefaultTabController(
         length: 4,
         child: Scaffold(
@@ -168,7 +169,7 @@ class ItemsTabs extends StatelessWidget {
           ////////////////////////Bottom Tabs Navigation widget/////////////////////////
           body: TabBarView(
             children: <Widget>[
-              ItemsPage(), // SwitchPage(ItemsPage()),
+              ItemsPage(model), // SwitchPage(ItemsPage()),
               OrderPage(model), //SwitchPage(OrderPage()),
               //   model.bulkOrder.length != 0 ? OrderPage(model) : null,
               TrackTabs(),

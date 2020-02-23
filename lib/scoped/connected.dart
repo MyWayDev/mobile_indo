@@ -23,20 +23,24 @@ import 'package:firebase_core/firebase_core.dart';
 
 class MainModel extends Model {
   // ** items //** */
-  static String _version = '3.12r'; //!Modify for every release version./.
-  static String firebaseDb = "indoProduction"; //!modify back to indoProduction;
+  static String _version = '3.20r'; //!Modify for every release version./.
+  static String firebaseDb = "indoStage"; //!modify back to indoProduction;
   static String stage = "indoStage";
   static String updateDb = "indoStage";
   final FirebaseDatabase database = FirebaseDatabase.instance;
   DatabaseReference databaseReference;
   final String path = 'flamelink/environments/$firebaseDb/content';
   final String httpath = 'http://mywayindoapi.azurewebsites.net/api';
+  //!production azure//'http://mywayindoapi-staging.azurewebsites.net/api'
   String shipmentName = '';
   String shipmentArea = '';
   String shipmentAddress = '';
   String bulkDistrId;
   String shipmentCompanyId;
-  int distrPoint = 0;
+  int distrPoint = 1;
+  String distrPointName = 'Jakarta Courier';
+  String setStoreId = '02';
+  String docType = 'CR';
   int noteCount;
   List<Item> itemData = List();
   List<Item> searchResult = [];
@@ -52,6 +56,12 @@ class MainModel extends Model {
   bool isBalanceChecked = true;
   bool isTypeing = false;
   final List<Item> _recoImage = List();
+  String get distrPointNames {
+    String _distrPointNames;
+    _distrPointNames = distrPointName;
+    notifyListeners();
+    return _distrPointNames;
+  }
 
   updateEnabledItems(String itemId) {
     database
@@ -1289,7 +1299,7 @@ class MainModel extends Model {
 
   int getRandom() {
     Random random = Random();
-    int _random = random.nextInt(10000);
+    int _random = random.nextInt(9998);
     int projId;
     projId = _random.toString().length == 4 ? _random : getRandom();
     return projId;
@@ -1575,6 +1585,7 @@ for(var area in areas){
       shipmentAreas = [];
       print('no shipment Areas for $distrId');
     }
+    print('validShipmentAreas Count=>:${validShipmentAreas.length}');
     return validShipmentAreas;
   }
 
@@ -1675,17 +1686,33 @@ for(var area in areas){
   }
 
 //!--------*
-  Future<List<Region>> getPoints() async {
+
+  List<Store> stores;
+  Future<List<Store>> getStores() async {
+    DataSnapshot snapshot =
+        await database.reference().child('$path/stores/en-US/').once();
+
+    Map<dynamic, dynamic> _stores = snapshot.value;
+    List list = _stores.values.toList();
+    stores = list.map((f) => Store.json(f)).toList();
+
+    return stores;
+  }
+
+  List<Region> distrPoints;
+  Future<List<Region>> getPoints(int _regionId) async {
+    distrPoints = [];
+
     DataSnapshot snapshot =
         await database.reference().child('$path/region/en-US/').once();
 
     Map<dynamic, dynamic> _areas = snapshot.value;
     List list = _areas.values.toList();
-    List<Region> distrPoints = list
+    distrPoints = list
         .map((f) => Region.json(f))
-        .where((r) => r.distrPoint == true)
+        .where((r) => r.distrPoint == true && r.id == _regionId)
         .toList();
-
+    print('distrPoints Count:${distrPoints.length}');
     return distrPoints;
   }
 

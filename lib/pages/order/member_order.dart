@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:mor_release/models/courier.dart';
+import 'package:mor_release/pages/order/order_cash.dart';
 import 'package:mor_release/pages/order/widgets/order_courier.dart';
 import 'package:mor_release/scoped/connected.dart';
 
@@ -10,7 +11,7 @@ class MemberOrder extends StatefulWidget {
   final MainModel model;
   final String areaId;
   final int distrPoint;
-  MemberOrder(this.model, this.areaId, this.distrPoint);
+  MemberOrder(this.model, this.distrPoint, {this.areaId});
   @override
   State<StatefulWidget> createState() {
     return _MemberOrder();
@@ -30,7 +31,7 @@ class _MemberOrder extends State<MemberOrder> {
 
   @override
   void initState() {
-    getinit();
+    widget.areaId == '' ? null : getinit();
     super.initState();
   }
 
@@ -50,10 +51,10 @@ class _MemberOrder extends State<MemberOrder> {
   Widget build(BuildContext context) {
     return ScopedModelDescendant<MainModel>(
       builder: (BuildContext context, Widget child, MainModel model) {
-        return shipment.length > 0
+        return shipment.length > 0 && model.docType == 'CR'
             ? CourierOrder(shipment, widget.areaId, model.userInfo.distrId,
                 model.userInfo.distrId)
-            : Container();
+            : CashOrder(model.userInfo.distrId, model.userInfo.distrId);
       },
     );
   }

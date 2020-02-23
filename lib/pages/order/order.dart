@@ -413,7 +413,8 @@ class _OrderPage extends State<OrderPage> {
                                       MainAxisAlignment.spaceEvenly,
                                   children: <Widget>[
                                     model.bulkOrder.length == 0 &&
-                                            model.userInfo.isleader
+                                            model.userInfo.isleader &&
+                                            model.docType == 'CR'
                                         ? Transform.scale(
                                             scale: 1.5,
                                             child: Switch(

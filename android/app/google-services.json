@@ -59,6 +59,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "592280217867-0ei5822noepjvsi1ulgkrmam53fpvuu1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.myway.mor_release",
+            "certificate_hash": "38f89513487817b991f399b6ff96147dc33e9462"
+          }
+        },
+        {
           "client_id": "592280217867-bsnmhsigqv9fa2dja4hp2n2igovsscm5.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

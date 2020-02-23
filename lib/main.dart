@@ -56,6 +56,7 @@ class _MyApp extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+
     String _token = '';
     initTokenListen();
     Future onSelectNotification(String payload) async => Navigator.push(
@@ -235,7 +236,7 @@ class _MyApp extends State<MyApp> {
               BulkOrder(model, model.shipmentArea, model.distrPoint),
           //'/welcome': (BuildContext context) => Welcome(),
           '/itemstabs': (BuildContext context) => ItemsTabs(),
-          '/itemspage': (BuildContext context) => ItemsPage(),
+          '/itemspage': (BuildContext context) => ItemsPage(model),
           '/endorder': (BuildContext context) => EndOrder(model),
           '/order': (BuildContext context) => OrderPage(model),
           '/phoneAuth': (BuildContext context) => PhoneAuth(title: 'Reg'),

@@ -48,7 +48,25 @@ class _BulkOrderState extends State<BulkOrder> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Bulk Order'),
+        title: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                widget.model.userInfo.name,
+                style: TextStyle(
+                  fontSize: 15,
+                ),
+              ),
+              Text(
+                widget.model.distrPointName,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontStyle: FontStyle.italic,
+                  color: Colors.amberAccent,
+                ),
+              )
+            ]),
       ),
       body: ScopedModelDescendant<MainModel>(
         builder: (BuildContext context, Widget child, MainModel model) {

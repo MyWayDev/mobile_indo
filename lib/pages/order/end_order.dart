@@ -1,7 +1,4 @@
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:mor_release/models/area.dart';
 import 'package:mor_release/models/courier.dart';
 import 'package:mor_release/pages/order/member_order.dart';
@@ -9,7 +6,6 @@ import 'package:mor_release/pages/order/node_order.dart';
 import 'package:mor_release/pages/order/widgets/shipmentArea.dart';
 
 import 'package:mor_release/scoped/connected.dart';
-import 'package:mor_release/widgets/color_loader_2.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class EndOrder extends StatefulWidget {
@@ -22,8 +18,8 @@ class EndOrder extends StatefulWidget {
 
 @override
 class _EndOrder extends State<EndOrder> with SingleTickerProviderStateMixin {
-  final GlobalKey<FormBuilderState> _fbKey = GlobalKey<FormBuilderState>();
-  final GlobalKey<FormBuilderState> _fbKeyII = GlobalKey<FormBuilderState>();
+  //final GlobalKey<FormBuilderState> _fbKey = GlobalKey<FormBuilderState>();
+  //final GlobalKey<FormBuilderState> _fbKeyII = GlobalKey<FormBuilderState>();
   String shipmetArea = '';
   int distrpoint = 0;
   bool isOpened = false;
@@ -182,7 +178,7 @@ class _EndOrder extends State<EndOrder> with SingleTickerProviderStateMixin {
       return Scaffold(
           resizeToAvoidBottomPadding: false,
           appBar: AppBar(
-            title: Row(
+            title: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -192,9 +188,17 @@ class _EndOrder extends State<EndOrder> with SingleTickerProviderStateMixin {
                       fontSize: 15,
                     ),
                   ),
+                  Text(
+                    model.distrPointName,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontStyle: FontStyle.italic,
+                      color: Colors.amberAccent,
+                    ),
+                  )
                 ]),
             actions: <Widget>[
-              !isOpened
+              !isOpened && model.docType == 'CR'
                   ? IconButton(
                       icon: Icon(
                         Icons.playlist_add,
@@ -241,54 +245,57 @@ class _EndOrder extends State<EndOrder> with SingleTickerProviderStateMixin {
               child: isOpened
                   ? NodeOrder(model, model.distrPoint)
                   : model.shipmentArea != '' && model.distrPoint != 0
-                      ? MemberOrder(model, model.shipmentArea, model.distrPoint)
-                      : Container(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Text(
-                                'Tekan Icon diatas untuk menyelesaikan pesanan',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 13.5,
-                                    color: Colors.grey[500]),
+                      ? MemberOrder(model, model.distrPoint,
+                          areaId: model.shipmentArea)
+                      : model.docType == 'CA'
+                          ? MemberOrder(model, model.distrPoint, areaId: '')
+                          : Container(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Text(
+                                    'Tekan Icon diatas untuk menyelesaikan pesanan',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 13.5,
+                                        color: Colors.grey[500]),
+                                  ),
+                                  Center(
+                                      child: Icon(
+                                    Icons.playlist_add,
+                                    size: 70,
+                                    color: Colors.grey[300],
+                                  )),
+                                  Padding(
+                                    padding: EdgeInsets.only(top: 55),
+                                  ),
+                                  model.userInfo.isleader
+                                      ? Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: <Widget>[
+                                            Text(
+                                              'Tekan Icon dibawah untuk menyele saikan vesanann downline',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 14,
+                                                  color: Colors.grey[500]),
+                                            ),
+                                            Padding(
+                                              padding: EdgeInsets.only(top: 55),
+                                            ),
+                                            Center(
+                                                child: Icon(
+                                              Icons.arrow_downward,
+                                              size: 50,
+                                              color: Colors.grey[300],
+                                            )),
+                                          ],
+                                        )
+                                      : Container(),
+                                ],
                               ),
-                              Center(
-                                  child: Icon(
-                                Icons.playlist_add,
-                                size: 70,
-                                color: Colors.grey[300],
-                              )),
-                              Padding(
-                                padding: EdgeInsets.only(top: 55),
-                              ),
-                              model.userInfo.isleader
-                                  ? Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: <Widget>[
-                                        Text(
-                                          'Tekan Icon dibawah untuk menyele saikan vesanann downline',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 14,
-                                              color: Colors.grey[500]),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.only(top: 55),
-                                        ),
-                                        Center(
-                                            child: Icon(
-                                          Icons.arrow_downward,
-                                          size: 50,
-                                          color: Colors.grey[300],
-                                        )),
-                                      ],
-                                    )
-                                  : Container(),
-                            ],
-                          ),
-                        )));
+                            )));
     });
   }
 /*

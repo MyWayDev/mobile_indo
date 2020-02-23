@@ -51,7 +51,7 @@ class _PhoneAuth extends State<PhoneAuth> {
         context: context,
         barrierDismissible: false,
         builder: (BuildContext context) {
-          return new AlertDialog(
+          return AlertDialog(
             title: Text('Enter SMS Code'),
             content: Container(
               height: 85,

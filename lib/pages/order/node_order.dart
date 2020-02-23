@@ -4,6 +4,7 @@ import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:mor_release/models/area.dart';
 import 'package:mor_release/models/courier.dart';
 import 'package:mor_release/models/user.dart';
+import 'package:mor_release/pages/order/order_cash.dart';
 import 'package:mor_release/pages/order/widgets/order_courier.dart';
 import 'package:mor_release/pages/order/widgets/shipmentArea.dart';
 import 'package:mor_release/scoped/connected.dart';
@@ -192,10 +193,13 @@ class _NodeOrder extends State<NodeOrder> {
                           print(shipment.length);*/
                           //  await getAreas(_nodeData.distrId);
 
-                          showDialog(
-                              context: context,
-                              builder: (_) => ShipmentPlace(
-                                  model: model, memberId: _nodeData.distrId));
+                          model.docType == 'CR'
+                              ? showDialog(
+                                  context: context,
+                                  builder: (_) => ShipmentPlace(
+                                      model: model,
+                                      memberId: _nodeData.distrId))
+                              : null;
                         } else {
                           resetVeri();
                           isTyping = false;
@@ -211,9 +215,14 @@ class _NodeOrder extends State<NodeOrder> {
                   ),
                 ),
               ),
-              veri && controller.text.length >= 8 && model.shipmentArea != ''
+              veri &&
+                      controller.text.length >= 8 &&
+                      model.shipmentArea != '' &&
+                      model.docType == 'CR'
                   ? BuildCourierOrder(model, _nodeData.distrId)
-                  : Container(),
+                  : controller.text.length >= 8 && model.docType == 'CA'
+                      ? CashOrder(_nodeData.distrId, model.userInfo.distrId)
+                      : Container()
               // buildCourierOrder(context, model),
             ],
           ),

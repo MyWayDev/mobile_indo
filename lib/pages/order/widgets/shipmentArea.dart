@@ -64,10 +64,10 @@ class _ShipmentAreaState extends State<ShipmentPlace>
 
   getDistrPoints() async {
     isloading(true);
-    distrPoints = await widget.model.getPoints();
+    distrPoints = await widget.model.getPoints(widget.model.distrPoint);
     if (distrPoints.length > 0) {
       setState(() {
-        widget.model.distrPoint = distrPoints[0].id;
+        //   widget.model.distrPoint = distrPoints[0].id;
         isloading(false);
       });
     } else {
@@ -77,7 +77,7 @@ class _ShipmentAreaState extends State<ShipmentPlace>
     }
     if (distrPoints.length == 1) {
       setState(() {
-        distrpoint = distrPoints[0].id;
+        distrpoint = widget.model.distrPoint; //distrPoints[0].id;
       });
       await getAreas();
       if (shipmentAreas.length == 0) {
@@ -92,7 +92,8 @@ class _ShipmentAreaState extends State<ShipmentPlace>
 
   getAreas() async {
     isloading(true);
-
+    print(
+        'Global distrPoint:${widget.model.distrPoint}: local distrPoint:$distrpoint');
     widget.memberId == null
         ? shipmentAreas = await widget.model
             .getShipmentAreas(widget.model.userInfo.distrId, distrpoint)

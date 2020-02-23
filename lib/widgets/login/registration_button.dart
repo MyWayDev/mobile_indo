@@ -11,7 +11,7 @@ class RegistrationButton extends StatelessWidget {
           Expanded(
             child: FlatButton(
               shape: RoundedRectangleBorder(
-                  borderRadius: new BorderRadius.circular(30.0)),
+                  borderRadius: BorderRadius.circular(30.0)),
               splashColor: Theme.of(context).primaryColor,
               color: Colors.pink[100],
               child: Row(
@@ -45,8 +45,8 @@ class RegistrationButton extends StatelessWidget {
                             color: Theme.of(context).primaryColor,
                           ),
                           onPressed: () =>
-                              Navigator.pushNamed(context, '/phoneAuth')),
-                      // Navigator.pushNamed(context, '/registration')),
+                              //  Navigator.pushNamed(context, '/phoneAuth')),
+                              Navigator.pushNamed(context, '/registration')),
                     ),
                   )
                 ],
