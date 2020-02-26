@@ -4,6 +4,7 @@ import 'package:groovin_material_icons/groovin_material_icons.dart';
 import 'package:intl/intl.dart';
 import 'package:mor_release/models/lock.dart';
 import 'package:mor_release/pages/items/itemDetails/footer.dart';
+import 'package:mor_release/pages/order/widgets/distrPointButton.dart';
 import 'package:scoped_model/scoped_model.dart';
 import '../../models/item.dart';
 import '../items/item.card.dart';
@@ -19,7 +20,7 @@ class ItemsPage extends StatefulWidget {
 }
 
 @override
-class _ItemsPage extends State<ItemsPage> {
+class _ItemsPage extends State<ItemsPage> with SingleTickerProviderStateMixin {
   final formatWeight = new NumberFormat("#,###.##");
   //String db = 'production';
   String path =
@@ -31,6 +32,7 @@ class _ItemsPage extends State<ItemsPage> {
   var subAdd;
   var subChanged;
   TextEditingController controller = new TextEditingController();
+  AnimationController _animationController;
   Lock lock;
 
   //bool defaultDB = true;
@@ -43,6 +45,9 @@ class _ItemsPage extends State<ItemsPage> {
     //!TODO ADD QUERY TO FILTER PRODUCTS NOT IN CATALOGE..
     subAdd = query.onChildAdded.listen(_onItemEntryAdded);
     subChanged = query.onChildChanged.listen(_onItemEntryChanged);
+    _animationController =
+        new AnimationController(vsync: this, duration: Duration(seconds: 1));
+    _animationController.repeat();
     super.initState();
   }
 
@@ -50,6 +55,7 @@ class _ItemsPage extends State<ItemsPage> {
   void dispose() {
     subAdd?.cancel();
     subChanged?.cancel();
+    _animationController.dispose();
     super.dispose();
   }
 
@@ -175,15 +181,15 @@ class _ItemsPage extends State<ItemsPage> {
     return Padding(
       padding: widget.model.bulkOrder.length > 0 ||
               widget.model.itemorderlist.length > 0
-          ? EdgeInsets.only(bottom: 23)
-          : EdgeInsets.only(top: 21),
+          ? EdgeInsets.only(bottom: 26)
+          : EdgeInsets.only(top: 16),
       child: Material(
         //Wrap with Material
         shape:
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
 
-        elevation: 8.0,
-        color: Colors.transparent,
+        elevation: 20.0,
+        color: Colors.amber,
         clipBehavior: Clip.antiAliasWithSaveLayer, // Add This
         child: Opacity(
             opacity: widget.model.bulkOrder.length > 0 ||
@@ -196,12 +202,15 @@ class _ItemsPage extends State<ItemsPage> {
                 color: Color(0xFF303030),
                 child: Row(
                   children: <Widget>[
-                    Icon(GroovinMaterialIcons.map_marker_radius,
-                        color: Colors.amber[900], size: 20),
+                    FadeTransition(
+                      opacity: _animationController,
+                      child: Icon(GroovinMaterialIcons.map_marker_radius,
+                          color: Colors.amber, size: 20),
+                    ),
                     Padding(padding: EdgeInsets.only(right: 8)),
                     Text(widget.model.distrPointNames,
                         style: TextStyle(
-                            fontSize: 13.5,
+                            fontSize: 13,
                             // fontWeight: FontWeight.bold,
                             color: Colors.amber[50])),
                   ],
@@ -297,6 +306,7 @@ class _ItemsPage extends State<ItemsPage> {
                         ],
                       )
                     : Container(),
+                // MyBlinkingButton()
                 _showNeedHelpButton()
               ],
             ),

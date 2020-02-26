@@ -22,7 +22,7 @@ class InvoiceItem {
     return InvoiceItem(
         docId: json['DOC_ID'],
         itemId: json['ITEM_ID'],
-        itemName: json['ITEM_NAME'] ?? " ",
+        itemName: json['ITEM_NAME'] ?? "",
         total: json['NET_TOTAL'],
         itemBp: json['ITEM_BP'],
         totalBp: json['TOTAL_BP'],
@@ -42,7 +42,13 @@ class Invoice {
   String shipper;
   String counter;
   String refNo;
+  String flagType;
   List<InvoiceItem> invoiceItems;
+
+  DateTime get addDate {
+    DateTime _addDate = DateTime.parse(docDate);
+    return _addDate;
+  }
 
   double get invocieTotal {
     double _totalPrice = 0;
@@ -71,19 +77,21 @@ class Invoice {
       this.shipper,
       this.counter,
       this.refNo,
+      this.flagType,
       this.invoiceItems});
 
   factory Invoice.fromJson(Map<String, dynamic> json) {
     return Invoice(
         docId: json['DOC_ID'],
-        docDate: json['DOC_DATE'],
-        distrId: json['DISTR'],
-        distrName: json['DISTR_NAME'],
-        shipId: json['DS_SHIPMENT'],
-        status: json['SHIPMENT_STATUS'],
+        docDate: json['DOC_DATE'] ?? '',
+        distrId: json['DISTR'] ?? '',
+        distrName: json['DISTR_NAME'] ?? '',
+        shipId: json['DS_SHIPMENT'] ?? '',
+        status: json['SHIPMENT_STATUS'] ?? '',
         shipper: json['COMP_NAME'] ?? '',
-        dlvDate: json['DLV_DATE'],
-        counter: json['COUNTER'],
+        dlvDate: json['DLV_DATE'] ?? '',
+        counter: json['COUNTER'] ?? '',
+        flagType: json['FLAG_TYPE'] ?? '',
         refNo: json['REF_NO'] ?? '');
   }
 }

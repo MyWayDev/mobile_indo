@@ -228,9 +228,11 @@ class _NewMemberPage extends State<NewMemberPage> {
                                   if (veri) {
                                     _nodeData = await model.nodeJson(
                                         controller.text.padLeft(8, '0'));
-                                    controller.text = _nodeData.distrId +
-                                        ' ' +
-                                        _nodeData.name;
+                                    _nodeData.distrId == '00000000'
+                                        ? resetVeri()
+                                        : controller.text = _nodeData.distrId +
+                                            ' ' +
+                                            _nodeData.name;
                                   } else {
                                     resetVeri();
                                   }

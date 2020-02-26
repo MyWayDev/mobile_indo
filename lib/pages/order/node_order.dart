@@ -102,9 +102,13 @@ class _NodeOrder extends State<NodeOrder> {
   Courier selectedCourier;
   List<Courier> shipment = [];
 
-  void resetVeri() {
+  void resetVeri(MainModel model) {
     controller.clear();
-    veri = false;
+    setState(() {
+      veri = false;
+      isTyping = false;
+    });
+    getTyping(model);
     shipment = [];
   }
 
@@ -183,8 +187,10 @@ class _NodeOrder extends State<NodeOrder> {
                           getTyping(model);
                           _nodeData = await model
                               .nodeJson(controller.text.padLeft(8, '0'));
-                          controller.text =
-                              _nodeData.distrId + '    ' + _nodeData.name;
+                          _nodeData.distrId == '00000000'
+                              ? resetVeri(model)
+                              : controller.text =
+                                  _nodeData.distrId + '    ' + _nodeData.name;
                           model.shipmentArea = '';
                           /* showDialog(
                               context: context,
@@ -193,7 +199,8 @@ class _NodeOrder extends State<NodeOrder> {
                           print(shipment.length);*/
                           //  await getAreas(_nodeData.distrId);
 
-                          model.docType == 'CR'
+                          model.docType == 'CR' &&
+                                  _nodeData.distrId != '00000000'
                               ? showDialog(
                                   context: context,
                                   builder: (_) => ShipmentPlace(
@@ -201,14 +208,10 @@ class _NodeOrder extends State<NodeOrder> {
                                       memberId: _nodeData.distrId))
                               : null;
                         } else {
-                          resetVeri();
-                          isTyping = false;
-                          getTyping(model);
+                          resetVeri(model);
                         }
                       } else {
-                        resetVeri();
-                        isTyping = false;
-                        getTyping(model);
+                        resetVeri(model);
                       }
                     },
                     splashColor: Colors.pink,
@@ -220,8 +223,11 @@ class _NodeOrder extends State<NodeOrder> {
                       model.shipmentArea != '' &&
                       model.docType == 'CR'
                   ? BuildCourierOrder(model, _nodeData.distrId)
-                  : controller.text.length >= 8 && model.docType == 'CA'
-                      ? CashOrder(_nodeData.distrId, model.userInfo.distrId)
+                  : veri &&
+                          controller.text.length >= 8 &&
+                          model.shipmentArea == '' &&
+                          model.docType == 'CA'
+                      ? BuildCashOrder(model, _nodeData.distrId)
                       : Container()
               // buildCourierOrder(context, model),
             ],
@@ -230,9 +236,40 @@ class _NodeOrder extends State<NodeOrder> {
       );
     });
   }
+}
 
-  Widget buildCourierOrder(BuildContext context, MainModel model) {
-    return veri && controller.text.length >= 8 && shipment.length > 0
+class BuildCashOrder extends StatefulWidget {
+  final MainModel model;
+  final String distrId;
+
+  BuildCashOrder(this.model, this.distrId);
+
+  @override
+  _BuildCashOrderState createState() => _BuildCashOrderState();
+}
+
+class _BuildCashOrderState extends State<BuildCashOrder> {
+  List<Courier> shipment = [];
+  void initNodeCourierList(MainModel model) async {
+    shipment = await model.couriersList(model.shipmentArea, model.distrPoint);
+  }
+
+  @override
+  void initState() {
+    //initNodeCourierList(widget.model);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return shipment.length == 0 &&
+            widget.model.shipmentArea == '' &&
+            widget.distrId != '00000000'
         ? Card(
             color: Colors.grey[100],
             child: Column(
@@ -244,8 +281,8 @@ class _NodeOrder extends State<NodeOrder> {
                           flex: 1,
                           child: Column(
                             children: <Widget>[
-                              CourierOrder(shipment, model.shipmentArea,
-                                  _nodeData.distrId, model.userInfo.distrId),
+                              CashOrder(widget.distrId,
+                                  widget.model.userInfo.distrId),
                             ],
                           ))
                     ],

@@ -29,7 +29,7 @@ class _TrackInvoice extends State<TrackInvoice> {
   void _getInvoices(String userId) async {
     firstInvoice = [];
     final http.Response response = await http.get(
-        'http://mywayindoapi.azurewebsites.net/api/userinvoices/$userId'); // sample distrid =>$userId
+        'http://mywayindoapi-staging.azurewebsites.net/api/userinvoices/$userId'); // sample distrid =>$userId
     if (response.statusCode == 200 && firstInvoice.length == 0) {
       print('getInvoice ok');
       List<dynamic> invoiceList = json.decode(response.body);
@@ -61,6 +61,8 @@ class _TrackInvoice extends State<TrackInvoice> {
 //firstInvoice.forEach((f)=>print({f.docId:f.invoiceItems.length}));
 //firstInvoice.forEach((f)=>print({f.docId:f.invocieTotal}));
     }
+    firstInvoice
+        .sort((b, a) => a.addDate.toLocal().compareTo(b.addDate.toLocal()));
     //return firstInvoice;
   }
 
@@ -75,8 +77,8 @@ class _TrackInvoice extends State<TrackInvoice> {
     super.dispose();
   }
 
-  Color _statusColor(String status) {
-    Color _color = Colors.white;
+  Color _statusColor(String status, String flagType) {
+    Color _color = flagType == 'CA' ? Colors.limeAccent[700] : Colors.white;
 
     if (status == '0' || status == '1') {
       _color = Colors.yellow[400];
@@ -89,8 +91,8 @@ class _TrackInvoice extends State<TrackInvoice> {
     return _color;
   }
 
-  Color _statusColorHead(String status) {
-    Color _color = Colors.white;
+  Color _statusColorHead(String status, String flagType) {
+    Color _color = flagType == 'CA' ? Colors.limeAccent[400] : Colors.white;
 
     if (status == '0' || status == '1') {
       _color = Colors.lime[300];
@@ -103,8 +105,8 @@ class _TrackInvoice extends State<TrackInvoice> {
     return _color;
   }
 
-  Color _statusColorDetails(String status) {
-    Color _color = Colors.white;
+  Color _statusColorDetails(String status, String flagType) {
+    Color _color = flagType == 'CA' ? Colors.limeAccent[400] : Colors.white;
 
     if (status == '0' || status == '1') {
       _color = Colors.lime[200];
@@ -193,7 +195,8 @@ class _TrackInvoice extends State<TrackInvoice> {
 
   Widget _buildOrder(List<Invoice> invoices, int index) {
     return ExpansionTile(
-        backgroundColor: _statusColorDetails(invoices[index].status),
+        backgroundColor: _statusColorDetails(
+            invoices[index].status, invoices[index].flagType),
         key: PageStorageKey<Invoice>(invoices[index]),
         title: ListTile(
           title: Container(
@@ -222,7 +225,7 @@ class _TrackInvoice extends State<TrackInvoice> {
     firstInvoice.clear();
 
     final http.Response responseII = await http.post(
-        'http://mywayindoapi.azurewebsites.net/api/updatedoneinv/$docId/$distrId');
+        'http://mywayindoapi-staging.azurewebsites.net/api/updatedoneinv/$docId/$distrId');
     if (responseII.statusCode == 200) {
       _getInvoices(widget.userId);
       isLoading(false, model);
@@ -287,7 +290,8 @@ class _TrackInvoice extends State<TrackInvoice> {
                           key: Key(firstInvoice[index].docId),
                           child: Card(
                               elevation: 8,
-                              color: _statusColor(firstInvoice[index].status),
+                              color: _statusColor(firstInvoice[index].status,
+                                  firstInvoice[index].flagType),
                               child: Column(
                                 children: <Widget>[
                                   Padding(
@@ -349,13 +353,30 @@ class _TrackInvoice extends State<TrackInvoice> {
                                   ),
                                   ExpansionTile(
                                       backgroundColor: _statusColorHead(
-                                          firstInvoice[index].status),
+                                          firstInvoice[index].status,
+                                          firstInvoice[index].flagType),
                                       key: PageStorageKey<Invoice>(
                                           firstInvoice[index]),
                                       title: ListTile(
                                         leading: Container(
                                           child: Column(
                                             children: <Widget>[
+                                              Padding(
+                                                  padding:
+                                                      EdgeInsets.only(left: 18),
+                                                  child: Text(
+                                                      firstInvoice[index]
+                                                                  .flagType !=
+                                                              'CA'
+                                                          ? 'Track # ${firstInvoice[index].refNo}'
+                                                          : firstInvoice[index]
+                                                              .flagType,
+                                                      style: TextStyle(
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Colors
+                                                              .brown[700]))),
                                               Text(firstInvoice[index].shipId,
                                                   style: TextStyle(
                                                       fontSize: 14,
@@ -368,14 +389,6 @@ class _TrackInvoice extends State<TrackInvoice> {
                                                           FontWeight.bold,
                                                       fontSize: 14,
                                                       color: Colors.grey[700])),
-                                              Text(
-                                                  'Track # ${firstInvoice[index].refNo}',
-                                                  style: TextStyle(
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors
-                                                          .limeAccent[400]))
                                             ],
                                           ),
                                         ),
@@ -420,7 +433,7 @@ class _TrackInvoice extends State<TrackInvoice> {
                                                   color: Colors.blue[900],
                                                   fontSize: 14,
                                                 ),
-                                              )
+                                              ),
                                             ],
                                           ),
                                         ),

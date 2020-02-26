@@ -13,7 +13,7 @@ class Area {
     return Area(areaId: json['areaId'], name: json['name']);
   }
   factory Area.fromJson(Map<String, dynamic> json) {
-    return Area(areaId: json['AREA_ID'], name: json['ANAME']);
+    return Area(areaId: json['AREA_ID'], name: json['LNAME']);
   }
   toJson() {
     return {

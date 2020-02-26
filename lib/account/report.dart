@@ -101,7 +101,7 @@ class _Report extends State<Report> {
   Future<Member> memberReportSummary(String distrid) async {
     isloading(true);
     http.Response response = await http.get(
-        'http://mywayindoapi.azurewebsites.net/api/distrrepsummary/$distrid');
+        'http://mywayindoapi-staging.azurewebsites.net/api/distrrepsummary/$distrid');
     if (response.statusCode == 200) {
       List _summary = json.decode(response.body);
       member = Member.formJson(_summary[0]);
@@ -157,8 +157,10 @@ class _Report extends State<Report> {
                         if (veri) {
                           _nodeData = await model
                               .nodeJson(distrController.text.padLeft(8, '0'));
-                          distrController.text =
-                              _nodeData.distrId + '  ' + _nodeData.name;
+                          _nodeData.distrId == '00000000'
+                              ? resetVeri()
+                              : distrController.text =
+                                  _nodeData.distrId + '  ' + _nodeData.name;
                           memberReportSummary(_nodeData.distrId);
                         } else {
                           resetVeri();

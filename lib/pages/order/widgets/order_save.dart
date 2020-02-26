@@ -18,9 +18,7 @@ class OrderSave extends StatelessWidget {
   OrderSave(this.courierId, this.courierFee, this.courierDiscount, this.distrId,
       this.note, this.areaId, this.userId);
   double orderTotal(MainModel model) {
-    return (courierFee - courierDiscount) +
-        model.orderSum() +
-        model.settings.adminFee;
+    return model.orderSum() + model.settings.adminFee;
   }
 
   double bulkOrderCourierFee(MainModel model) {
@@ -84,7 +82,9 @@ class OrderSave extends StatelessWidget {
                             child: Container(),
                           ),
                           Text(
-                            formatter.format((orderTotal(model) * 1.1)) + ' Rp',
+                            formatter.format((orderTotal(model) * 1.1) +
+                                    courierFee * 1.01) +
+                                ' Rp',
                             style: TextStyle(
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold),

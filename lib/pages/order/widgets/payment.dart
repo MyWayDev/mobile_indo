@@ -22,8 +22,10 @@ class PaymentInfo extends StatelessWidget {
       ),
       margin: EdgeInsets.all(8),
       borderRadius: 8,
-      title: model.settings.bankInfo,
-      message: 'Silahkan Lakukan Pembayaran Melalui',
+      titleText: Text('Please Pay to this account',
+          style: TextStyle(fontSize: 12, color: Colors.white)),
+      messageText: Text('${model.settings.bankInfo}',
+          style: TextStyle(fontSize: 14, color: Colors.white)),
       icon: Icon(
         GroovinMaterialIcons.bank,
         color: Colors.greenAccent,

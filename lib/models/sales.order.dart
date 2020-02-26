@@ -5,6 +5,7 @@ class Sorder {
   String counter;
   String docDate;
   String addTime;
+  String soType;
   List<SoItem> soItems;
 
   String get soTotal {
@@ -35,17 +36,18 @@ class Sorder {
     this.distrId,
     this.distrName,
     this.counter,
+    this.soType,
     this.soItems,
   });
   factory Sorder.fromJson(Map<String, dynamic> json) {
     return Sorder(
-      docId: json['DOC_ID'],
-      docDate: json['DOC_DATE'],
-      distrId: json['DISTR_ID'],
-      distrName: json['DISTRNAME'],
-      addTime: json['ADD_TIME'],
-      counter: json['COUNTER'],
-    );
+        docId: json['DOC_ID'],
+        docDate: json['DOC_DATE'],
+        distrId: json['DISTR_ID'],
+        distrName: json['DISTRNAME'],
+        addTime: json['ADD_TIME'],
+        counter: json['COUNTER'],
+        soType: json['SO_INV_TYPE']);
   }
 }
 

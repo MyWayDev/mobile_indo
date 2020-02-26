@@ -6,12 +6,8 @@ import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:mor_release/bottom_nav.dart';
 import 'package:mor_release/models/item.dart';
 import 'package:mor_release/models/item.order.dart';
-import 'package:mor_release/pages/order/bulkOrder.dart';
-import 'package:mor_release/pages/order/order.dart';
-import 'package:mor_release/pages/order/widgets/outStockDialog.dart';
 import 'package:mor_release/pages/order/widgets/payment.dart';
 import 'package:mor_release/scoped/connected.dart';
-import 'package:mor_release/track/track.order.dart';
 import 'package:mor_release/widgets/color_loader_2.dart';
 import 'package:scoped_model/scoped_model.dart';
 
@@ -35,7 +31,7 @@ class _SaveBulkDialogState extends State<SaveBulkDialog> {
   List<AggrItem> balanceCheckOutPut = [];
   OrderBulkMsg bulkIds = new OrderBulkMsg(ids: [], error: '');
 
-  List<ItemOrder> msg = List();
+  List<ItemOrder> msg = [];
 
   @override
   void initState() {
@@ -69,35 +65,6 @@ class _SaveBulkDialogState extends State<SaveBulkDialog> {
   Widget _saveDialog(BuildContext context) {
     return ScopedModelDescendant<MainModel>(
         builder: (BuildContext context, Widget child, MainModel model) {
-      /* Flushbar fu = Flushbar(
-        isDismissible: true,
-        flushbarPosition: FlushbarPosition.BOTTOM,
-        flushbarStyle: FlushbarStyle.GROUNDED,
-        reverseAnimationCurve: Curves.decelerate,
-        forwardAnimationCurve: Curves.elasticOut,
-        mainButton: FlatButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: Icon(
-            Icons.done_all,
-            color: Colors.lightGreenAccent[400],
-          ),
-        ),
-        margin: EdgeInsets.all(8),
-        borderRadius: 8,
-        title: model.settings.bankInfo,
-        message: 'Silahkan Lakukan Pembayaran Melalui',
-        icon: Icon(
-          GroovinMaterialIcons.bank,
-          color: Colors.greenAccent,
-        ),
-        boxShadows: [
-          BoxShadow(
-            color: Colors.red[800],
-            offset: Offset(0.0, 2.0),
-            blurRadius: 3.0,
-          )
-        ],
-      );*/
       return ModalProgressHUD(
         child: model.giftPacks.length == 0 &&
                 model.isBalanceChecked &&
@@ -146,18 +113,6 @@ class _SaveBulkDialogState extends State<SaveBulkDialog> {
     );
   }
 
-/*  bulkIds.ids.length != 0
-                          ? Container(
-                              height: 300,
-                              width: 275,
-                              child: ListView.builder(
-                                itemCount: bulkIds.ids.length,
-                                itemBuilder: (context, i) {
-                                  return saveMsg(context, i);
-                                },
-                              ),
-                            )
-                          : errorMsg(context), */
   Widget orderOutCard(BuildContext context, MainModel model, int i) {
     return Container(
       height: 50,
@@ -395,11 +350,12 @@ class _SaveBulkDialogState extends State<SaveBulkDialog> {
                     ),
                   ),
             // : errorMsg(context),
-            SizedBox(height: 20.0),
+
+            SizedBox(height: 83.0),
             //  Text('Silahkan Lakukan Pembayaran Melalui'),
             bulkIds.ids.length == 0
                 ? Container(
-                    height: 50.0,
+                    height: 30.0,
                     width: MediaQuery.of(context).size.width,
                     color: Colors.white,
                     child: Padding(
@@ -419,21 +375,6 @@ class _SaveBulkDialogState extends State<SaveBulkDialog> {
                               fillColor: Colors.yellowAccent[700],
                               onPressed: () {
                                 Navigator.of(context).pop();
-                              },
-                              splashColor: Colors.pink[900],
-                            ),
-                            RawMaterialButton(
-                              child: Icon(
-                                Icons.queue,
-                                size: 21.0,
-                                color: Colors.white,
-                              ),
-                              shape: CircleBorder(),
-                              highlightColor: Colors.pink[900],
-                              elevation: 3,
-                              fillColor: Colors.black,
-                              onPressed: () {
-                                model.bulkItemsList(model.bulkOrder);
                               },
                               splashColor: Colors.pink[900],
                             ),
@@ -472,42 +413,7 @@ class _SaveBulkDialogState extends State<SaveBulkDialog> {
                                         PaymentInfo(model)
                                             .flushAction(context)
                                             .show(context);
-                                        /*OutStock(balanceCheckOutPut)
-                                                  .flushAction(context)
-                                                  .show(context);*/
                                       }
-
-                                      /* Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        PaymentInfo(model)
-                                                    // ItemDetails(widget.itemData[widget.index])
-                                                    ));*/
-
-                                      /* isLoading(true, model);
-                                            msg = await model.saveBulkOrders(
-                                              model.bulkOrder,
-                                              widget.courierFee,
-                                              widget.note +
-                                                  model.shipmentAddress,
-                                              widget.courierId,
-                                            );
-
-                                            print(
-                                                'bulkOrderBp:${model.bulkOrderBp()}');
-                                            if (model.bulkOrderBp() == 0 &&
-                                                model.bulkOrder.length ==
-                                                    0) if (model.loading) {
-                                              model.isTypeing = false;
-                                              Navigator.pop(context);
-                                              isLoading(false, model);*/
-                                      /* showReview(
-                                                  context, msg, msg.first);*/
-                                      /* model.isTypeing = false;
-                                            } else {
-                                              isLoading(false, model);
-                                            }*/
                                     },
                                     splashColor: Colors.pink[900],
                                   )
@@ -515,44 +421,30 @@ class _SaveBulkDialogState extends State<SaveBulkDialog> {
                           ]),
                     ))
                 : Container(),
-            Container(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Text(
-                    formatter.format((bulkOrderTotal(model) * 1.1)) + ' Rp',
-                    style: TextStyle(
-                        color: Colors.black, fontWeight: FontWeight.bold),
-                  ),
-                  bulkIds.ids.length != 0
-                      ? RawMaterialButton(
-                          child: Icon(
-                            Icons.close,
-                            size: 24.0,
-                            color: Colors.white,
+            bulkIds.ids.length != 0
+                ? RawMaterialButton(
+                    child: Icon(
+                      Icons.close,
+                      size: 24.0,
+                      color: Colors.white,
+                    ),
+                    shape: CircleBorder(),
+                    highlightColor: Colors.pink[900],
+                    elevation: 3,
+                    fillColor: Colors.pink[900],
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => BottomNav(widget.userId),
+                            // ItemDetails(widget.itemData[widget.index])
                           ),
-                          shape: CircleBorder(),
-                          highlightColor: Colors.pink[900],
-                          elevation: 3,
-                          fillColor: Colors.pink[900],
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      BottomNav(widget.userId),
-                                  // ItemDetails(widget.itemData[widget.index])
-                                ),
-                                (_) => false);
-                          },
-                          splashColor: Colors.pink[900],
-                        )
-                      : Container(),
-                ],
-              ),
-            ),
+                          (_) => false);
+                    },
+                    splashColor: Colors.pink[900],
+                  )
+                : Container(),
           ],
         ),
       ),

@@ -1034,22 +1034,32 @@ class _NodeDialogeState extends State<NodeDialoge> {
                     if (veri) {
                       _nodeData = await widget.model
                           .nodeJson(controller.text.padLeft(8, '0'));
-                      controller.text =
-                          _nodeData.distrId + '    ' + _nodeData.name;
-
-                      Navigator.of(context).pop();
-                      setState(() {
-                        widget.model.bulkDistrId = _nodeData.distrId;
-                      });
-                      widget.model.shipmentAddress == null ||
-                              widget.model.shipmentAddress == ''
-                          ? showDialog(
-                              context: context,
-                              builder: (_) => ShipmentPlace(
-                                    model: widget.model,
-                                    memberId: _nodeData.distrId,
-                                  ))
-                          : widget.model.orderToBulk(widget.model.bulkDistrId);
+                      print('_nodeData.distrId:${_nodeData.distrId}');
+                      _nodeData.distrId == '00000000'
+                          ? resetVeri()
+                          : controller.text =
+                              _nodeData.distrId + '    ' + _nodeData.name;
+                      if (_nodeData.distrId == '00000000') {
+                        Navigator.of(context).pop();
+                        showDialog(
+                            context: context,
+                            builder: (_) => NodeDialoge(widget.model));
+                      } else {
+                        Navigator.of(context).pop();
+                        setState(() {
+                          widget.model.bulkDistrId = _nodeData.distrId;
+                        });
+                        widget.model.shipmentAddress == null ||
+                                widget.model.shipmentAddress == ''
+                            ? showDialog(
+                                context: context,
+                                builder: (_) => ShipmentPlace(
+                                      model: widget.model,
+                                      memberId: _nodeData.distrId,
+                                    ))
+                            : widget.model
+                                .orderToBulk(widget.model.bulkDistrId);
+                      }
                     } else {
                       resetVeri();
                     }

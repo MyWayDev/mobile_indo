@@ -38,25 +38,25 @@ class User {
       "id": int.parse(distrId).toString(),
       "isleader": false,
       "areaId": areaId,
-      "name": name,
+      "name": name ?? '',
       "tele": phone,
     };
   }
 
   factory User.formJson(Map<String, dynamic> json) {
     return User(
-      distrId: json['DISTR_ID'],
-      name: json['LNAME'],
-      distrIdent: json['DISTR_IDENT'],
-      email: json['E_MAIL'],
-      phone: json['TELEPHONE'],
-      areaId: json['AREA_ID'],
+      distrId: json['DISTR_ID'] ?? '',
+      name: json['LNAME'] ?? '',
+      distrIdent: json['DISTR_IDENT'] ?? '',
+      email: json['E_MAIL'] ?? '',
+      phone: json['TELEPHONE'] ?? '',
+      areaId: json['AREA_ID'] ?? '',
     );
   }
   // * firebase sample code for model..
   User.fromSnapshot(DataSnapshot snapshot)
       : key = snapshot.key,
-        name = snapshot.value["name"],
+        name = snapshot.value["name"] ?? '',
         distrId = snapshot.value["distrId"],
         email = snapshot.value["email"],
         isAllowed = snapshot.value["IsAllowed"],
@@ -66,7 +66,7 @@ class User {
         photoUrl = snapshot.value["photoUrl"];
 
   User.useSnapshot(DataSnapshot snapshot)
-      : name = snapshot.value["name"],
+      : name = snapshot.value["name"] ?? '',
         distrId = snapshot.value["distrId"],
         email = snapshot.value["email"],
         isAllowed = snapshot.value["IsAllowed"],
@@ -105,7 +105,7 @@ class NewMember {
       this.taxNumber});
   Map<String, dynamic> toJson() => {
         "SPONSOR_ID": sponsorId,
-        "FAMILY_ANAME": familyName,
+        "FAMILY_LNAME": familyName,
         "LNAME": name,
         "DISTR_IDENT": personalId,
         "BIRTH_DATE": birthDate,
@@ -126,7 +126,7 @@ class NewMember {
   Future<http.Response> createPost(NewMember newMember, String user,
       String shipmentPlace, String shipmentPlaceName) async {
     final response = await http.put(
-        'http://mywayindoapi.azurewebsites.net/api/memregister/$user/$shipmentPlace/$shipmentPlaceName',
+        'http://mywayindoapi-staging.azurewebsites.net/api/memregister/$user/$shipmentPlace/$shipmentPlaceName',
         headers: {
           HttpHeaders.contentTypeHeader: 'application/json',
           //HttpHeaders.authorizationHeader: ''

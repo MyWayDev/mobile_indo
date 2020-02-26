@@ -30,8 +30,8 @@ class MainModel extends Model {
   final FirebaseDatabase database = FirebaseDatabase.instance;
   DatabaseReference databaseReference;
   final String path = 'flamelink/environments/$firebaseDb/content';
-  final String httpath = 'http://mywayindoapi.azurewebsites.net/api';
-  //!production azure//'http://mywayindoapi-staging.azurewebsites.net/api'
+  final String httpath = 'http://mywayindoapi-staging.azurewebsites.net/api';
+  //!production azure'http://mywayindoapi-staging.azurewebsites.net/api'//
   String shipmentName = '';
   String shipmentArea = '';
   String shipmentAddress = '';
@@ -300,8 +300,8 @@ class MainModel extends Model {
 //String img = await spaceRef;
 
     List<Item> items;
-    final response = await http
-        .get('http://mywayindoapi.azurewebsites.net/api/allitemdetails');
+    final response = await http.get(
+        'http://mywayindoapi-staging.azurewebsites.net/api/allitemdetails');
     if (response.statusCode == 200) {
       List<dynamic> itemlist = json.decode(response.body);
       items = itemlist.map((i) => Item.fromJson(i)).toList();
@@ -1002,7 +1002,8 @@ class MainModel extends Model {
 
 //!--------*Stock*---------//
   Future<int> getStock(String itemId) async {
-    http.Response response = await http.get('$httpath/stock/$itemId');
+    http.Response response =
+        await http.get('$httpath/stock/$itemId/$setStoreId');
 
     List stockData = json.decode(response.body);
     ItemOrder itemOrder = ItemOrder.fromJson(stockData[0]);
@@ -1126,6 +1127,9 @@ class MainModel extends Model {
         note: '',
         address: shipmentAddress,
         courierId: '',
+        storeId: setStoreId,
+        branchId: setStoreId,
+        soType: docType,
         areaId: shipmentArea,
         weight: orderWeight(),
         order: itemorderlist,
@@ -1308,7 +1312,7 @@ class MainModel extends Model {
   List<SalesOrder> prepareBulkOrder(List<SalesOrder> bulkOrders,
       double courierFee, String note, String shipmentId, int ordersCount) {
     List<SalesOrder> finalBulkOrders = [];
-
+    String bulkId = getRandom().toString();
     for (SalesOrder order in bulkOrders) {
       if (order.gifts.length > 0) {
         /* order.gifts.forEach((g) => g.pack.forEach((p) => {p.bp = 0: p.bv = 0.0}));
@@ -1347,17 +1351,22 @@ class MainModel extends Model {
         userId: userInfo.distrId,
         total: order.total,
         totalBp: order.totalBp,
-        note: getRandom().toString() +
+        note: bulkId +
+            ' => ' +
+            (bulkOrders.indexOf(order) + 1).toString() +
             '/' +
             ordersCount.toString() +
-            '=>' +
+            ' => ' +
             order.address +
             ': ' +
             note, //?
-        projId: getRandom().toString(),
+        projId: bulkId,
         address: order.address,
         courierId: shipmentId, //?
         areaId: order.areaId,
+        storeId: setStoreId,
+        branchId: setStoreId,
+        soType: docType,
         order: order.order,
       );
       finalBulkOrders.add(salesOrder);
@@ -1481,9 +1490,12 @@ class MainModel extends Model {
       total: orderSum(),
       totalBp: orderBp(),
       note: note,
-      address: shipmentAddress,
-      courierId: shipmentId,
-      areaId: areaId,
+      address: docType == 'CR' ? shipmentAddress : null,
+      courierId: docType == 'CR' ? shipmentId : null,
+      areaId: docType == 'CR' ? areaId : null,
+      storeId: setStoreId,
+      branchId: setStoreId,
+      soType: docType,
       order: itemorderlist,
     );
 
@@ -1578,6 +1590,7 @@ for(var area in areas){
       for (ShipmentArea s in shipmentAreas) {
         await couriersList(s.shipmentArea, point)
             .then((c) => c.length > 0 ? validShipmentAreas.add(s) : null);
+        //c.length > 0 ? validShipmentAreas.add(s) : null
       }
 
       //  products = productlist.map((i) => Item.fromJson(i)).toList();
@@ -1607,8 +1620,9 @@ for(var area in areas){
           for (var s in c['service']) {
             for (var a in s['areas']) {
               if (a.toString() == areaid) {
-                // print('a.string:=>${a.toString()}');
-                // print(c['courierId']);
+                print('a.string:=>${a.toString()}:areaid=$areaid');
+                print(c['courierId']);
+
                 ships.add(c);
               }
             }
@@ -1618,7 +1632,6 @@ for(var area in areas){
     }
     courierList = [];
     List companies = ships.map((f) => Courier.fromList(f)).toList();
-
     // companies.forEach((c) => print(c));
 //companies.forEach((f)=>print('${f.name} : ${f.courierId}'));
     ships.clear();
@@ -1814,9 +1827,10 @@ for( var i = 0 ; i < _list.length; i++){
       List responseData = await json.decode(response.body);
       nodeJsonData = User.formJson(responseData[0]);
     } else {
-      return nodeJsonData = null;
+      return nodeJsonData =
+          new User(distrId: '00000000', name: 'NA', areaId: '');
     }
-    print('nodeJsonArea:${nodeJsonData.areaId}');
+
     return nodeJsonData;
   }
 

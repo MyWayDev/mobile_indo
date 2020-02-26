@@ -112,6 +112,9 @@ class SalesOrder {
   String address;
   String amt;
   String so;
+  String storeId;
+  String branchId;
+  String soType;
   String projId;
   List<ItemOrder> order;
   List<GiftOrder> gifts;
@@ -130,16 +133,23 @@ class SalesOrder {
       this.address,
       this.amt,
       this.so,
+      this.storeId,
+      this.branchId,
+      this.soType,
       this.projId,
       this.gifts,
       this.promos});
 
   Map<String, dynamic> toJson() => {
         "a9master": {
+          "STORE_ID": storeId, //!new
+          "BRANCH_ID": branchId, //!new
           "CUS_VEN_ID": distrId,
           "USER_ID": userId,
         },
         "apmaster": {
+          "STORE_ID": storeId, //!new
+          "SO_INV_TYPE": soType, //!new
           "GROSS_TOTAL": total,
           "NET_TOTAL": total,
           "PRJ_ID": projId,
@@ -158,13 +168,13 @@ class SalesOrder {
   }
 
   Future<http.Response> createPost(SalesOrder salesOrder) async {
-    final response =
-        await http.put('http://mywayindoapi.azurewebsites.net/api/invoice',
-            headers: {
-              HttpHeaders.contentTypeHeader: 'application/json',
-              //HttpHeaders.authorizationHeader: ''
-            },
-            body: postOrderToJson(salesOrder));
+    final response = await http.put(
+        'http://mywayindoapi-staging.azurewebsites.net/api/invoice',
+        headers: {
+          HttpHeaders.contentTypeHeader: 'application/json',
+          //HttpHeaders.authorizationHeader: ''
+        },
+        body: postOrderToJson(salesOrder));
     return response;
   }
 }
@@ -185,7 +195,7 @@ class BulkSalesOrder {
 
   Future<http.Response> createBulkPost(BulkSalesOrder batch) async {
     final response = await http.put(
-        'http://mywayindoapi.azurewebsites.net/api/insert_batch_sales_orders',
+        'http://mywayindoapi-staging.azurewebsites.net/api/insert_batch_sales_orders',
         headers: {
           HttpHeaders.contentTypeHeader: 'application/json',
           //HttpHeaders.authorizationHeader: ''

@@ -41,11 +41,11 @@ class _TrackOrder extends State<TrackOrder> {
     model.docIdDel = docId;
     isLoading(true, model);
     final http.Response responseI = await http.post(
-        'http://mywayindoapi.azurewebsites.net/api/updatedelap/$docId/$distrId');
+        'http://mywayindoapi-staging.azurewebsites.net/api/updatedelap/$docId/$distrId');
 
     if (responseI.statusCode == 200) {
       final http.Response responseII = await http.post(
-          'http://mywayindoapi.azurewebsites.net/api/editvou/$docId/$distrId');
+          'http://mywayindoapi-staging.azurewebsites.net/api/editvou/$docId/$distrId');
       if (responseII.statusCode == 200) {
         model.checkSoDupl(_getSorders, widget.userId);
       } else {
@@ -62,8 +62,9 @@ class _TrackOrder extends State<TrackOrder> {
 
   void _getSorders(String userId) async {
     firstSorder = [];
-    final http.Response response = await http
-        .get('http://mywayindoapi.azurewebsites.net/api/userpending/$userId');
+
+    final http.Response response = await http.get(
+        'http://mywayindoapi-staging.azurewebsites.net/api/userpending/$userId');
     if (response.statusCode == 200 && firstSorder.length == 0) {
       print('getSorder ok');
       List<dynamic> soList = json.decode(response.body);
@@ -90,6 +91,8 @@ class _TrackOrder extends State<TrackOrder> {
         }
       }
     }
+    firstSorder
+        .sort((b, a) => a.addDate.toLocal().compareTo(b.addDate.toLocal()));
   }
 
   @override
@@ -359,7 +362,9 @@ class _TrackOrder extends State<TrackOrder> {
                       itemBuilder: (BuildContext context, int index) {
                         return Card(
                           elevation: 8,
-                          color: Colors.pink[700],
+                          color: firstSorder[index].soType == 'CA'
+                              ? Colors.pink[900]
+                              : Colors.pink[700],
                           child: Column(
                             children: <Widget>[
                               Padding(
@@ -433,6 +438,11 @@ class _TrackOrder extends State<TrackOrder> {
                                       child: Column(
                                         children: <Widget>[
                                           Text(firstSorder[index].docId,
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.yellow[100])),
+                                          Text(firstSorder[index].soType,
                                               style: TextStyle(
                                                   fontSize: 15,
                                                   fontWeight: FontWeight.bold,

@@ -33,9 +33,12 @@ class _IconBar extends State<IconBar> {
     return ScopedModelDescendant<MainModel>(
         builder: (BuildContext context, Widget child, MainModel model) {
       return Row(
+        mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
           ButtonBar(
+            alignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               !model.cartLocked
                   ? BadgeIconButton(
@@ -60,7 +63,7 @@ class _IconBar extends State<IconBar> {
                       icon: Icon(
                         Icons.remove_shopping_cart,
                         color: Colors.grey,
-                        size: 32.0,
+                        size: 30.0,
                       ),
                       // required
                       //badgeColor: Colors.pink[900],
@@ -78,11 +81,11 @@ class _IconBar extends State<IconBar> {
                             StockDialog(widget.itemData, widget.index));
                   }),*/
               Padding(
-                padding: EdgeInsets.only(left: 7.0, right: 7.0),
+                padding: EdgeInsets.only(left: 6.0, right: 6.0),
               ),
               IconButton(
                   icon: Icon(Icons.info_outline),
-                  iconSize: 32.0,
+                  iconSize: 30.0,
                   color: Colors.blueAccent,
                   onPressed: () {
                     Navigator.push(
