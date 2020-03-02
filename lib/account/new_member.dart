@@ -150,6 +150,8 @@ class _NewMemberPage extends State<NewMemberPage> {
     return ScopedModelDescendant<MainModel>(
         builder: (BuildContext context, Widget child, MainModel model) {
       return Scaffold(
+        floatingActionButton:
+            FloatingActionButton.extended(onPressed: null, label: null),
         resizeToAvoidBottomPadding: false,
         body: ModalProgressHUD(
           child: Container(

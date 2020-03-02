@@ -116,6 +116,7 @@ class SalesOrder {
   String branchId;
   String soType;
   String projId;
+  String courierFee;
   List<ItemOrder> order;
   List<GiftOrder> gifts;
   List<PromoOrder> promos;
@@ -137,6 +138,7 @@ class SalesOrder {
       this.branchId,
       this.soType,
       this.projId,
+      this.courierFee,
       this.gifts,
       this.promos});
 
@@ -156,6 +158,7 @@ class SalesOrder {
           "DS_SHIPMENT_COMP": courierId,
           "DS_SHIPMENT_PLACE": areaId,
           "LREMARKS": note,
+          "AREMARKS": courierFee ?? '0',
           "DISC_NOTES": address,
         },
         "aadetail": order,
@@ -168,13 +171,13 @@ class SalesOrder {
   }
 
   Future<http.Response> createPost(SalesOrder salesOrder) async {
-    final response = await http.put(
-        'http://mywayindoapi-staging.azurewebsites.net/api/invoice',
-        headers: {
-          HttpHeaders.contentTypeHeader: 'application/json',
-          //HttpHeaders.authorizationHeader: ''
-        },
-        body: postOrderToJson(salesOrder));
+    final response =
+        await http.put('http://mywayindoapi.azurewebsites.net/api/invoice',
+            headers: {
+              HttpHeaders.contentTypeHeader: 'application/json',
+              //HttpHeaders.authorizationHeader: ''
+            },
+            body: postOrderToJson(salesOrder));
     return response;
   }
 }
@@ -195,7 +198,7 @@ class BulkSalesOrder {
 
   Future<http.Response> createBulkPost(BulkSalesOrder batch) async {
     final response = await http.put(
-        'http://mywayindoapi-staging.azurewebsites.net/api/insert_batch_sales_orders',
+        'http://mywayindoapi.azurewebsites.net/api/insert_batch_sales_orders',
         headers: {
           HttpHeaders.contentTypeHeader: 'application/json',
           //HttpHeaders.authorizationHeader: ''

@@ -206,7 +206,7 @@ class _CourierOrder extends State<CourierOrder> {
                           )
                         : Container(),
 
-                    courierFee != null && !model.isBulk
+                    courierFee != null && !model.isBulk && stateValue != null
                         ? Container(
                             height: 180,
                             child: ModalProgressHUD(
@@ -228,7 +228,8 @@ class _CourierOrder extends State<CourierOrder> {
                                             controller.text,
                                             courierDiscount)
                                         : Container(),
-                                    courierFee != null &&
+                                    stateValue != null &&
+                                            courierFee != null &&
                                             model.orderBp() > 0 &&
                                             model.giftPacks.length == 0 &&
                                             model.promoPacks.length == 0
@@ -315,7 +316,7 @@ class _CourierOrder extends State<CourierOrder> {
                             ),
                           )
                         : Container(),
-                    courierFee != null && model.isBulk
+                    courierFee != null && model.isBulk && stateValue != null
                         ? Container(
                             height: 180,
                             child: ModalProgressHUD(
@@ -338,6 +339,7 @@ class _CourierOrder extends State<CourierOrder> {
                                             courierDiscount)
                                         : Container(),
                                     courierFee != null &&
+                                            stateValue != null &&
                                             model.bulkOrderBp() > 0 &&
                                             model.giftPacks.length == 0 &&
                                             model.promoPacks.length == 0

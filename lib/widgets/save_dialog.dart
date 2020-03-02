@@ -328,14 +328,14 @@ class _SaveDialog extends State<SaveDialog> {
                                   color: Colors.grey,
                                   fontWeight: FontWeight.bold),
                             ),
-                            Text(
+                            /*  Text(
                               '$amt :total biaya',
                               textDirection: TextDirection.rtl,
                               style: TextStyle(
                                   fontSize: 16.0,
                                   color: Colors.grey,
                                   fontWeight: FontWeight.bold),
-                            ),
+                            ),*/
                           ],
                         )
                       : Column(

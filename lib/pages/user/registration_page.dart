@@ -296,8 +296,8 @@ class _RegistrationPage extends State<RegistrationPage> {
                                   color: Theme.of(context).primaryColor,
                                 ),
                                 onPressed: () async {
-                                  await fillMobileNumber();
-                                  // _regPressed();
+                                  // await fillMobileNumber();
+                                  _regPressed();
                                   //model.fbItemsUpdateFromDb();
                                 },
                               ),
@@ -306,8 +306,8 @@ class _RegistrationPage extends State<RegistrationPage> {
                         ],
                       ),
                       onPressed: () async {
-                        await fillMobileNumber();
-                        // _regPressed();
+                        // await fillMobileNumber();
+                        _regPressed();
                         // model.fbItemsUpdateFromDb();
                       },
                     ),

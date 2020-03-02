@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:groovin_material_icons/groovin_material_icons.dart';
 import 'package:intl/intl.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:mor_release/models/item.dart';
@@ -27,7 +28,8 @@ class _TrackOrder extends State<TrackOrder> {
   List<Sorder> firstSorder;
   final formatter = new NumberFormat("#,###");
   double addPpnTax(int index) {
-    return double.parse(firstSorder[index].soTotal) * 1.1;
+    double cf = double.tryParse(firstSorder[index].coureirFee) ?? 0.0;
+    return double.tryParse(firstSorder[index].soTotal) * 1.1 + cf * 1.01;
   }
 
   void isLoading(bool o, MainModel model) {
@@ -36,16 +38,17 @@ class _TrackOrder extends State<TrackOrder> {
     });
   }
 
-  void _deleteSo(String docId, String distrId, MainModel model) async {
+  void _deleteSo(String docId, String distrId, MainModel model, String storeId,
+      String soType) async {
     model.distrIdDel = distrId;
     model.docIdDel = docId;
     isLoading(true, model);
     final http.Response responseI = await http.post(
-        'http://mywayindoapi-staging.azurewebsites.net/api/updatedelap/$docId/$distrId');
+        'http://mywayindoapi.azurewebsites.net/api/updatedelap/$docId/$distrId/$storeId/$soType');
 
     if (responseI.statusCode == 200) {
       final http.Response responseII = await http.post(
-          'http://mywayindoapi-staging.azurewebsites.net/api/editvou/$docId/$distrId');
+          'http://mywayindoapi.azurewebsites.net/api/editvou/$docId/$distrId/$storeId/$soType');
       if (responseII.statusCode == 200) {
         model.checkSoDupl(_getSorders, widget.userId);
       } else {
@@ -63,8 +66,8 @@ class _TrackOrder extends State<TrackOrder> {
   void _getSorders(String userId) async {
     firstSorder = [];
 
-    final http.Response response = await http.get(
-        'http://mywayindoapi-staging.azurewebsites.net/api/userpending/$userId');
+    final http.Response response = await http
+        .get('http://mywayindoapi.azurewebsites.net/api/userpending/$userId');
     if (response.statusCode == 200 && firstSorder.length == 0) {
       print('getSorder ok');
       List<dynamic> soList = json.decode(response.body);
@@ -72,7 +75,13 @@ class _TrackOrder extends State<TrackOrder> {
       List<SoItem> items = soList.map((i) => SoItem.fromJson(i)).toList();
 //List<Invoice> firstInvoice = [];
 //items.forEach((f)=>print('${f.itemId}..${f.docId}'));
-      sos.forEach((f) => f.counter == '0001' ? firstSorder.add(f) : null);
+      sos.forEach((f) {
+        if (f.counter == '0001' && f.soType == 'CR') {
+          firstSorder.add(f);
+        } else if (f.counter == '0001' && f.soType == 'CA') {
+          firstSorder.add(f);
+        }
+      });
 
       for (var i = 0; i < firstSorder.length; i++) {
         if (firstSorder[i].soItems == null) {
@@ -81,10 +90,12 @@ class _TrackOrder extends State<TrackOrder> {
       }
       for (SoItem item in items) {
         for (var i = 0; i < firstSorder.length; i++) {
-          if (firstSorder[i].docId == item.docId) {
+          if (firstSorder[i].docId == item.docId &&
+              firstSorder[i].soType == item.soType) {
             firstSorder[i].soItems.add(item);
           } else {
-            if (firstSorder[i].docId == item.docId) {
+            if (firstSorder[i].docId == item.docId &&
+                firstSorder[i].soType == item.soType) {
               firstSorder[i].soItems.add(item);
             }
           }
@@ -196,7 +207,7 @@ class _TrackOrder extends State<TrackOrder> {
   }
 
   void _deleteSoDialog(List<SoItem> sOrder, String docId, String distrId,
-      MainModel model, String title, bool edit) {
+      MainModel model, String title, bool edit, String storeId, String soType) {
     // flutter defined function
     showDialog(
       context: context,
@@ -221,12 +232,12 @@ class _TrackOrder extends State<TrackOrder> {
                 ),
                 onPressed: () {
                   if (!edit) {
-                    _deleteSo(docId, distrId, model);
+                    _deleteSo(docId, distrId, model, storeId, soType);
 
                     Navigator.of(context).pop();
                   } else {
                     reBuildOrderFromLegacy(sOrder, model);
-                    _deleteSo(docId, distrId, model);
+                    _deleteSo(docId, distrId, model, storeId, soType);
                     Navigator.of(context).pop();
                   }
                 },
@@ -254,44 +265,46 @@ class _TrackOrder extends State<TrackOrder> {
             Colors.pink[300], // _statusColorDetails(sos[index].status),
         key: PageStorageKey<Sorder>(sos[index]),
         title: ListTile(
-            leading: IconButton(
-                disabledColor: Colors.transparent,
-                icon: Icon(
-                  Icons.delete_forever,
-                  color: Colors.white,
-                  size: 32,
-                ),
-                onPressed: () async {
-                  int wait = await getTimeDiff(model, index);
-                  if (wait > 5) {
-                    _deleteSoDialog(
-                        firstSorder[index].soItems,
-                        sos[index].docId,
-                        sos[index].distrId,
-                        model,
-                        "Barang yang sudah dipesan akan dibatalkan dan order akan dihapus",
-                        false);
-                  } else {
-                    _bottomSheetAlert(model, wait);
-                  }
-                }),
-            title: Container(
-              child: Column(
-                children: <Widget>[
-                  // Text(sos[index].docId, style: TextStyle(fontSize: 14)),
-                  Text(
-                    sos[index].distrName,
-                    style: TextStyle(fontSize: 14),
-                  ),
-                  Divider(
-                    height: 3.0,
-                    indent: 0,
-                    color: Colors.white,
-                  )
-                ],
+          leading: IconButton(
+              disabledColor: Colors.transparent,
+              icon: Icon(
+                Icons.delete_forever,
+                color: Colors.white,
+                size: 32,
               ),
+              onPressed: () async {
+                int wait = await getTimeDiff(model, index);
+                if (wait > 5) {
+                  _deleteSoDialog(
+                      firstSorder[index].soItems,
+                      sos[index].docId,
+                      sos[index].distrId,
+                      model,
+                      "Barang yang sudah dipesan akan dibatalkan dan order akan dihapus",
+                      false,
+                      sos[index].storeId,
+                      sos[index].soType);
+                } else {
+                  _bottomSheetAlert(model, wait);
+                }
+              }),
+          title: Container(
+            child: Column(
+              children: <Widget>[
+                // Text(sos[index].docId, style: TextStyle(fontSize: 14)),
+                Text(
+                  sos[index].distrName,
+                  style: TextStyle(fontSize: 14),
+                ),
+                Divider(
+                  height: 3.0,
+                  indent: 0,
+                  color: Colors.white,
+                )
+              ],
             ),
-            trailing: !model.cartLocked
+          ),
+          /* trailing: !model.cartLocked
                 ? IconButton(
                     icon: Icon(
                       Icons.edit,
@@ -320,7 +333,8 @@ class _TrackOrder extends State<TrackOrder> {
                       color: Colors.white,
                     ),
                     onPressed: () {},
-                  )),
+                  )*/
+        ),
         children: sos[index].soItems.map(_buildItem).toList()
         //root.invoiceItems.map(_buildTiles).toList(),
         );
@@ -362,9 +376,22 @@ class _TrackOrder extends State<TrackOrder> {
                       itemBuilder: (BuildContext context, int index) {
                         return Card(
                           elevation: 8,
-                          color: firstSorder[index].soType == 'CA'
+                          color: firstSorder[index].soType == 'CA' &&
+                                  firstSorder[index].soItems.first.itemId !=
+                                      '99m'
                               ? Colors.pink[900]
-                              : Colors.pink[700],
+                              : firstSorder[index].soType == 'CR' &&
+                                      firstSorder[index].soItems.first.itemId !=
+                                          '99m'
+                                  ? Colors.pink[700]
+                                  : firstSorder[index].soType == 'CA' &&
+                                          firstSorder[index]
+                                                  .soItems
+                                                  .first
+                                                  .itemId ==
+                                              '99m'
+                                      ? Colors.redAccent[400]
+                                      : Colors.redAccent,
                           child: Column(
                             children: <Widget>[
                               Padding(
@@ -439,14 +466,88 @@ class _TrackOrder extends State<TrackOrder> {
                                         children: <Widget>[
                                           Text(firstSorder[index].docId,
                                               style: TextStyle(
-                                                  fontSize: 15,
+                                                  fontSize: 14,
                                                   fontWeight: FontWeight.bold,
                                                   color: Colors.yellow[100])),
-                                          Text(firstSorder[index].soType,
-                                              style: TextStyle(
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.yellow[100])),
+                                          firstSorder[index]
+                                                          .soItems
+                                                          .first
+                                                          .itemId ==
+                                                      '99m' &&
+                                                  firstSorder[index].soType ==
+                                                      'CA'
+                                              ? Row(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: <Widget>[
+                                                    Icon(
+                                                      GroovinMaterialIcons
+                                                          .account_plus,
+                                                    ),
+                                                    SizedBox(width: 5),
+                                                    Icon(
+                                                      GroovinMaterialIcons
+                                                          .cash_multiple,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ],
+                                                )
+                                              : firstSorder[index].soType ==
+                                                          'CA' &&
+                                                      firstSorder[index]
+                                                              .soItems
+                                                              .first
+                                                              .itemId !=
+                                                          '99m'
+                                                  ? Icon(
+                                                      GroovinMaterialIcons
+                                                          .cash_multiple,
+                                                      color: Colors.white,
+                                                    )
+                                                  : firstSorder[index].soType ==
+                                                              'CR' &&
+                                                          firstSorder[index]
+                                                                  .soItems
+                                                                  .first
+                                                                  .itemId !=
+                                                              '99m'
+                                                      ? Icon(
+                                                          Icons.local_shipping,
+                                                        )
+                                                      : firstSorder[index]
+                                                                      .soItems
+                                                                      .first
+                                                                      .itemId ==
+                                                                  '99m' &&
+                                                              firstSorder[index]
+                                                                      .soType ==
+                                                                  'CR'
+                                                          ? Row(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                              mainAxisSize:
+                                                                  MainAxisSize
+                                                                      .min,
+                                                              children: <
+                                                                  Widget>[
+                                                                Icon(
+                                                                  GroovinMaterialIcons
+                                                                      .account_plus,
+                                                                  color: Colors
+                                                                      .white,
+                                                                ),
+                                                                SizedBox(
+                                                                    width: 5),
+                                                                Icon(
+                                                                  Icons
+                                                                      .local_shipping,
+                                                                ),
+                                                              ],
+                                                            )
+                                                          : Container()
                                         ],
                                       ),
                                     ),

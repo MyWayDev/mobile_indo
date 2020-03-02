@@ -23,13 +23,15 @@ class _TrackInvoice extends State<TrackInvoice> {
   List<Invoice> firstInvoice;
   final formatter = new NumberFormat("#,###");
   double addPpnTax(int index) {
-    return firstInvoice[index].invocieTotal * 1.1;
+    print(firstInvoice[index].shipFee);
+    return firstInvoice[index].invocieTotal * 1.1 +
+        double.tryParse(firstInvoice[index].shipFee) * 1.01;
   }
 
   void _getInvoices(String userId) async {
     firstInvoice = [];
     final http.Response response = await http.get(
-        'http://mywayindoapi-staging.azurewebsites.net/api/userinvoices/$userId'); // sample distrid =>$userId
+        'http://mywayindoapi.azurewebsites.net/api/userinvoices/$userId'); // sample distrid =>$userId
     if (response.statusCode == 200 && firstInvoice.length == 0) {
       print('getInvoice ok');
       List<dynamic> invoiceList = json.decode(response.body);
@@ -39,7 +41,13 @@ class _TrackInvoice extends State<TrackInvoice> {
           invoiceList.map((i) => InvoiceItem.fromJson(i)).toList();
 //List<Invoice> firstInvoice = [];
 //items.forEach((f)=>print('${f.itemId}..${f.docId}'));
-      invoices.forEach((f) => f.counter == '0001' ? firstInvoice.add(f) : null);
+      invoices.forEach((f) {
+        if (f.counter == '0001' && f.flagType == 'CR') {
+          firstInvoice.add(f);
+        } else if (f.counter == '0001' && f.flagType == 'CA') {
+          firstInvoice.add(f);
+        }
+      });
 
       for (var i = 0; i < firstInvoice.length; i++) {
         if (firstInvoice[i].invoiceItems == null) {
@@ -48,13 +56,21 @@ class _TrackInvoice extends State<TrackInvoice> {
       }
       for (InvoiceItem item in items) {
         for (var i = 0; i < firstInvoice.length; i++) {
-          if (firstInvoice[i].docId == item.docId) {
+          if (firstInvoice[i].docId == item.docId &&
+              item.flagType == firstInvoice[i].flagType &&
+              item.itemId != '90') {
             firstInvoice[i].invoiceItems.add(item);
-          } else {
+          } else if (item.itemId == '90') {
+            var _shipFee = double.tryParse(firstInvoice[i].shipFee) ?? 0.0;
+            _shipFee = item.price;
+            print(
+                'Invoice shipFee: =>${firstInvoice[i].shipFee}:${item.itemId}');
+          }
+          /*else  {
             if (firstInvoice[i].docId == item.docId) {
               firstInvoice[i].invoiceItems.add(item);
             }
-          }
+          }*/
         }
       }
 //firstInvoice.forEach((f)=>f.invoiceItems.forEach((f)=>print('${f.itemId}=>${f.price} * ${f.qty} = ${f.total}/${f.itemBp}==${f.totalBp}')));
@@ -148,7 +164,8 @@ class _TrackInvoice extends State<TrackInvoice> {
           );
   }
 
-  void _hideInvoiceDialog(String docId, String distrId, MainModel model) {
+  void _hideInvoiceDialog(String docId, String distrId, MainModel model,
+      String storeId, String flagType) {
     // flutter defined function
     showDialog(
       context: context,
@@ -172,7 +189,7 @@ class _TrackInvoice extends State<TrackInvoice> {
                   color: Colors.green,
                 ),
                 onPressed: () {
-                  hideInvoice(docId, distrId, model);
+                  hideInvoice(docId, distrId, model, storeId, flagType);
                   Navigator.of(context).pop();
                 },
               ),
@@ -220,12 +237,13 @@ class _TrackInvoice extends State<TrackInvoice> {
         );
   }
 
-  void hideInvoice(String docId, String distrId, model) async {
+  void hideInvoice(String docId, String distrId, model, String storeId,
+      String flagType) async {
     isLoading(true, model);
     firstInvoice.clear();
 
     final http.Response responseII = await http.post(
-        'http://mywayindoapi-staging.azurewebsites.net/api/updatedoneinv/$docId/$distrId');
+        'http://mywayindoapi.azurewebsites.net/api/updatedoneinv/$docId/$distrId/$storeId/$flagType');
     if (responseII.statusCode == 200) {
       _getInvoices(widget.userId);
       isLoading(false, model);
@@ -277,13 +295,21 @@ class _TrackInvoice extends State<TrackInvoice> {
                         return Dismissible(
                           onDismissed: (DismissDirection direction) {
                             if (direction == DismissDirection.endToStart) {
-                              _hideInvoiceDialog(firstInvoice[index].docId,
-                                  firstInvoice[index].distrId, model);
+                              _hideInvoiceDialog(
+                                  firstInvoice[index].docId,
+                                  firstInvoice[index].distrId,
+                                  model,
+                                  firstInvoice[index].storeId,
+                                  firstInvoice[index].flagType);
                               _getInvoices(widget.userId);
                             } else if (direction ==
                                 DismissDirection.startToEnd) {
-                              _hideInvoiceDialog(firstInvoice[index].docId,
-                                  firstInvoice[index].distrId, model);
+                              _hideInvoiceDialog(
+                                  firstInvoice[index].docId,
+                                  firstInvoice[index].distrId,
+                                  model,
+                                  firstInvoice[index].storeId,
+                                  firstInvoice[index].flagType);
                               _getInvoices(widget.userId);
                             }
                           },
@@ -363,7 +389,7 @@ class _TrackInvoice extends State<TrackInvoice> {
                                             children: <Widget>[
                                               Padding(
                                                   padding:
-                                                      EdgeInsets.only(left: 18),
+                                                      EdgeInsets.only(left: 8),
                                                   child: Text(
                                                       firstInvoice[index]
                                                                   .flagType !=

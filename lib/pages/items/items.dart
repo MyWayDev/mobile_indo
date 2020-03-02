@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:mor_release/models/lock.dart';
 import 'package:mor_release/pages/items/itemDetails/footer.dart';
 import 'package:mor_release/pages/order/widgets/distrPointButton.dart';
+import 'package:mor_release/pages/order/widgets/storeFloat.dart';
 import 'package:scoped_model/scoped_model.dart';
 import '../../models/item.dart';
 import '../items/item.card.dart';
@@ -307,7 +308,7 @@ class _ItemsPage extends State<ItemsPage> with SingleTickerProviderStateMixin {
                       )
                     : Container(),
                 // MyBlinkingButton()
-                _showNeedHelpButton()
+                StoreFloat(model)
               ],
             ),
             padding: EdgeInsets.only(right: 35),
@@ -327,16 +328,6 @@ class _ItemsPage extends State<ItemsPage> with SingleTickerProviderStateMixin {
         resizeToAvoidBottomPadding: false,
         body: Column(
           children: <Widget>[
-            /* Switch(
-                value: defaultDB,
-                onChanged: (value) {
-                  setState(() {
-                    defaultDB = value;
-                    defaultDB == true ? db = 'prouction' : db = 'stage';
-
-                    print('dbvalue:$value');
-                  });
-                }),*/
             Container(
               height: 58,
               color: Theme.of(context).primaryColorLight,
@@ -395,8 +386,8 @@ class _ItemsPage extends State<ItemsPage> with SingleTickerProviderStateMixin {
     }
 
     itemData.where((i) => !i.disabled).forEach((item) {
-      if (item.name.contains(text) || item.itemId.contains(text))
-        searchResult.add(item);
+      if (item.name.toLowerCase().contains(text.toLowerCase()) ||
+          item.itemId.contains(text)) searchResult.add(item);
     });
     setState(() {});
   }

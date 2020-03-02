@@ -6,12 +6,14 @@ class Sorder {
   String docDate;
   String addTime;
   String soType;
+  String coureirFee;
+  String storeId;
   List<SoItem> soItems;
 
   String get soTotal {
     double _totalPrice = 0;
     for (SoItem s in soItems) {
-      _totalPrice += s.total;
+      s.itemId != '90' ? _totalPrice += s.total : '0';
     }
     return _totalPrice.toString();
   }
@@ -37,6 +39,8 @@ class Sorder {
     this.distrName,
     this.counter,
     this.soType,
+    this.coureirFee,
+    this.storeId,
     this.soItems,
   });
   factory Sorder.fromJson(Map<String, dynamic> json) {
@@ -47,6 +51,8 @@ class Sorder {
         distrName: json['DISTRNAME'],
         addTime: json['ADD_TIME'],
         counter: json['COUNTER'],
+        coureirFee: json['AREMARKS'] ?? '0.0',
+        storeId: json['STORE_ID'],
         soType: json['SO_INV_TYPE']);
   }
 }
@@ -55,6 +61,7 @@ class SoItem {
   String docId;
   String itemId;
   String itemName;
+  String soType;
   var qty;
   var price;
   var total;
@@ -65,6 +72,7 @@ class SoItem {
     this.docId,
     this.itemId,
     this.itemName,
+    this.soType,
     this.qty,
     this.price,
     this.total,
@@ -74,14 +82,14 @@ class SoItem {
 
   factory SoItem.fromJson(Map<String, dynamic> json) {
     return SoItem(
-      docId: json['DOC_ID'],
-      itemId: json['ITEM_ID'],
-      itemName: json['ITEMNAME'],
-      qty: json['QTY_REQ'],
-      price: json['UNIT_PRICE'],
-      total: json['TOT_PRICE'],
-      itemBp: json['ITEM_BP'],
-      totalBp: json['TOTAL_BP'],
-    );
+        docId: json['DOC_ID'],
+        itemId: json['ITEM_ID'],
+        itemName: json['ITEMNAME'],
+        qty: json['QTY_REQ'] ?? 0,
+        price: json['UNIT_PRICE'] ?? 0.0,
+        total: json['TOT_PRICE'] ?? 0.0,
+        itemBp: json['ITEM_BP'] ?? 0,
+        totalBp: json['TOTAL_BP'] ?? 0,
+        soType: json['SO_INV_TYPE']);
   }
 }

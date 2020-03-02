@@ -30,8 +30,8 @@ class MainModel extends Model {
   final FirebaseDatabase database = FirebaseDatabase.instance;
   DatabaseReference databaseReference;
   final String path = 'flamelink/environments/$firebaseDb/content';
-  final String httpath = 'http://mywayindoapi-staging.azurewebsites.net/api';
-  //!production azure'http://mywayindoapi-staging.azurewebsites.net/api'//
+  final String httpath = 'http://mywayindoapi.azurewebsites.net/api';
+  //!production azure'http://mywayindoapi.azurewebsites.net/api'//
   String shipmentName = '';
   String shipmentArea = '';
   String shipmentAddress = '';
@@ -300,8 +300,8 @@ class MainModel extends Model {
 //String img = await spaceRef;
 
     List<Item> items;
-    final response = await http.get(
-        'http://mywayindoapi-staging.azurewebsites.net/api/allitemdetails');
+    final response = await http
+        .get('http://mywayindoapi.azurewebsites.net/api/allitemdetails');
     if (response.statusCode == 200) {
       List<dynamic> itemlist = json.decode(response.body);
       items = itemlist.map((i) => Item.fromJson(i)).toList();
@@ -1006,7 +1006,7 @@ class MainModel extends Model {
         await http.get('$httpath/stock/$itemId/$setStoreId');
 
     List stockData = json.decode(response.body);
-    ItemOrder itemOrder = ItemOrder.fromJson(stockData[0]);
+    ItemOrder itemOrder = ItemOrder.fromJson(stockData.first);
 //ItemOrder itemOrder= ItemOrder.fromJson(json.decode(response.body));
 
     print(itemOrder.qty);
@@ -1351,6 +1351,7 @@ class MainModel extends Model {
         userId: userInfo.distrId,
         total: order.total,
         totalBp: order.totalBp,
+        courierFee: courierFee.toString(),
         note: bulkId +
             ' => ' +
             (bulkOrders.indexOf(order) + 1).toString() +
@@ -1489,6 +1490,7 @@ class MainModel extends Model {
       userId: userInfo.distrId,
       total: orderSum(),
       totalBp: orderBp(),
+      courierFee: courierfee.toString(),
       note: note,
       address: docType == 'CR' ? shipmentAddress : null,
       courierId: docType == 'CR' ? shipmentId : null,
@@ -1871,6 +1873,7 @@ for( var i = 0 ; i < _list.length; i++){
         locKCart(context); //! uncomment this before buildR
         locKApp(context); //! uncomment this before buildR
         userAccess(key, context);
+        userTest(key, context);
         // getArea();
 
         try {
@@ -1899,6 +1902,29 @@ for( var i = 0 ; i < _list.length; i++){
 
   //!--------*
   bool access = true;
+  bool tester = false;
+  void userTest(key, BuildContext context) {
+    databaseReference = database.reference().child('$path/users/en-US/$key/');
+    databaseReference.onValue.listen((event) async {
+      tester = await setIsTester(User.fromSnapshot(event.snapshot).tester);
+      print('isTesterxx:$tester');
+      if (!tester) {
+        itemorderlist.clear();
+        giftorderList.clear();
+        promoOrderList.clear();
+        signOut();
+        // Navigator.pushNamedAndRemoveUntil(context, '/login', (_) => false);
+        // exit(0);
+        Navigator.pushReplacementNamed(context, '/');
+        //  Navigator.pushNamedAndRemoveUntil(context, '/login', (_) => false);
+        //   Navigator.pop(
+        //   context, MaterialPageRoute(builder: (context) => LoginScreen()));
+      }
+    });
+
+    // return _access;
+  }
+
   void userAccess(key, BuildContext context) {
     databaseReference = database.reference().child('$path/users/en-US/$key/');
     databaseReference.onValue.listen((event) async {
@@ -1993,6 +2019,7 @@ for( var i = 0 ; i < _list.length; i++){
 
     // return _access;
   }
+
   //!--------*
 
   Future<bool> leaderVerification(String distrId) async {
@@ -2030,6 +2057,11 @@ for( var i = 0 ; i < _list.length; i++){
   Future<bool> setIsAllowed(bool allowed) async {
     final User userAccess = User(isAllowed: allowed);
     return userAccess.isAllowed;
+  }
+
+  Future<bool> setIsTester(bool _tester) async {
+    final User testUser = User(tester: _tester);
+    return testUser.tester;
   }
 
   //!--------*

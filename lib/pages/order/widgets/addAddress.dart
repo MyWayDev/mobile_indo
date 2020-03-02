@@ -69,7 +69,7 @@ class _AddRegionState extends State<AddRegion> {
     List<ShipmentArea> shipmentAreas = [];
     areas.clear();
     final response = await http.get(
-        'http://mywayindoapi-staging.azurewebsites.net/api/get_shipment_places_by_area_id/$areaId');
+        'http://mywayindoapi.azurewebsites.net/api/get_shipment_places_by_area_id/$areaId');
     if (response.statusCode == 200) {
       final _shipmentArea = json.decode(response.body) as List;
       shipmentAreas =
@@ -360,7 +360,7 @@ class _AddAddressState extends State<AddAddress> {
     if (list.length == 3) {
       String delId = list.first.shipmentId.toString();
       http.delete(
-          'http://mywayindoapi-staging.azurewebsites.net/api/delete_distr_shipment_place_record/$delId');
+          'http://mywayindoapi.azurewebsites.net/api/delete_distr_shipment_place_record/$delId');
     }
     String msg;
 

@@ -15,6 +15,7 @@ class User {
   String photoUrl;
   bool isAllowed;
   bool isleader;
+  bool tester;
   String token;
 
   User(
@@ -27,6 +28,7 @@ class User {
       this.photoUrl,
       this.isAllowed,
       this.isleader,
+      this.tester,
       this.token});
 
   toJson() {
@@ -63,6 +65,7 @@ class User {
         isleader = snapshot.value["isleader"],
         areaId = snapshot.value["areaId"],
         token = snapshot.value["token"],
+        tester = snapshot.value["tester"] ?? false,
         photoUrl = snapshot.value["photoUrl"];
 
   User.useSnapshot(DataSnapshot snapshot)
@@ -73,6 +76,7 @@ class User {
         isleader = snapshot.value["isleader"],
         areaId = snapshot.value["areaId"],
         token = snapshot.value["token"],
+        tester = snapshot.value["tester"],
         photoUrl = snapshot.value["photoUrl"];
 }
 
@@ -126,7 +130,7 @@ class NewMember {
   Future<http.Response> createPost(NewMember newMember, String user,
       String shipmentPlace, String shipmentPlaceName) async {
     final response = await http.put(
-        'http://mywayindoapi-staging.azurewebsites.net/api/memregister/$user/$shipmentPlace/$shipmentPlaceName',
+        'http://mywayindoapi.azurewebsites.net/api/memregister/$user/$shipmentPlace/$shipmentPlaceName',
         headers: {
           HttpHeaders.contentTypeHeader: 'application/json',
           //HttpHeaders.authorizationHeader: ''
