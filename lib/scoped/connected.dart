@@ -24,7 +24,7 @@ import 'package:firebase_core/firebase_core.dart';
 class MainModel extends Model {
   // ** items //** */
   static String _version = '3.20r'; //!Modify for every release version./.
-  static String firebaseDb = "indoStage"; //!modify back to indoProduction;
+  static String firebaseDb = "indoProduction"; //!modify back to indoProduction;
   static String stage = "indoStage";
   static String updateDb = "indoStage";
   final FirebaseDatabase database = FirebaseDatabase.instance;
@@ -1577,6 +1577,20 @@ for(var area in areas){
     }
 //return couriers;
   }*/
+  Future<List<AreaPlace>> getAreaPlace() async {
+    List<AreaPlace> shipmentAreas = [];
+
+    final response = await http.get('$httpath/get_all_shipment_places/');
+    if (response.statusCode == 200) {
+      final _shipmentArea = json.decode(response.body) as List;
+      shipmentAreas = _shipmentArea.map((s) => AreaPlace.json(s)).toList();
+      shipmentAreas.forEach((a) => print(a.spName));
+    } else {
+      shipmentAreas = [];
+    }
+
+    return shipmentAreas;
+  }
 
   Future<List<ShipmentArea>> getShipmentAreas(String distrId, int point) async {
     List<ShipmentArea> shipmentAreas = [];
@@ -1873,7 +1887,7 @@ for( var i = 0 ; i < _list.length; i++){
         locKCart(context); //! uncomment this before buildR
         locKApp(context); //! uncomment this before buildR
         userAccess(key, context);
-        userTest(key, context);
+        // getAreauserTest(key, context);
         // getArea();
 
         try {
@@ -2020,18 +2034,41 @@ for( var i = 0 ; i < _list.length; i++){
     // return _access;
   }
 
+  Future<bool> distrVerification(String distrId) async {
+    http.Response response = await http.get('$httpath/memberid/$distrId');
+    User _verDistr;
+    String sBool;
+
+    if (response.statusCode == 200 && response.contentLength > 0) {
+      List _distr = await json.decode(response.body);
+
+      _verDistr = User.formJson(_distr[0]);
+      if (_verDistr.distrId.substring(1, 2) == '3' && _verDistr != null) {
+        http.Response responseBool = await http.get(
+            '$httpath/member_fees_verification/$distrId/${_verDistr.serviceCenter}');
+        if (response.statusCode == 200) {
+          List _distrVeri = json.decode(responseBool.body);
+          sBool = _distrVeri[0];
+          print('sbool:$sBool');
+        }
+      }
+    }
+
+    return sBool == '1' ? false : true;
+  }
+
   //!--------*
 
   Future<bool> leaderVerification(String distrId) async {
     String v;
-
+    bool _distrVeri;
     http.Response response = await http
         .get('$httpath/leaderverification/${userInfo.distrId}/$distrId');
 
     if (response.statusCode == 200) {
       List vList = await json.decode(response.body);
       print('verList:${vList.length}');
-
+      _distrVeri = await distrVerification(distrId);
       if (vList.length == 1) {
         v = vList[0].toString().toLowerCase();
       } else {
@@ -2039,8 +2076,9 @@ for( var i = 0 ; i < _list.length; i++){
       }
     }
     bool b;
-    v == 'true' ? b = true : b = false;
-    print('verification:$b');
+    v == 'true' && _distrVeri ? b = true : b = false;
+
+    print('verificationDistr:$b :paidDistr:$_distrVeri');
     return b;
   }
 

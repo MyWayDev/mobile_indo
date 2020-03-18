@@ -51,8 +51,8 @@ class RegistrationButton extends StatelessWidget {
                   )
                 ],
               ),
-              onPressed: () => Navigator.pushNamed(context, '/phoneAuth'),
-              // Navigator.pushNamed(context, '/registration'),
+              onPressed: () => //Navigator.pushNamed(context, '/phoneAuth'),
+                  Navigator.pushNamed(context, '/registration'),
             ),
           ),
         ],

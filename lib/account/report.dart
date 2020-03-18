@@ -69,8 +69,6 @@ class _Report extends State<Report> {
         backgroundColor: Colors.transparent,
         //foregroundColor: Colors.transparent,
         onPressed: () {
-          print(widget.userId);
-
           distrController.text.length <= 8 || !veri
               ? memberReportSummary(widget.userId)
               : memberReportSummary(_nodeData.distrId);

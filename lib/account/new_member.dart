@@ -6,10 +6,14 @@ import 'package:http/http.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:mor_release/models/area.dart';
 import 'package:mor_release/models/user.dart';
+import 'package:mor_release/pages/order/widgets/payment.dart';
+import 'package:mor_release/pages/order/widgets/shipmentArea.dart';
+import 'package:mor_release/pages/order/widgets/storeFloat.dart';
 import 'package:mor_release/scoped/connected.dart';
 import 'package:mor_release/widgets/color_loader_2.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:groovin_material_icons/groovin_material_icons.dart';
+import 'package:http/http.dart' as http;
 
 import 'package:intl/intl.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
@@ -31,14 +35,20 @@ class _NewMemberPage extends State<NewMemberPage> {
   TextEditingController controller = new TextEditingController();
 
   final GlobalKey<FormState> _newMemberFormKey = GlobalKey<FormState>();
+
   List<DropdownMenuItem> items = [];
+  List<DropdownMenuItem> places = [];
   String selectedValue;
+  String placeValue;
   var areaSplit;
+  var placeSplit;
+
   bool _loading = false;
 
   @override
   void initState() {
-    getAreas();
+    getPlaces();
+    //  getAreas();
     controller.addListener(() {
       setState(() {});
     });
@@ -76,7 +86,43 @@ class _NewMemberPage extends State<NewMemberPage> {
           DropdownMenuItem(
               child: Text(
                 sValue,
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 11),
+              ),
+              value: sValue),
+        );
+      }
+    }
+  }
+
+  AreaPlace getplace(String id) {
+    AreaPlace place;
+    place = areaPlace.firstWhere((p) => p.shipmentPlace == id);
+    print(
+        'shipmentPlace:${place.shipmentPlace}:spName${place.spName}:areaId:${place.areaId}');
+    return place;
+  }
+
+  List<AreaPlace> areaPlace;
+  void getPlaces() async {
+    areaPlace = [];
+    final response = await http.get(
+        'http://mywayindoapi.azurewebsites.net/api/get_all_shipment_places/');
+    if (response.statusCode == 200) {
+      final _shipmentArea = json.decode(response.body) as List;
+      areaPlace = _shipmentArea.map((s) => AreaPlace.json(s)).toList();
+      //areaPlace.forEach((a) => print(a.spName));
+    } else {
+      areaPlace = [];
+    }
+
+    if (areaPlace.isNotEmpty) {
+      for (var t in areaPlace) {
+        String sValue = "${t.shipmentPlace}" + " " + "${t.spName}";
+        places.add(
+          DropdownMenuItem(
+              child: Text(
+                sValue,
+                style: TextStyle(fontSize: 12),
               ),
               value: sValue),
         );
@@ -97,6 +143,7 @@ class _NewMemberPage extends State<NewMemberPage> {
     bankAccoutName: null,
     bankAccountNumber: null,
     taxNumber: null,
+    serviceCenter: null,
   );
 
   Area stateValue;
@@ -123,13 +170,15 @@ class _NewMemberPage extends State<NewMemberPage> {
 
   bool validData;
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  bool validateAndSave(String userId) {
+  bool validateAndSave(String userId, String sc) {
     final form = _newMemberFormKey.currentState;
     isloading(true);
-    if (form.validate() && selected != null && areaSplit.first != null) {
+    if (form.validate() && selected != null && placeSplit.first != null) {
       _newMemberForm.birthDate =
           DateFormat('yyyy-MM-dd').format(selected).toString();
       _newMemberForm.email = userId;
+      _newMemberForm.areaId = getplace(placeSplit.first).areaId;
+      _newMemberForm.serviceCenter = sc;
       setState(() {
         validData = true;
       });
@@ -150,8 +199,14 @@ class _NewMemberPage extends State<NewMemberPage> {
     return ScopedModelDescendant<MainModel>(
         builder: (BuildContext context, Widget child, MainModel model) {
       return Scaffold(
-        floatingActionButton:
-            FloatingActionButton.extended(onPressed: null, label: null),
+        floatingActionButton: FloatingActionButton.extended(
+            onPressed: null,
+            label: StoreFloat(model),
+            isExtended: true,
+            elevation: 30,
+            backgroundColor: Colors.transparent),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
         resizeToAvoidBottomPadding: false,
         body: ModalProgressHUD(
           child: Container(
@@ -477,42 +532,60 @@ class _NewMemberPage extends State<NewMemberPage> {
                                               _newMemberForm.taxNumber = value;
                                             },
                                           ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceEvenly,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: <Widget>[
-                                              Icon(
-                                                Icons.add_location,
-                                                size: 26,
-                                                color: Colors.pink[500],
-                                              ),
+                                          Container(
+                                            width: 300,
+                                            child: Wrap(children: <Widget>[
+                                              Icon(Icons.add_location,
+                                                  color: Colors.pink[500]),
                                               SearchableDropdown(
-                                                hint: Text('REGION'),
-                                                icon: Icon(
-                                                  Icons.arrow_drop_down_circle,
-                                                  size: 28,
-                                                ),
+                                                //style: TextStyle(fontSize: 12),
+                                                hint: Text('Area'),
                                                 iconEnabledColor:
                                                     Colors.pink[200],
                                                 iconDisabledColor: Colors.grey,
-                                                items: items,
+                                                items: places,
                                                 value: selectedValue,
                                                 onChanged: (value) {
                                                   setState(() {
                                                     selectedValue = value;
-                                                    areaSplit = selectedValue
+                                                    placeSplit = selectedValue
                                                         .split('\ ');
-                                                    _newMemberForm.areaId =
-                                                        areaSplit.first;
-                                                    print(
-                                                        'split:${_newMemberForm.areaId}');
+                                                    print(placeSplit);
                                                   });
                                                 },
-                                              ),
-                                            ],
-                                          )
+                                              )
+                                            ]), /* Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: <Widget>[
+                                                SearchableDropdown(
+                                                  hint: Text('region'),
+                                                  icon: Icon(
+                                                    Icons
+                                                        .arrow_drop_down_circle,
+                                                    size: 28,
+                                                  ),
+                                                  iconEnabledColor:
+                                                      Colors.pink[200],
+                                                  iconDisabledColor:
+                                                      Colors.grey,
+                                                  items: items,
+                                                  value: selectedValue,
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      selectedValue = value;
+                                                      areaSplit = selectedValue
+                                                          .split('\ ');
+                                                      _newMemberForm.areaId =
+                                                          areaSplit.first;
+
+                                                      print(
+                                                          'split:${_newMemberForm.areaId}');
+                                                    });
+                                                  },
+                                                ),
+                                              ],
+                                            ),*/
+                                          ),
                                         ],
                                       ),
                                     )
@@ -541,12 +614,20 @@ class _NewMemberPage extends State<NewMemberPage> {
                               ),
                               onPressed: () async {
                                 String msg = '';
-                                if (validateAndSave(model.userInfo.distrId)) {
+                                if (validateAndSave(
+                                    model.userInfo.distrId, model.setStoreId)) {
                                   msg = await _saveNewMember(
-                                      model.userInfo.distrId);
+                                      model.userInfo.distrId,
+                                      model.docType,
+                                      model.setStoreId);
                                   showReview(context, msg);
 
                                   _newMemberFormKey.currentState.reset();
+
+                                  PaymentInfo(model)
+                                      .flushAction(context)
+                                      .show(context);
+                                  ;
                                 }
 
                                 //  s
@@ -567,13 +648,20 @@ class _NewMemberPage extends State<NewMemberPage> {
   }
 
   String errorM = '';
-  Future<String> _saveNewMember(String user) async {
+  Future<String> _saveNewMember(
+      String user, String docType, String storeId) async {
+    print('docType:$docType:storeId:$storeId');
     Id body;
     String msg;
     isloading(true);
     print(_newMemberForm.postNewMemberToJson(_newMemberForm));
     Response response = await _newMemberForm.createPost(
-        _newMemberForm, user, '022705', 'JAKARTA');
+        _newMemberForm,
+        user,
+        getplace(placeSplit.first).shipmentPlace,
+        getplace(placeSplit.first).spName,
+        docType,
+        storeId);
     if (response.statusCode == 201) {
       body = Id.fromJson(json.decode(response.body));
       msg = body.id;

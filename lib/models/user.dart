@@ -13,6 +13,7 @@ class User {
   String phone;
   String areaId;
   String photoUrl;
+  String serviceCenter;
   bool isAllowed;
   bool isleader;
   bool tester;
@@ -26,6 +27,7 @@ class User {
       this.name,
       this.areaId,
       this.photoUrl,
+      this.serviceCenter,
       this.isAllowed,
       this.isleader,
       this.tester,
@@ -47,13 +49,13 @@ class User {
 
   factory User.formJson(Map<String, dynamic> json) {
     return User(
-      distrId: json['DISTR_ID'] ?? '',
-      name: json['LNAME'] ?? '',
-      distrIdent: json['DISTR_IDENT'] ?? '',
-      email: json['E_MAIL'] ?? '',
-      phone: json['TELEPHONE'] ?? '',
-      areaId: json['AREA_ID'] ?? '',
-    );
+        distrId: json['DISTR_ID'] ?? '',
+        name: json['LNAME'] ?? '',
+        distrIdent: json['DISTR_IDENT'] ?? '',
+        email: json['E_MAIL'] ?? '',
+        phone: json['TELEPHONE'] ?? '',
+        areaId: json['AREA_ID'] ?? '',
+        serviceCenter: json['SERVICE_CENTER']);
   }
   // * firebase sample code for model..
   User.fromSnapshot(DataSnapshot snapshot)
@@ -93,6 +95,7 @@ class NewMember {
   String bankAccoutName;
   String bankAccountNumber;
   String taxNumber;
+  String serviceCenter;
 
   NewMember(
       {this.sponsorId,
@@ -106,7 +109,9 @@ class NewMember {
       this.areaId,
       this.bankAccoutName,
       this.bankAccountNumber,
-      this.taxNumber});
+      this.taxNumber,
+      this.serviceCenter});
+
   Map<String, dynamic> toJson() => {
         "SPONSOR_ID": sponsorId,
         "FAMILY_LNAME": familyName,
@@ -119,18 +124,25 @@ class NewMember {
         "AREA_ID": areaId,
         "NOTES": bankAccoutName,
         "SM_ID": bankAccountNumber,
-        "AP_AC_ID": taxNumber
+        "AP_AC_ID": taxNumber,
+        "SERVICE_CENTER": serviceCenter,
       };
+
   String postNewMemberToJson(NewMember newMember) {
     final dyn = newMember.toJson();
     return json.encode(dyn);
   }
   //!! refactor to new schema from api documentation;
 
-  Future<http.Response> createPost(NewMember newMember, String user,
-      String shipmentPlace, String shipmentPlaceName) async {
+  Future<http.Response> createPost(
+      NewMember newMember,
+      String user,
+      String shipmentPlace,
+      String shipmentPlaceName,
+      String docType,
+      String storeId) async {
     final response = await http.put(
-        'http://mywayindoapi.azurewebsites.net/api/memregister/$user/$shipmentPlace/$shipmentPlaceName',
+        'http://mywayindoapi.azurewebsites.net/api/memregister/$user/$shipmentPlace/$shipmentPlaceName/$docType/$storeId',
         headers: {
           HttpHeaders.contentTypeHeader: 'application/json',
           //HttpHeaders.authorizationHeader: ''

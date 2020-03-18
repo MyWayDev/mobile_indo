@@ -22,30 +22,16 @@ class ReportTabs extends StatelessWidget {
           icon: Icon(
             GroovinMaterialIcons.account_card_details,
             size: 29.0,
-            color: Colors.blueAccent[100],
+            color: Colors.white,
           ),
         ),
-        Tab(
+        /* Tab(
           icon: Icon(
             GroovinMaterialIcons.account_plus,
             color: Colors.greenAccent[400],
             size: 29.0,
           ),
-          // required
-          //badgeColor: Colors.red, // default: Colors.red
-          // default: Colors.white
-          //hideZeroCount: true, // default: true
-
-          /* icon: new Stack(children: <Widget>[
-                        Icon(
-                          Icons.shopping_cart,
-                          size: 35.0,
-                        ),
-                        Positioned(
-                            right: 0.0,
-                            bottom: 0.0,
-                            child: )
-                      ]),*/
+       
         ),
         Tab(
           icon: Icon(
@@ -60,7 +46,7 @@ class ReportTabs extends StatelessWidget {
             size: 29.0,
             color: Colors.white,
           ),
-        ),
+        ),*/
       ],
     ),
   );
@@ -70,16 +56,16 @@ class ReportTabs extends StatelessWidget {
     return ScopedModelDescendant<MainModel>(
         builder: (BuildContext context, Widget child, MainModel model) {
       return DefaultTabController(
-        length: 4,
+        length: 1,
         child: Scaffold(
           appBar: PreferredSize(
               preferredSize: Size.fromHeight(45.0), child: _appBar),
           body: TabBarView(
             children: <Widget>[
               Report(model.userInfo.distrId),
-              TrackInvoice(model.userInfo.distrId),
-              Report(model.userInfo.distrId),
-              Report(model.userInfo.distrId),
+              // TrackInvoice(model.userInfo.distrId),
+              //  Report(model.userInfo.distrId),
+              //  Report(model.userInfo.distrId),
               // ExpansionTileSample() // SwitchPage(ItemsPage()),
               //OrderPage(), //SwitchPage(OrderPage()),
               //ProductList(),

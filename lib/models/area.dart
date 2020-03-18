@@ -24,6 +24,23 @@ class Area {
   }
 }
 
+class AreaPlace {
+  String shipmentPlace;
+  String spName;
+  String areaId;
+  String areaName;
+
+  AreaPlace({this.shipmentPlace, this.spName, this.areaId, this.areaName});
+
+  factory AreaPlace.json(Map<dynamic, dynamic> json) {
+    return AreaPlace(
+        shipmentPlace: json['DS_SHIPMENT_PLACE'],
+        spName: json['SPNAME'],
+        areaId: json['AREA_ID'],
+        areaName: json['AREA_NAME']);
+  }
+}
+
 class Region {
   String regionId;
   String name;

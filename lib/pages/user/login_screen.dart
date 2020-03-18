@@ -306,8 +306,8 @@ class _LoginScreen extends State<LoginScreen> {
                         })),
                       ],
                     )),
-                //!! registraion button here..
-                // registration_button.RegistrationButton(),
+                //! registraion button here..
+                registration_button.RegistrationButton(),
 
                 Padding(
                     padding: EdgeInsets.only(top: 8),
