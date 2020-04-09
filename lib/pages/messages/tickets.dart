@@ -20,7 +20,7 @@ class _TicketsState extends State<Tickets> {
   List<TicketType> types = [];
   ChatScreen msgs;
 
-  String path = "flamelink/environments/indoStage/content/support/en-US";
+  String path = "flamelink/environments/indoProduction/content/support/en-US";
 
   FirebaseDatabase database = FirebaseDatabase.instance;
 
@@ -440,7 +440,8 @@ class _TicketsState extends State<Tickets> {
   getTicketTypes() async {
     DataSnapshot snapshot = await database
         .reference()
-        .child('flamelink/environments/indoStage/content/ticketType/en-US/')
+        .child(
+            'flamelink/environments/indoProduction/content/ticketType/en-US/')
         .once();
     Map<dynamic, dynamic> typeList = snapshot.value;
     List list = typeList.values.toList();

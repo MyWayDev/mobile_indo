@@ -325,27 +325,118 @@ class _LoginScreen extends State<LoginScreen> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
                             Icon(GroovinMaterialIcons.whatsapp,
-                                size: 28, color: Colors.greenAccent[400]),
+                                size: 26, color: Colors.greenAccent[400]),
                             SizedBox(width: 2.0),
-                            Column(
+                            Row(
                               mainAxisSize: MainAxisSize.min,
                               children: <Widget>[
-                                Text('0811- 186 - 245',
-                                    style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold)),
-                                Text('0811-888-3014',
-                                    style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold)),
-                                Text('0811-888-3015',
-                                    style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold))
+                                Column(
+                                  children: <Widget>[
+                                    Text('Password/Login',
+                                        style: TextStyle(
+                                            color: Colors.pink[900],
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold)),
+                                    Column(
+                                      children: <Widget>[
+                                        Text('0811-186-245  ',
+                                            style: TextStyle(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.bold)),
+                                        Text('0811-888-3084  ',
+                                            style: TextStyle(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.bold)),
+                                        Text('0811-888-3015  ',
+                                            style: TextStyle(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.bold))
+                                      ],
+                                    )
+                                  ],
+                                )
                               ],
                             )
                           ],
-                        )
+                        ),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Icon(GroovinMaterialIcons.whatsapp,
+                                size: 26, color: Colors.greenAccent[400]),
+                            SizedBox(width: 2.0),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Column(
+                                  children: <Widget>[
+                                    Text('Sales Orders',
+                                        style: TextStyle(
+                                            color: Colors.pink[900],
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold)),
+                                    Column(
+                                      children: <Widget>[
+                                        Text('0811-888-3014',
+                                            style: TextStyle(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.bold)),
+                                        Text('0811-888-3023',
+                                            style: TextStyle(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.bold)),
+                                        Text('0822-8838-0029(Medan)',
+                                            style: TextStyle(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.bold))
+                                      ],
+                                    )
+                                  ],
+                                )
+                              ],
+                            )
+                          ],
+                        ),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Icon(GroovinMaterialIcons.whatsapp,
+                                size: 26, color: Colors.greenAccent[400]),
+                            SizedBox(width: 2.0),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Column(
+                                  children: <Widget>[
+                                    Text('Pendaftaran Member Baru',
+                                        style: TextStyle(
+                                            color: Colors.pink[900],
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold)),
+                                    Column(
+                                      children: <Widget>[
+                                        Text('0811-888-3026',
+                                            style: TextStyle(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.bold)),
+                                        Text('0811-888-3015',
+                                            style: TextStyle(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.bold)),
+                                        Text('0822-8838-0021(Medan)',
+                                            style: TextStyle(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.bold))
+                                      ],
+                                    )
+                                  ],
+                                )
+                              ],
+                            )
+                          ],
+                        ),
                       ],
                     ))),
               ],

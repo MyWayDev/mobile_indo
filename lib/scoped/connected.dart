@@ -24,9 +24,9 @@ import 'package:firebase_core/firebase_core.dart';
 class MainModel extends Model {
   // ** items //** */
   static String _version = '3.20r'; //!Modify for every release version./.
-  static String firebaseDb = "indoStage"; //!modify back to indoStage;
-  static String stage = "indoStage";
-  static String updateDb = "indoStage";
+  static String firebaseDb = "indoProduction"; //!modify back to indoProduction;
+  static String stage = "indoProduction";
+  static String updateDb = "indoProduction";
   final FirebaseDatabase database = FirebaseDatabase.instance;
   DatabaseReference databaseReference;
   final String path = 'flamelink/environments/$firebaseDb/content';
@@ -102,18 +102,16 @@ class MainModel extends Model {
   }
 
   updateCatToFalse(int itemId) {
-    DatabaseReference catF = FirebaseDatabase.instance
-        .reference()
-        .child('flamelink/environments/indoStage/content/items/en-US/$itemId');
+    DatabaseReference catF = FirebaseDatabase.instance.reference().child(
+        'flamelink/environments/indoProduction/content/items/en-US/$itemId');
     catF.update({
       'catalogue': false,
     });
   }
 
   updateItemsCatFalse(int itemId, Products p) {
-    DatabaseReference catF = FirebaseDatabase.instance
-        .reference()
-        .child('flamelink/environments/indoStage/content/items/en-US/$itemId');
+    DatabaseReference catF = FirebaseDatabase.instance.reference().child(
+        'flamelink/environments/indoProduction/content/items/en-US/$itemId');
     if (p.promo == '50') {
       catF.update({
         'catalogue': p.catalog,

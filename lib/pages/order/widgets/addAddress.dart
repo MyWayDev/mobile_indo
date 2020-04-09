@@ -23,7 +23,7 @@ class AddRegion extends StatefulWidget {
 }
 
 class _AddRegionState extends State<AddRegion> {
-  String path = 'flamelink/environments/indoStage/content/region/en-US/';
+  String path = 'flamelink/environments/indoProduction/content/region/en-US/';
   FirebaseDatabase database = FirebaseDatabase.instance;
 
   List<DropdownMenuItem> regions = [];
@@ -241,7 +241,7 @@ class _AddAddressState extends State<AddAddress> {
               isExpanded: true,
               hint: Center(
                 child: Text(
-                  'Pilih Kecamatan',
+                  'Pilih Area Pengiriman',
                   softWrap: true,
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 ),

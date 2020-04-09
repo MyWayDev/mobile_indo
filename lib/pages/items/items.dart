@@ -24,7 +24,7 @@ class _ItemsPage extends State<ItemsPage> with SingleTickerProviderStateMixin {
   final formatWeight = new NumberFormat("#,###.##");
   //String db = 'production';
   String path =
-      "flamelink/environments/indoStage/content/items/en-US"; //! VERY IMPORTANT change back to production before release
+      "flamelink/environments/indoProduction/content/items/en-US"; //! VERY IMPORTANT change back to production before release
   List<Item> itemData = List();
   List<Item> searchResult = [];
   FirebaseDatabase database = FirebaseDatabase.instance;
