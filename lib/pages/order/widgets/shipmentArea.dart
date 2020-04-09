@@ -25,7 +25,7 @@ class _ShipmentAreaState extends State<ShipmentPlace>
   bool _isloading = false;
   bool isSelected = false;
   bool _hasData = false;
-  int distrpoint = 0;
+  int distrpoint = 1;
   String type;
   List<Region> distrPoints = [];
   List<ShipmentArea> shipmentAreas = [];
@@ -65,6 +65,7 @@ class _ShipmentAreaState extends State<ShipmentPlace>
   getDistrPoints() async {
     isloading(true);
     distrPoints = await widget.model.getPoints(widget.model.distrPoint);
+    distrPoints.forEach((p) => print('getpoints+>${p.name}'));
     if (distrPoints.length > 0) {
       setState(() {
         //   widget.model.distrPoint = distrPoints[0].id;
@@ -116,6 +117,7 @@ class _ShipmentAreaState extends State<ShipmentPlace>
   @override
   void initState() {
     getDistrPoints();
+    distrpoint = widget.model.distrPoint;
 
     super.initState();
   }
@@ -182,7 +184,7 @@ class _ShipmentAreaState extends State<ShipmentPlace>
                               attribute: "Point",
                               decoration: InputDecoration(
                                   labelText: "Titik Distribusi"),
-                              initialValue: distrPoints[0].id,
+                              initialValue: distrpoint,
                               hint: Text('Select Point'),
                               validators: [FormBuilderValidators.required()],
                               onChanged: (value) async {
@@ -210,7 +212,7 @@ class _ShipmentAreaState extends State<ShipmentPlace>
                                     ],
                                     formField: FormField(
                                         initialValue:
-                                            shipmentAreas[0].shipmentId,
+                                            shipmentAreas.last.shipmentId,
                                         enabled: _hasData ? true : false,
                                         builder:
                                             (FormFieldState<dynamic> field) {

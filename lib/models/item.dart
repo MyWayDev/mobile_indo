@@ -61,27 +61,27 @@ class Item {
   Item.fromSnapshot(DataSnapshot snapshot)
       : key = snapshot.key,
         id = snapshot.key,
-        itemId = snapshot.value['itemId'],
+        itemId = snapshot.value['itemId'] ?? "",
         name = snapshot.value['name'] ?? "",
-        price = snapshot.value['price'],
-        bp = snapshot.value['bp'],
-        bv = snapshot.value['bv'],
-        image = snapshot.value['image'],
-        imageUrl = snapshot.value['imageUrl'],
-        size = snapshot.value['size'],
-        unit = snapshot.value['unit'],
-        promo = snapshot.value['promo'],
+        price = snapshot.value['price'] ?? 0,
+        bp = snapshot.value['bp'] ?? 0,
+        bv = snapshot.value['bv'] ?? 0.0,
+        image = snapshot.value['image'] ?? "",
+        imageUrl = snapshot.value['imageUrl'] ?? "",
+        size = snapshot.value['size'] ?? "",
+        unit = snapshot.value['unit'] ?? "",
+        promo = snapshot.value['promo'] ?? "",
         promoImage = snapshot.value['promoImage'],
-        promoImageUrl = snapshot.value['promoImageUrl'],
+        promoImageUrl = snapshot.value['promoImageUrl'] ?? "",
         catalogue = snapshot.value['catalogue'],
         nw = snapshot.value['new'],
-        disabled = snapshot.value['disable'],
+        disabled = snapshot.value['disable'] ?? false,
         discont = snapshot.value['discontinued'],
         brand = snapshot.value['brand'],
         cat = snapshot.value['catagory'],
         grp = snapshot.value['group'],
         usage = snapshot.value['usage'],
-        weight = snapshot.value['weight'];
+        weight = snapshot.value['weight'] ?? 0.0;
 
   factory Item.fromJson(Map<String, dynamic> json) {
     return Item(
@@ -157,6 +157,41 @@ class Item {
       "disable": disabled,
       "discontinued": discont,
     };
+  }
+}
+
+class Products {
+  String itemId;
+  String name;
+  var price;
+  var bp;
+  var bv;
+  var weight;
+  String promo;
+  bool enabled;
+  bool catalog;
+  Products({
+    this.itemId,
+    this.name,
+    this.price,
+    this.bp,
+    this.bv,
+    this.weight,
+    this.promo,
+    this.enabled,
+    this.catalog,
+  });
+  factory Products.fromList(Map<dynamic, dynamic> list) {
+    return Products(
+      itemId: list['ITEM_ID'],
+      name: list['ANAME'] ?? "",
+      price: list['PRICE'],
+      bp: list['BP'],
+      bv: list['BV'],
+      promo: list['PROMO'],
+      catalog: list['CATALOG'],
+      enabled: list['ENABLED'],
+    );
   }
 }
 

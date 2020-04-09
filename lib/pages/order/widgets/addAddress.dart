@@ -23,7 +23,7 @@ class AddRegion extends StatefulWidget {
 }
 
 class _AddRegionState extends State<AddRegion> {
-  String path = 'flamelink/environments/indoProduction/content/region/en-US/';
+  String path = 'flamelink/environments/indoStage/content/region/en-US/';
   FirebaseDatabase database = FirebaseDatabase.instance;
 
   List<DropdownMenuItem> regions = [];
@@ -357,7 +357,8 @@ class _AddAddressState extends State<AddAddress> {
     print('distrPoint:${model.distrPoint}');
     List<ShipmentArea> list =
         await model.getShipmentAreas(memberId, model.distrPoint);
-    if (list.length == 3) {
+    print('address length=>${list.length}');
+    if (list.length > 5) {
       String delId = list.first.shipmentId.toString();
       http.delete(
           'http://mywayindoapi.azurewebsites.net/api/delete_distr_shipment_place_record/$delId');

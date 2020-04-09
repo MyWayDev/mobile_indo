@@ -88,6 +88,8 @@ class _IconBar extends State<IconBar> {
                   iconSize: 30.0,
                   color: Colors.blueAccent,
                   onPressed: () {
+                    //model.updateCatToFalse()
+                    // model.itemDataUpdataProductToFB();
                     Navigator.push(
                         context,
                         MaterialPageRoute(

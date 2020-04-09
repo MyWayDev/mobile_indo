@@ -327,9 +327,23 @@ class _LoginScreen extends State<LoginScreen> {
                             Icon(GroovinMaterialIcons.whatsapp,
                                 size: 28, color: Colors.greenAccent[400]),
                             SizedBox(width: 2.0),
-                            Text('081-1186-245',
-                                style: TextStyle(
-                                    fontSize: 15, fontWeight: FontWeight.bold))
+                            Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Text('0811- 186 - 245',
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold)),
+                                Text('0811-888-3014',
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold)),
+                                Text('0811-888-3015',
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold))
+                              ],
+                            )
                           ],
                         )
                       ],

@@ -24,7 +24,7 @@ import 'package:firebase_core/firebase_core.dart';
 class MainModel extends Model {
   // ** items //** */
   static String _version = '3.20r'; //!Modify for every release version./.
-  static String firebaseDb = "indoProduction"; //!modify back to indoProduction;
+  static String firebaseDb = "indoStage"; //!modify back to indoStage;
   static String stage = "indoStage";
   static String updateDb = "indoStage";
   final FirebaseDatabase database = FirebaseDatabase.instance;
@@ -61,6 +61,91 @@ class MainModel extends Model {
     _distrPointNames = distrPointName;
     notifyListeners();
     return _distrPointNames;
+  }
+
+  Future<List<Item>> fireItemList() async {
+    DataSnapshot snapshot =
+        await database.reference().child('$path/items/en-US/').once();
+    Map<dynamic, dynamic> fbitemsList = snapshot.value;
+    List fblist = fbitemsList.values.toList();
+    List<Item> fbItems = fblist.map((f) => Item.fromList(f)).toList();
+    return fbItems;
+  }
+
+  void itemDataUpdataProductToFB() async {
+    List<Products> products = await getitemDetailsApi();
+    List<Item> fireItems = await fireItemList();
+    // fireItems.forEach((f) => updateCatToFalse(f.id));
+    if (products.isNotEmpty) {
+      for (Products p in products)
+        fireItems.where((i) => i.itemId == p.itemId).forEach((f) {
+          print(f.promo);
+          // print(products.length);
+          // print(fireItems.k;
+          // updateItemsCatFalse(f.key, p);
+          updateItemsCatFalse(f.id, p);
+        });
+      print('itemDataLength:=>${fireItems.length}');
+    }
+  }
+
+  Future<List<Products>> getitemDetailsApi() async {
+    List<Products> products;
+    //List productlist;
+    final response = await http.get('$httpath/allitemdetails');
+    if (response.statusCode == 200) {
+      final productlist = json.decode(response.body) as List;
+
+      products = productlist.map((i) => Products.fromList(i)).toList();
+    }
+    return products;
+  }
+
+  updateCatToFalse(int itemId) {
+    DatabaseReference catF = FirebaseDatabase.instance
+        .reference()
+        .child('flamelink/environments/indoStage/content/items/en-US/$itemId');
+    catF.update({
+      'catalogue': false,
+    });
+  }
+
+  updateItemsCatFalse(int itemId, Products p) {
+    DatabaseReference catF = FirebaseDatabase.instance
+        .reference()
+        .child('flamelink/environments/indoStage/content/items/en-US/$itemId');
+    if (p.promo == '50') {
+      catF.update({
+        'catalogue': p.catalog,
+        'disable': false,
+        'promo': p.promo,
+        'price': p.price,
+        'bp': p.bp,
+        'bv': p.bv,
+        //'weigth': p.weight,
+        // 'promoImageUrl':
+        //     'https://firebasestorage.googleapis.com/v0/b/mobile-coco.appspot.com/o/flamelink%2Fmedia%2F1582300782233_tag-50.png?alt=media&token=d4bc271f-ee57-49e0-ae16-1573043690b8',
+        // 'promoImage': []
+
+        // 'fromSupport': 0,
+      });
+    }
+    /*
+    if (p.promo == '35') {
+      catF.update({
+        'catalogue': p.catalog,
+      'disable': false,
+      'promo': p.promo,
+      'price': p.price,
+      'bp': p.bp,
+      'bv': p.bv,
+      'weigth': p.weight,
+        'promoImageUrl':
+            'https://firebasestorage.googleapis.com/v0/b/mobile-coco.appspot.com/o/flamelink%2Fmedia%2F1581957902462_tag-35.png?alt=media&token=d364eef4-37b1-4e1d-b86d-dc4538d3fa5e' // 'promoImage': []
+
+        'fromSupport': 0,
+      });
+    }*/
   }
 
   updateEnabledItems(String itemId) {

@@ -7,7 +7,6 @@ import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:mor_release/models/area.dart';
 import 'package:mor_release/models/user.dart';
 import 'package:mor_release/pages/order/widgets/payment.dart';
-import 'package:mor_release/pages/order/widgets/shipmentArea.dart';
 import 'package:mor_release/pages/order/widgets/storeFloat.dart';
 import 'package:mor_release/scoped/connected.dart';
 import 'package:mor_release/widgets/color_loader_2.dart';
@@ -30,7 +29,7 @@ class NewMemberPage extends StatefulWidget {
 @override
 class _NewMemberPage extends State<NewMemberPage> {
   DateTime selected;
-  String path = 'flamelink/environments/indoProduction/content/region/en-US/';
+  String path = 'flamelink/environments/indoStage/content/region/en-US/';
   FirebaseDatabase database = FirebaseDatabase.instance;
   TextEditingController controller = new TextEditingController();
 
@@ -315,7 +314,8 @@ class _NewMemberPage extends State<NewMemberPage> {
                                             CrossAxisAlignment.stretch,
                                         children: <Widget>[
                                           ListTile(
-                                            trailing: Text('30,000 RP',
+                                            trailing: Text(
+                                                model.settings.catCode,
                                                 style: TextStyle(
                                                     color:
                                                         Colors.lightGreen[900],
