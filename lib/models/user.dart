@@ -156,13 +156,19 @@ class NewMember {
 class Member {
   String distrId;
   String name;
+  String joinDate; //?new member REPORT
+  var count21; //? ratio REPORT
   var perBp;
   var grpBp;
   var totBp;
   var ratio;
-  String leaderId;
-  String sponsorId;
   var grpCount;
+  String leaderId;
+  String leaderName; //? details REPORT
+  String sponsorId;
+  String sponsorName; //? details REPORT
+  String areaName; //?new member REPORT
+  String telephone; //?new member REPORT
   String area;
   String lastUpdate;
   String nextUpdate;
@@ -170,12 +176,18 @@ class Member {
   Member({
     this.distrId,
     this.name,
+    this.joinDate,
+    this.count21,
     this.perBp,
     this.grpBp,
     this.totBp,
     this.ratio,
     this.leaderId,
+    this.leaderName,
     this.sponsorId,
+    this.sponsorName,
+    this.areaName,
+    this.telephone,
     this.grpCount,
     this.area,
     this.lastUpdate,
@@ -196,6 +208,45 @@ class Member {
       area: json['AREA'],
       lastUpdate: json['LASTUPDATE'],
       nextUpdate: json['NEXTUPDATE'],
+    );
+  }
+  factory Member.formJsonNew(Map<String, dynamic> json) {
+    return Member(
+      distrId: json['distr_id'],
+      name: json['distr_name'],
+      joinDate: json['JOIN_DATE'],
+      perBp: json['per_bp'] ?? 0,
+      areaName: json['area_name'],
+      telephone: json['TELEPHONE'],
+    );
+  }
+  factory Member.formJsonRatio(Map<String, dynamic> json) {
+    return Member(
+      distrId: json['distr_id'],
+      name: json['distr_name'],
+      ratio: json['M_RATIO'],
+      count21: json['COUNT21'],
+      perBp: json['per_bp'] ?? 0,
+      grpBp: json['PGROUP_BP'] ?? 0,
+      totBp: json['TOTAL_BP'] ?? 0,
+      areaName: json['area_name'],
+      telephone: json['TELEPHONE'],
+    );
+  }
+  factory Member.formJsonDetails(Map<String, dynamic> json) {
+    return Member(
+      distrId: json['DISTR_ID'],
+      name: json['NAME'],
+      perBp: json['PER_BP'] ?? 0,
+      grpBp: json['PGROUP_BP'] ?? 0,
+      totBp: json['TOTAL_BP'] ?? 0,
+      ratio: json['RATIO'] ?? 0,
+      leaderId: json['LEADER_ID'],
+      leaderName: json['LEADER_NAME'],
+      sponsorId: json['SPONSER_ID'],
+      sponsorName: json['SPONSER_NAME'],
+      grpCount: json['COUNT'] ?? 0,
+      areaName: json['AREA'],
     );
   }
 }

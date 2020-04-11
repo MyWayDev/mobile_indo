@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mor_release/account/details_report.dart';
+import 'package:mor_release/account/new_report.dart';
+import 'package:mor_release/account/ratio_member.dart';
 import 'package:mor_release/account/report.dart';
 import 'package:mor_release/scoped/connected.dart';
 import 'package:mor_release/track/track.invoice.dart';
@@ -20,33 +23,32 @@ class ReportTabs extends StatelessWidget {
       tabs: <Widget>[
         Tab(
           icon: Icon(
-            GroovinMaterialIcons.account_card_details,
-            size: 29.0,
+            GroovinMaterialIcons.account_check,
+            size: 32.0,
             color: Colors.white,
           ),
         ),
-        /* Tab(
+        Tab(
           icon: Icon(
             GroovinMaterialIcons.account_plus,
             color: Colors.greenAccent[400],
-            size: 29.0,
+            size: 32.0,
           ),
-       
         ),
         Tab(
           icon: Icon(
             GroovinMaterialIcons.account_star,
-            size: 29.0,
-            color: Color(0xFFFFD700),
+            size: 32.0,
+            color: Colors.yellow,
           ),
         ),
         Tab(
           icon: Icon(
-            GroovinMaterialIcons.account_group,
-            size: 29.0,
-            color: Colors.white,
+            GroovinMaterialIcons.account_network,
+            size: 32.0,
+            color: Colors.lightBlue[200],
           ),
-        ),*/
+        ),
       ],
     ),
   );
@@ -56,16 +58,16 @@ class ReportTabs extends StatelessWidget {
     return ScopedModelDescendant<MainModel>(
         builder: (BuildContext context, Widget child, MainModel model) {
       return DefaultTabController(
-        length: 1,
+        length: 4,
         child: Scaffold(
           appBar: PreferredSize(
               preferredSize: Size.fromHeight(45.0), child: _appBar),
           body: TabBarView(
             children: <Widget>[
               Report(model.userInfo.distrId),
-              // TrackInvoice(model.userInfo.distrId),
-              //  Report(model.userInfo.distrId),
-              //  Report(model.userInfo.distrId),
+              NewReport(model.userInfo.distrId),
+              RatioReport(model.userInfo.distrId),
+              DetailsReport(model.userInfo.distrId),
               // ExpansionTileSample() // SwitchPage(ItemsPage()),
               //OrderPage(), //SwitchPage(OrderPage()),
               //ProductList(),

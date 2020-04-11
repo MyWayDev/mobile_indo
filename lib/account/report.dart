@@ -5,7 +5,9 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
+import 'package:groovin_material_icons/groovin_material_icons.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:mor_release/models/user.dart';
 import 'package:mor_release/scoped/connected.dart';
@@ -110,6 +112,38 @@ class _Report extends State<Report> {
   }
 
   Widget buildReport(BuildContext context) {
+    Flushbar flushbar(String flush) {
+      return Flushbar(
+        messageText: Text('',
+            style: TextStyle(fontSize: 15, color: Colors.limeAccent[100])),
+        isDismissible: true,
+        flushbarPosition: FlushbarPosition.TOP,
+        flushbarStyle: FlushbarStyle.FLOATING,
+        reverseAnimationCurve: Curves.decelerate,
+        forwardAnimationCurve: Curves.elasticOut,
+        mainButton: FlatButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Icon(
+            Icons.close,
+            color: Colors.amber,
+          ),
+        ),
+        margin: EdgeInsets.all(8),
+        borderRadius: 8,
+        title: flush,
+        message: '',
+        icon: Icon(GroovinMaterialIcons.heart_pulse,
+            color: Colors.red[400], size: 72),
+        boxShadows: [
+          BoxShadow(
+            color: Colors.red[800],
+            offset: Offset(0.0, 2.0),
+            blurRadius: 3.0,
+          )
+        ],
+      );
+    }
+
     return ScopedModelDescendant<MainModel>(
         builder: (BuildContext context, Widget child, MainModel model) {
       return SingleChildScrollView(
@@ -149,24 +183,28 @@ class _Report extends State<Report> {
                             : Container(),
                     color: Colors.pink[900],
                     onPressed: () async {
-                      if (!veri) {
-                        veri = await model.leaderVerification(
-                            distrController.text.padLeft(8, '0'));
-                        if (veri) {
-                          _nodeData = await model
-                              .nodeJson(distrController.text.padLeft(8, '0'));
-                          _nodeData.distrId == '00000000'
-                              ? resetVeri()
-                              : distrController.text =
-                                  _nodeData.distrId + '  ' + _nodeData.name;
-                          memberReportSummary(_nodeData.distrId);
+                      if (distrController.text == 'sari') {
+                        flushbar(model.settings.flush).show(context);
+                      } else {
+                        if (!veri) {
+                          veri = await model.leaderVerification(
+                              distrController.text.padLeft(8, '0'));
+                          if (veri) {
+                            _nodeData = await model
+                                .nodeJson(distrController.text.padLeft(8, '0'));
+                            _nodeData.distrId == '00000000'
+                                ? resetVeri()
+                                : distrController.text =
+                                    _nodeData.distrId + '  ' + _nodeData.name;
+                            memberReportSummary(_nodeData.distrId);
+                          } else {
+                            resetVeri();
+                            memberReportSummary(widget.userId);
+                          }
                         } else {
                           resetVeri();
                           memberReportSummary(widget.userId);
                         }
-                      } else {
-                        resetVeri();
-                        memberReportSummary(widget.userId);
                       }
                     },
                     splashColor: Colors.pink,
