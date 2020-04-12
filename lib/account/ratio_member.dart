@@ -28,7 +28,6 @@ class _RatioReport extends State<RatioReport> {
   List<Member> searchResult = [];
   TextEditingController controller = new TextEditingController();
 
-  TextEditingController distrController = new TextEditingController();
   bool _isloading = false;
 
   void isloading(bool i) {
@@ -41,16 +40,8 @@ class _RatioReport extends State<RatioReport> {
   //int _courier;
   User _nodeData;
 
-  void resetVeri() {
-    distrController.clear();
-    veri = false;
-  }
-
   @override
   void initState() {
-    distrController.addListener(() {
-      setState(() {});
-    });
     _nodeData = null;
     memberDetailsReportSummary(widget.userId);
     super.initState();
@@ -71,9 +62,7 @@ class _RatioReport extends State<RatioReport> {
         backgroundColor: Colors.transparent,
         //foregroundColor: Colors.transparent,
         onPressed: () {
-          distrController.text.length <= 8 || !veri
-              ? memberDetailsReportSummary(widget.userId)
-              : memberDetailsReportSummary(_nodeData.distrId);
+          memberDetailsReportSummary(widget.userId);
         },
         child: Icon(
           Icons.refresh,
@@ -126,12 +115,14 @@ class _RatioReport extends State<RatioReport> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        '3% : ${members.where((m) => m.ratio == 3).length}   -  ',
-                      ),
+                          '3% : ${members.where((m) => m.ratio == 3).length}   -  ',
+                          style: TextStyle(fontSize: 14)),
                       Text(
-                          '6% : ${members.where((m) => m.ratio == 6).length}  -  '),
+                          '6% : ${members.where((m) => m.ratio == 6).length}  -  ',
+                          style: TextStyle(fontSize: 14)),
                       Text(
-                          '9% : ${members.where((m) => m.ratio == 9).length}    '),
+                          '9% : ${members.where((m) => m.ratio == 9).length}    ',
+                          style: TextStyle(fontSize: 14)),
                     ],
                   ),
                   Row(
@@ -140,11 +131,14 @@ class _RatioReport extends State<RatioReport> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                          '12% : ${members.where((m) => m.ratio == 12).length}  -  '),
+                          '12% : ${members.where((m) => m.ratio == 12).length}  -  ',
+                          style: TextStyle(fontSize: 14)),
                       Text(
-                          '15% : ${members.where((m) => m.ratio == 15).length}  -  '),
+                          '15% : ${members.where((m) => m.ratio == 15).length}  -  ',
+                          style: TextStyle(fontSize: 14)),
                       Text(
-                          '18% : ${members.where((m) => m.ratio == 18).length}   '),
+                          '18% : ${members.where((m) => m.ratio == 18).length}   ',
+                          style: TextStyle(fontSize: 14)),
                     ],
                   ),
                   Row(
@@ -153,7 +147,8 @@ class _RatioReport extends State<RatioReport> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                          '21% : ${members.where((m) => m.ratio == 21).length}'),
+                          '21% : ${members.where((m) => m.ratio == 21).length}',
+                          style: TextStyle(fontSize: 14)),
                     ],
                   )
                 ],
@@ -201,11 +196,19 @@ class _RatioReport extends State<RatioReport> {
                               children: <Widget>[
                                 Text('${searchResult[i].distrId}'),
                                 Text(
-                                  '${searchResult[i].name}',
-                                  softWrap: true,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                Text('${searchResult[i].telephone}'),
+                                    searchResult[i].name.length >= 14
+                                        ? searchResult[i]
+                                                .name
+                                                .substring(0, 14) +
+                                            '..'
+                                        : searchResult[i].name,
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.orange[900])),
+                                Text('${searchResult[i].telephone}',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                    )),
                               ],
                             ),
                             title: Column(
@@ -215,14 +218,20 @@ class _RatioReport extends State<RatioReport> {
                               children: <Widget>[
                                 Text(
                                     '${searchResult[i].ratio.toInt().toString()}%',
-                                    style: TextStyle(fontSize: 14)),
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                    )),
                                 members[i].count21 != 0
                                     ? Text(
                                         'Jumlah Leader: ${searchResult[i].count21.toString()}',
-                                        style: TextStyle(fontSize: 14))
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                        ))
                                     : Text(''),
                                 Text('${searchResult[i].areaName}',
-                                    style: TextStyle(fontSize: 14)),
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                    )),
                               ],
                             ),
                             trailing: Column(
@@ -230,12 +239,21 @@ class _RatioReport extends State<RatioReport> {
                                 mainAxisSize: MainAxisSize.max,
                                 children: <Widget>[
                                   Text(
-                                      'Bp Pribadi : ${searchResult[i].perBp.toInt().toString()}'),
+                                      'Bp Pribadi : ${searchResult[i].perBp.toInt().toString()}',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                      )),
                                   Text(
-                                      'Bp Grup : ${searchResult[i].grpBp.toInt().toString()}'),
+                                      'Bp Grup : ${searchResult[i].grpBp.toInt().toString()}',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                      )),
                                   members[i].grpBp != members[i].totBp
                                       ? Text(
-                                          'Bp Total : ${searchResult[i].totBp.toInt().toString()}')
+                                          'Bp Total : ${searchResult[i].totBp.toInt().toString()}',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                          ))
                                       : Text('')
                                 ]),
                           ),
@@ -259,11 +277,17 @@ class _RatioReport extends State<RatioReport> {
                                   children: <Widget>[
                                     Text('${members[i].distrId}'),
                                     Text(
-                                      '${members[i].name}',
-                                      softWrap: true,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    Text('${members[i].telephone}'),
+                                        members[i].name.length >= 14
+                                            ? members[i].name.substring(0, 14) +
+                                                '..'
+                                            : members[i].name,
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.orange[900])),
+                                    Text('${members[i].telephone}',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                        )),
                                   ],
                                 ),
                                 title: Column(
@@ -273,14 +297,20 @@ class _RatioReport extends State<RatioReport> {
                                   children: <Widget>[
                                     Text(
                                         '${members[i].ratio.toInt().toString()}%',
-                                        style: TextStyle(fontSize: 14)),
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                        )),
                                     members[i].count21 != 0
                                         ? Text(
                                             'Jumlah Leader: ${members[i].count21.toString()}',
-                                            style: TextStyle(fontSize: 14))
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                            ))
                                         : Text(''),
                                     Text('${members[i].areaName}',
-                                        style: TextStyle(fontSize: 14)),
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                        )),
                                   ],
                                 ),
                                 trailing: Column(
@@ -288,12 +318,21 @@ class _RatioReport extends State<RatioReport> {
                                     mainAxisSize: MainAxisSize.max,
                                     children: <Widget>[
                                       Text(
-                                          'Bp Pribadi : ${members[i].perBp.toInt().toString()}'),
+                                          'Bp Pribadi : ${members[i].perBp.toInt().toString()}',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                          )),
                                       Text(
-                                          'Bp Grup : ${members[i].grpBp.toInt().toString()}'),
+                                          'Bp Grup : ${members[i].grpBp.toInt().toString()}',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                          )),
                                       members[i].grpBp != members[i].totBp
                                           ? Text(
-                                              'Bp Total : ${members[i].totBp.toInt().toString()}')
+                                              'Bp Total : ${members[i].totBp.toInt().toString()}',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                              ))
                                           : Text('')
                                     ]),
                               ),
@@ -314,8 +353,7 @@ class _RatioReport extends State<RatioReport> {
 
     members.forEach((item) {
       if (item.name.toLowerCase().contains(text.toLowerCase()) ||
-          item.distrId.contains(text) ||
-          item.areaName.contains(text)) searchResult.add(item);
+          item.distrId.contains(text)) searchResult.add(item);
     });
     setState(() {});
   }

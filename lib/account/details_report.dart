@@ -27,7 +27,6 @@ class _DetailsReport extends State<DetailsReport> {
   List<Member> members;
   List<Member> searchResult = [];
   TextEditingController controller = new TextEditingController();
-  TextEditingController distrController = new TextEditingController();
   bool _isloading = false;
 
   void isloading(bool i) {
@@ -37,20 +36,9 @@ class _DetailsReport extends State<DetailsReport> {
   }
 
   bool veri = false;
-  //int _courier;
-  User _nodeData;
-
-  void resetVeri() {
-    distrController.clear();
-    veri = false;
-  }
 
   @override
   void initState() {
-    distrController.addListener(() {
-      setState(() {});
-    });
-    _nodeData = null;
     memberDetailsReportSummary(widget.userId);
     super.initState();
   }
@@ -70,9 +58,7 @@ class _DetailsReport extends State<DetailsReport> {
         backgroundColor: Colors.transparent,
         //foregroundColor: Colors.transparent,
         onPressed: () {
-          distrController.text.length <= 8 || !veri
-              ? memberDetailsReportSummary(widget.userId)
-              : memberDetailsReportSummary(_nodeData.distrId);
+          memberDetailsReportSummary(widget.userId);
         },
         child: Icon(
           Icons.refresh,
@@ -149,54 +135,73 @@ class _DetailsReport extends State<DetailsReport> {
                           color: Colors.blue[100],
                           child: ListTile(
                             leading: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
                               children: <Widget>[
                                 Text('${searchResult[i].distrId}'),
                                 Text(
-                                  '${searchResult[i].name}',
-                                  softWrap: true,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                Text('${searchResult[i].areaName}'),
+                                    searchResult[i].name.length >= 14
+                                        ? searchResult[i]
+                                                .name
+                                                .substring(0, 14) +
+                                            '..'
+                                        : searchResult[i].name,
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.blue[600])),
+                                Text('${searchResult[i].areaName}',
+                                    style: TextStyle(fontSize: 13)),
                               ],
                             ),
                             title: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.max,
+                              mainAxisSize: MainAxisSize.min,
                               children: <Widget>[
                                 members[i].grpCount != 0
                                     ? Text(
                                         'Jumlah Leader: ${searchResult[i].grpCount.toString()}',
-                                        style: TextStyle(fontSize: 14))
+                                        style: TextStyle(fontSize: 13))
                                     : Text(''),
-                                Text('${searchResult[i].ratio}%'),
+                                Text('${searchResult[i].ratio}%',
+                                    style: TextStyle(fontSize: 13)),
                               ],
                             ),
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.max,
+                              mainAxisSize: MainAxisSize.min,
                               children: <Widget>[
                                 Text(
-                                  '${searchResult[i].sponsorName}',
+                                  searchResult[i].sponsorName.length >= 14
+                                      ? searchResult[i]
+                                          .sponsorName
+                                          .substring(0, 14)
+                                      : searchResult[i].sponsorName,
+                                  style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold),
                                   softWrap: true,
                                   overflow: TextOverflow.ellipsis,
                                 ),
-                                Text('${searchResult[i].sponsorId}')
+                                Text('${searchResult[i].sponsorId}',
+                                    style: TextStyle(fontSize: 13))
                               ],
                             ),
                             trailing: Column(
                               mainAxisAlignment: MainAxisAlignment.end,
-                              mainAxisSize: MainAxisSize.max,
+                              mainAxisSize: MainAxisSize.min,
                               children: <Widget>[
                                 //  Row(children: <Widget>[],),
                                 Text(
-                                    'Bp Pribadi : ${searchResult[i].perBp.toInt().toString()}'),
+                                    'Bp Pribadi : ${searchResult[i].perBp.toInt().toString()}',
+                                    style: TextStyle(fontSize: 13)),
                                 Text(
-                                    'Bp Grup : ${searchResult[i].grpBp.toInt().toString()}'),
+                                    'Bp Grup : ${searchResult[i].grpBp.toInt().toString()}',
+                                    style: TextStyle(fontSize: 13)),
                                 Text(
-                                    'Bp Total : ${searchResult[i].totBp.toInt().toString()}')
+                                    'Bp Total : ${searchResult[i].totBp.toInt().toString()}',
+                                    style: TextStyle(fontSize: 13))
                               ],
                             ),
                           ),
@@ -217,11 +222,16 @@ class _DetailsReport extends State<DetailsReport> {
                                   children: <Widget>[
                                     Text('${members[i].distrId}'),
                                     Text(
-                                      '${members[i].name}',
-                                      softWrap: true,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    Text('${members[i].areaName}'),
+                                        members[i].name.length >= 14
+                                            ? members[i].name.substring(0, 14) +
+                                                '..'
+                                            : members[i].name,
+                                        style: TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.blue[600])),
+                                    Text('${members[i].areaName}',
+                                        style: TextStyle(fontSize: 13)),
                                   ],
                                 ),
                                 title: Column(
@@ -231,9 +241,10 @@ class _DetailsReport extends State<DetailsReport> {
                                     members[i].grpCount != 0
                                         ? Text(
                                             'Jumlah Leader: ${members[i].grpCount.toString()}',
-                                            style: TextStyle(fontSize: 14))
+                                            style: TextStyle(fontSize: 13))
                                         : Text(''),
-                                    Text('${members[i].ratio}%'),
+                                    Text('${members[i].ratio}%',
+                                        style: TextStyle(fontSize: 13)),
                                   ],
                                 ),
                                 subtitle: Column(
@@ -242,11 +253,19 @@ class _DetailsReport extends State<DetailsReport> {
                                   mainAxisSize: MainAxisSize.min,
                                   children: <Widget>[
                                     Text(
-                                      '${members[i].sponsorName}',
+                                      members[i].sponsorName.length >= 14
+                                          ? members[i]
+                                              .sponsorName
+                                              .substring(0, 14)
+                                          : members[i].sponsorName,
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold),
                                       softWrap: true,
                                       overflow: TextOverflow.ellipsis,
                                     ),
-                                    Text('${members[i].sponsorId}')
+                                    Text('${members[i].sponsorId}',
+                                        style: TextStyle(fontSize: 13))
                                   ],
                                 ),
                                 trailing: Column(
@@ -255,11 +274,14 @@ class _DetailsReport extends State<DetailsReport> {
                                   children: <Widget>[
                                     //  Row(children: <Widget>[],),
                                     Text(
-                                        'Bp Pribadi : ${members[i].perBp.toInt().toString()}'),
+                                        'Bp Pribadi : ${members[i].perBp.toInt().toString()}',
+                                        style: TextStyle(fontSize: 13)),
                                     Text(
-                                        'Bp Grup : ${members[i].grpBp.toInt().toString()}'),
+                                        'Bp Grup : ${members[i].grpBp.toInt().toString()}',
+                                        style: TextStyle(fontSize: 13)),
                                     Text(
-                                        'Bp Total : ${members[i].totBp.toInt().toString()}')
+                                        'Bp Total : ${members[i].totBp.toInt().toString()}',
+                                        style: TextStyle(fontSize: 13))
                                   ],
                                 ),
                               ),

@@ -27,7 +27,7 @@ class _NewReport extends State<NewReport> {
   List<Member> members;
   List<Member> searchResult = [];
   TextEditingController controller = new TextEditingController();
-  TextEditingController distrController = new TextEditingController();
+
   bool _isloading = false;
 
   void isloading(bool i) {
@@ -41,15 +41,11 @@ class _NewReport extends State<NewReport> {
   User _nodeData;
 
   void resetVeri() {
-    distrController.clear();
     veri = false;
   }
 
   @override
   void initState() {
-    distrController.addListener(() {
-      setState(() {});
-    });
     _nodeData = null;
     memberDetailsReportSummary(widget.userId);
     super.initState();
@@ -70,9 +66,7 @@ class _NewReport extends State<NewReport> {
         backgroundColor: Colors.transparent,
         //foregroundColor: Colors.transparent,
         onPressed: () {
-          distrController.text.length <= 8 || !veri
-              ? memberDetailsReportSummary(widget.userId)
-              : memberDetailsReportSummary(_nodeData.distrId);
+          memberDetailsReportSummary(widget.userId);
         },
         child: Icon(
           Icons.refresh,
@@ -158,6 +152,56 @@ class _NewReport extends State<NewReport> {
                   itemCount: searchResult.length,
                   itemBuilder: (context, i) {
                     return Card(
+                      elevation: 15,
+                      color: Colors.green[50],
+                      child: ListTile(
+                        leading: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Text('${searchResult[i].joinDate}'),
+                            Text('${searchResult[i].distrId}'),
+                            Text(
+                                searchResult[i].name.length >= 14
+                                    ? searchResult[i].name.substring(0, 14) +
+                                        '..'
+                                    : searchResult[i].name,
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.green[500]))
+                          ],
+                        ),
+                        trailing: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Text(
+                                'Bp Pribadi: ${searchResult[i].perBp.toInt()}'),
+                          ],
+                        ),
+                        title: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Text('${searchResult[i].telephone}',
+                                style: TextStyle(
+                                    fontSize: 13, fontWeight: FontWeight.bold)),
+                            Text('${searchResult[i].areaName}',
+                                style: TextStyle(fontSize: 13)),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                )
+              : members.isNotEmpty
+                  ? ListView.builder(
+                      itemCount: members.length,
+                      itemBuilder: (context, i) {
+                        return Card(
                           elevation: 15,
                           color: Colors.green[50],
                           child: ListTile(
@@ -166,13 +210,17 @@ class _NewReport extends State<NewReport> {
                               mainAxisSize: MainAxisSize.min,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: <Widget>[
-                                Text('${searchResult[i].joinDate}'),
-                                Text('${searchResult[i].distrId}'),
+                                Text('${members[i].joinDate}'),
+                                Text('${members[i].distrId}'),
                                 Text(
-                                  '${searchResult[i].name}',
-                                  softWrap: true,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
+                                    members[i].name.length >= 14
+                                        ? members[i].name.substring(0, 14) +
+                                            '..'
+                                        : members[i].name,
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green[500]))
                               ],
                             ),
                             trailing: Column(
@@ -180,69 +228,23 @@ class _NewReport extends State<NewReport> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               mainAxisSize: MainAxisSize.min,
                               children: <Widget>[
-                                Text(
-                                    'Bp Pribadi: ${searchResult[i].perBp.toInt()}'),
+                                Text('Bp Pribadi: ${members[i].perBp.toInt()}'),
                               ],
                             ),
                             title: Column(
                               mainAxisAlignment: MainAxisAlignment.end,
                               mainAxisSize: MainAxisSize.min,
                               children: <Widget>[
-                                Text('${searchResult[i].telephone}',
-                                    style: TextStyle(fontSize: 14)),
-                                Text('${searchResult[i].areaName}',
-                                    style: TextStyle(fontSize: 14)),
+                                Text('${members[i].telephone}',
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold)),
+                                Text('${members[i].areaName}',
+                                    style: TextStyle(fontSize: 13)),
                               ],
                             ),
                           ),
-                        ) ??
-                        '';
-                  },
-                )
-              : members.isNotEmpty
-                  ? ListView.builder(
-                      itemCount: members.length,
-                      itemBuilder: (context, i) {
-                        return Card(
-                              elevation: 15,
-                              color: Colors.green[50],
-                              child: ListTile(
-                                leading: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: <Widget>[
-                                    Text('${members[i].joinDate}'),
-                                    Text('${members[i].distrId}'),
-                                    Text(
-                                      '${members[i].name}',
-                                      softWrap: true,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ],
-                                ),
-                                trailing: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: <Widget>[
-                                    Text(
-                                        'Bp Pribadi: ${members[i].perBp.toInt()}'),
-                                  ],
-                                ),
-                                title: Column(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: <Widget>[
-                                    Text('${members[i].telephone}',
-                                        style: TextStyle(fontSize: 14)),
-                                    Text('${members[i].areaName}',
-                                        style: TextStyle(fontSize: 14)),
-                                  ],
-                                ),
-                              ),
-                            ) ??
-                            '';
+                        );
                       },
                     )
                   : Container());
@@ -258,8 +260,7 @@ class _NewReport extends State<NewReport> {
 
     members.forEach((item) {
       if (item.name.toLowerCase().contains(text.toLowerCase()) ||
-          item.distrId.contains(text) ||
-          item.areaName.contains(text)) searchResult.add(item);
+          item.distrId.contains(text)) searchResult.add(item);
     });
     setState(() {});
   }

@@ -23,7 +23,7 @@ import 'package:firebase_core/firebase_core.dart';
 
 class MainModel extends Model {
   // ** items //** */
-  static String _version = '3.22r'; //!Modify for every release version./.
+  static String _version = '3.220r'; //!Modify for every release version./.
   static String firebaseDb = "indoProduction"; //!modify back to indoProduction;
   static String stage = "indoProduction";
   static String updateDb = "indoProduction";
