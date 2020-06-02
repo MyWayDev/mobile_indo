@@ -5,6 +5,7 @@ import 'package:groovin_material_icons/groovin_material_icons.dart';
 import 'package:mor_release/pages/items/items.dart';
 import 'package:mor_release/pages/messages/local_note.dart';
 import 'package:mor_release/pages/order/order.dart';
+import 'package:mor_release/pages/user/phoneAuth.dart';
 import 'package:mor_release/scoped/connected.dart';
 import 'package:mor_release/track/track.tabs.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -26,7 +27,7 @@ class ItemsTabs extends StatelessWidget {
       model.userDetails();
 
       return DefaultTabController(
-        length: 4,
+        length: 5,
         child: Scaffold(
           drawer: Drawer(
               child: Column(children: <Widget>[
@@ -69,7 +70,7 @@ class ItemsTabs extends StatelessWidget {
             ///////////////////////Top Tabs Navigation Widget//////////////////////////////
             title: TabBar(
               indicatorColor: Colors.grey[400],
-              indicatorWeight: 3,
+              indicatorWeight: 4,
               indicatorSize: TabBarIndicatorSize.tab,
               tabs: <Widget>[
                 Tab(
@@ -162,7 +163,14 @@ class ItemsTabs extends StatelessWidget {
                     size: 26.0,
                     color: Colors.grey[350],
                   ),
-                ))
+                )),
+                Tab(
+                  icon: Icon(
+                    GroovinMaterialIcons.message_processing,
+                    size: 26.0,
+                    color: Colors.grey[350],
+                  ),
+                ),
               ],
             ),
           ),
@@ -176,6 +184,7 @@ class ItemsTabs extends StatelessWidget {
               LocalNotification(
                 token: model.token,
               ),
+              PhoneAuth(title: 'Auth')
 
               //ProductList(),
             ],
