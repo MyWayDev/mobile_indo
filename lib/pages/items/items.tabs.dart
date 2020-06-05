@@ -66,15 +66,17 @@ class ItemsTabs extends StatelessWidget {
                               ? GroovinMaterialIcons.account_edit
                               : GroovinMaterialIcons.account_remove,
                           color: model.modify
-                              ? Colors.pink[900]
+                              ? Colors.indigo[900]
                               : Colors.transparent,
-                          size: model.modify ? 30 : 1,
+                          size: model.modify ? 32 : 1,
                         ),
                         title: model.modify
                             ? Text(
                                 ' Edit Data',
                                 style: TextStyle(
-                                    fontSize: 13, color: Colors.pink[900]),
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.indigo[900]),
                               )
                             : Text(''),
                         onTap: () {

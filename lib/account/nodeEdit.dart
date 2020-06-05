@@ -74,6 +74,7 @@ class _NodeEditState extends State<NodeEdit> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.indigo[900],
         title: Text('Edit Member'),
       ),
       resizeToAvoidBottomPadding: false,
@@ -99,7 +100,7 @@ class _NodeEditState extends State<NodeEdit> {
         children: <Widget>[
           ListTile(
             contentPadding: EdgeInsets.only(left: 8),
-            leading: Icon(Icons.vpn_key, size: 25.0, color: Colors.indigo[500]),
+            leading: Icon(Icons.vpn_key, size: 25.0, color: Colors.indigo[900]),
             title: TextFormField(
               focusNode: focusDistrController,
               textAlign: TextAlign.center,
@@ -300,16 +301,18 @@ class _NodeEditState extends State<NodeEdit> {
                       alignment: MainAxisAlignment.spaceAround,
                       children: <Widget>[
                         RaisedButton(
+                          elevation: 11,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(21.0)),
                           child: Text(
                             'Update',
-                            style: TextStyle(color: Colors.yellow[100]),
+                            style: TextStyle(color: Colors.white),
                           ),
                           color: Colors.indigo[900],
                           onPressed: () {/** */},
                         ),
                         RaisedButton(
+                          elevation: 11,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(21.0)),
                           child: Text(
