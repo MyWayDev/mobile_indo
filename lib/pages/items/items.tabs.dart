@@ -34,6 +34,30 @@ class ItemsTabs extends StatelessWidget {
             AppBar(
               title: Text('MENU'),
             ),
+            ListTile(
+                leading: Icon(Icons.image),
+                title: Text('Katalog'),
+                onTap: () {
+                  //print(model.settings.pdfUrl);
+
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => Cat(
+                                pdfUrl: model.settings.pdfUrl,
+                              )));
+                }),
+            ListTile(
+                leading: Icon(Icons.backspace),
+                title: Text('Keluar'),
+                onTap: () {
+                  model.signOut();
+                  Navigator.pushReplacementNamed(context, '/');
+                }),
+            Divider(
+              height: 5,
+              color: Colors.purple,
+            ),
             model.user.distrId != null
                 ? model.user.distrId == '00000001'
                     ? ListTile(
@@ -41,9 +65,10 @@ class ItemsTabs extends StatelessWidget {
                           model.modify
                               ? GroovinMaterialIcons.account_edit
                               : GroovinMaterialIcons.account_remove,
-                          color:
-                              model.modify ? Colors.pink[900] : Colors.red[50],
-                          size: 30,
+                          color: model.modify
+                              ? Colors.pink[900]
+                              : Colors.transparent,
+                          size: model.modify ? 30 : 1,
                         ),
                         title: model.modify
                             ? Text(
@@ -65,26 +90,6 @@ class ItemsTabs extends StatelessWidget {
                         })
                     : Container()
                 : Container(),
-            ListTile(
-                leading: Icon(Icons.image),
-                title: Text('Katalog'),
-                onTap: () {
-                  //print(model.settings.pdfUrl);
-
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => Cat(
-                                pdfUrl: model.settings.pdfUrl,
-                              )));
-                }),
-            ListTile(
-                leading: Icon(Icons.backspace),
-                title: Text('Keluar'),
-                onTap: () {
-                  model.signOut();
-                  Navigator.pushReplacementNamed(context, '/');
-                }),
           ])),
           appBar: AppBar(
             ///////////////////////Top Tabs Navigation Widget//////////////////////////////

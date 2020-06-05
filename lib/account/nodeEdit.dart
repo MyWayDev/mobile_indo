@@ -14,6 +14,21 @@ class NodeEdit extends StatefulWidget {
 }
 
 class _NodeEditState extends State<NodeEdit> {
+  TextEditingController cName;
+  TextEditingController cAddress;
+  TextEditingController cDistrId;
+  TextEditingController cPersonalId;
+  TextEditingController cTelePhone;
+  TextEditingController cBanKAccountNumber;
+  TextEditingController cBankAccountName;
+  TextEditingController cTaxNumber;
+  TextEditingController cAreaName;
+  TextEditingController cAreaId;
+  TextEditingController cServiceCenter;
+
+  final FocusNode focusName = new FocusNode();
+  final FocusNode focusAddress = new FocusNode();
+  final FocusNode focusBankAccount = FocusNode();
   TextEditingController distrController = new TextEditingController();
   bool _isloading = false;
 
@@ -25,10 +40,13 @@ class _NodeEditState extends State<NodeEdit> {
 
   bool veri = false;
   //int _courier;
-  NewMember _nodeData = NewMember(name: '');
+  NewMember _nodeData;
 
   void resetVeri() {
     distrController.clear();
+    cName.clear();
+    cAddress.clear();
+    cBanKAccountNumber.clear();
     veri = false;
   }
 
@@ -49,9 +67,10 @@ class _NodeEditState extends State<NodeEdit> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Edit Member'),
+      ),
       resizeToAvoidBottomPadding: false,
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
       body: ModalProgressHUD(
         child: Padding(
           padding: EdgeInsets.only(top: 28),
@@ -111,6 +130,14 @@ class _NodeEditState extends State<NodeEdit> {
                     if (veri) {
                       _nodeData = await widget.model
                           .nodeEdit(distrController.text.padLeft(8, '0'));
+                      setState(() {
+                        cName = TextEditingController(text: _nodeData.name);
+                        cAddress =
+                            TextEditingController(text: _nodeData.address);
+                        cBanKAccountNumber = TextEditingController(
+                            text: _nodeData.bankAccountNumber);
+                      });
+
                       setState(() {});
                       _nodeData.distrId == '00000000'
                           ? resetVeri()
@@ -130,33 +157,102 @@ class _NodeEditState extends State<NodeEdit> {
               splashColor: Colors.pink,
             ),
           ),
-          Container(
-            child: Text(
-              'Name',
-              style: TextStyle(
-                  fontStyle: FontStyle.italic,
-                  fontWeight: FontWeight.bold,
-                  color: primaryColor),
-            ),
-            margin: EdgeInsets.only(left: 10.0, top: 30.0, bottom: 5.0),
-          ),
-          Container(
-            child: Theme(
-              data: Theme.of(context).copyWith(primaryColor: primaryColor),
-              child: TextFormField(
-                initialValue: _nodeData.name,
-                decoration: InputDecoration(
-                  hintText: '',
-                  contentPadding: EdgeInsets.all(5.0),
-                  hintStyle: TextStyle(color: greyColor),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Container(
+                child: Text(
+                  'Name',
+                  style: TextStyle(
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.bold,
+                      color: primaryColor),
                 ),
-                onChanged: (value) {
-                  _nodeData.name = value;
-                },
+                margin: EdgeInsets.only(left: 30.0, top: 5.0, bottom: 1.0),
               ),
-            ),
-            margin: EdgeInsets.only(left: 30.0, right: 30.0),
-          ),
+              Container(
+                child: Theme(
+                  data: Theme.of(context).copyWith(primaryColor: primaryColor),
+                  child: TextFormField(
+                    decoration: InputDecoration(
+                      hintText: '',
+                      contentPadding: EdgeInsets.all(5.0),
+                      hintStyle: TextStyle(color: greyColor),
+                    ),
+                    controller: cName,
+                    onChanged: (value) {
+                      _nodeData.name = value;
+                    },
+                    focusNode: focusName,
+                  ),
+                ),
+                margin: EdgeInsets.only(left: 30.0, right: 30.0),
+              ),
+              Container(
+                child: Text(
+                  'Address',
+                  style: TextStyle(
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.bold,
+                      color: primaryColor),
+                ),
+                margin: EdgeInsets.only(left: 30.0, top: 5.0, bottom: 1.0),
+              ),
+              Container(
+                child: Theme(
+                  data: Theme.of(context).copyWith(primaryColor: primaryColor),
+                  child: TextFormField(
+                    maxLines: null,
+                    keyboardType: TextInputType.multiline,
+                    style: TextStyle(fontSize: 13),
+                    decoration: InputDecoration(
+                      hintText: '',
+                      contentPadding: EdgeInsets.all(5.0),
+                      hintStyle: TextStyle(color: greyColor),
+                    ),
+                    controller: cAddress,
+                    onChanged: (value) {
+                      _nodeData.address = value;
+                    },
+                    focusNode: focusAddress,
+                  ),
+                ),
+                margin: EdgeInsets.only(left: 30.0, right: 30.0),
+              ),
+              Container(
+                child: Text(
+                  'Bank Account',
+                  style: TextStyle(
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.bold,
+                      color: primaryColor),
+                ),
+                margin: EdgeInsets.only(left: 30.0, top: 5.0, bottom: 1.0),
+              ),
+              Container(
+                child: Theme(
+                  data: Theme.of(context).copyWith(primaryColor: primaryColor),
+                  child: TextFormField(
+                    maxLines: null,
+                    keyboardType: TextInputType.multiline,
+                    style: TextStyle(fontSize: 13),
+                    decoration: InputDecoration(
+                      hintText: '',
+                      contentPadding: EdgeInsets.all(5.0),
+                      hintStyle: TextStyle(color: greyColor),
+                    ),
+                    controller: cBanKAccountNumber,
+                    onChanged: (value) {
+                      _nodeData.bankAccountNumber = value;
+                    },
+                    // focusNode: focusAddress,
+                  ),
+                ),
+                margin: EdgeInsets.only(left: 30.0, right: 30.0),
+              ),
+            ],
+          )
         ],
       ),
     );
