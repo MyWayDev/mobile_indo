@@ -1,3 +1,4 @@
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:groovin_material_icons/groovin_material_icons.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
@@ -320,7 +321,67 @@ class _NodeEditState extends State<NodeEdit> {
                             style: TextStyle(color: Colors.yellow[100]),
                           ),
                           color: Colors.red[900],
-                          onPressed: () {/** */},
+                          onPressed: () => showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                    elevation: 15,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(21.0)),
+                                    title: Text(
+                                      'Confirm Delete ?',
+                                      style: TextStyle(color: Colors.red),
+                                    ),
+                                    content: Text(
+                                      'Member: ${_nodeData.distrId}',
+                                      style: TextStyle(
+                                          fontStyle: FontStyle.italic),
+                                    ),
+                                    actions: <Widget>[
+                                      FlatButton(
+                                        highlightColor: Colors.greenAccent,
+                                        shape: RoundedRectangleBorder(
+                                            side: BorderSide(
+                                                color: Colors.greenAccent[400],
+                                                width: 2.5,
+                                                style: BorderStyle.solid),
+                                            borderRadius:
+                                                BorderRadius.circular(50)),
+                                        color: Colors.white,
+                                        child: Text(
+                                          'Cancel',
+                                          style: TextStyle(
+                                              color: Colors.green[900],
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(),
+                                      ),
+                                      SizedBox(
+                                        width: 18,
+                                      ),
+                                      FlatButton(
+                                        colorBrightness: Brightness.light,
+                                        highlightColor: Colors.redAccent[400],
+                                        shape: RoundedRectangleBorder(
+                                            side: BorderSide(
+                                                color: Colors.redAccent[400],
+                                                width: 2.5,
+                                                style: BorderStyle.solid),
+                                            borderRadius:
+                                                BorderRadius.circular(50)),
+                                        color: Colors.white,
+                                        child: Text(
+                                          'Delete',
+                                          style: TextStyle(
+                                              color: Colors.pink[900],
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(),
+                                      ),
+                                    ],
+                                  )),
                         ),
                       ],
                     )
