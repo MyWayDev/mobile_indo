@@ -29,6 +29,7 @@ class _NodeEditState extends State<NodeEdit> {
   final FocusNode focusName = new FocusNode();
   final FocusNode focusAddress = new FocusNode();
   final FocusNode focusBankAccount = FocusNode();
+  final FocusNode focusTaxNumber = FocusNode();
   TextEditingController distrController = new TextEditingController();
   bool _isloading = false;
 
