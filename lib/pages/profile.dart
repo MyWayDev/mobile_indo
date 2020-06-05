@@ -35,16 +35,19 @@ class Settings extends StatelessWidget {
 }
 
 class SettingsScreen extends StatefulWidget {
+  final MainModel model;
   final String id;
   final String name;
   final String areaId;
   final String photoUrl;
 
   SettingsScreen(
-      {@required this.id,
+      {@required this.model,
+      @required this.id,
       @required this.name,
       @required this.areaId,
       @required this.photoUrl});
+
   @override
   State createState() => new SettingsScreenState();
 }
@@ -171,7 +174,7 @@ class SettingsScreenState extends State<SettingsScreen> {
     });
     FirebaseDatabase.instance
         .reference()
-        .child('flamelink/environments//en-US//content/users/en-US/$id')
+        .child('flamelink/environments//en-US/content/users/en-US/$id')
         .update({'name': name, 'areaId': areaId, 'photoUrl': photoUrl}).then(
             (data) async {
       //await prefs.setString('name', name);
@@ -260,7 +263,6 @@ class SettingsScreenState extends State<SettingsScreen> {
                 width: double.infinity,
                 margin: EdgeInsets.all(20.0),
               ),
-
               // Input
               Column(
                 children: <Widget>[
@@ -312,7 +314,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                           .copyWith(primaryColor: primaryColor),
                       child: TextField(
                         decoration: InputDecoration(
-                          hintText: 'Fun, like travel and play PES...',
+                          hintText: '',
                           contentPadding: EdgeInsets.all(5.0),
                           hintStyle: TextStyle(color: greyColor),
                         ),

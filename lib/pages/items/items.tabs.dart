@@ -1,17 +1,17 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:groovin_material_icons/groovin_material_icons.dart';
+import 'package:mor_release/account/nodeEdit.dart';
 import 'package:mor_release/pages/items/items.dart';
 import 'package:mor_release/pages/messages/local_note.dart';
 import 'package:mor_release/pages/order/order.dart';
+import 'package:mor_release/pages/order/widgets/passDialog.dart';
+import 'package:mor_release/pages/profile.dart';
 import 'package:mor_release/pages/user/phoneAuth.dart';
 import 'package:mor_release/scoped/connected.dart';
 import 'package:mor_release/track/track.tabs.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:badges/badges.dart';
 import '../../cat.dart';
-import 'dart:math' as math;
 
 //////////////////////////////////////////////////////
 ///
@@ -34,17 +34,37 @@ class ItemsTabs extends StatelessWidget {
             AppBar(
               title: Text('MENU'),
             ),
-            /* ListTile(
-                leading: Icon(Icons.settings),
-                title: Text('Profil'),
-                onTap: () {
-            
-                  // model.getCourierDiscount(300, 105);
-                  //model.signOut();
-                  // model.getIndoItems();
-                  // model.courierList(model.userInfo.areaId);
-                  // model.getShipmentAreas('02000007');
-                }),*/
+            model.user.distrId != null
+                ? model.user.distrId == '00000001'
+                    ? ListTile(
+                        leading: Icon(
+                          model.modify
+                              ? GroovinMaterialIcons.account_edit
+                              : GroovinMaterialIcons.account_remove,
+                          color:
+                              model.modify ? Colors.pink[900] : Colors.red[50],
+                          size: 30,
+                        ),
+                        title: model.modify
+                            ? Text(
+                                ' Edit Data',
+                                style: TextStyle(
+                                    fontSize: 13, color: Colors.pink[900]),
+                              )
+                            : Text(''),
+                        onTap: () {
+                          model.modify == false
+                              ? Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => PassDialog()))
+                              : Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => NodeEdit(model)));
+                        })
+                    : Container()
+                : Container(),
             ListTile(
                 leading: Icon(Icons.image),
                 title: Text('Katalog'),

@@ -11,6 +11,7 @@ import 'package:mor_release/pages/messages/local_note.dart';
 import 'package:mor_release/pages/order/bulkOrder.dart';
 import 'package:mor_release/pages/order/end_order.dart';
 import 'package:mor_release/pages/order/order.dart';
+import 'package:mor_release/pages/profile.dart';
 import 'package:mor_release/pages/user/phoneAuth.dart';
 import 'package:mor_release/scoped/connected.dart';
 import './pages/user/registration_page.dart';
@@ -56,7 +57,6 @@ class _MyApp extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-
     String _token = '';
     initTokenListen();
     Future onSelectNotification(String payload) async => Navigator.push(
@@ -234,7 +234,6 @@ class _MyApp extends State<MyApp> {
           '/registration': (BuildContext context) => RegistrationPage(),
           '/bulkOrder': (BuildContext context) =>
               BulkOrder(model, model.shipmentArea, model.distrPoint),
-          //'/welcome': (BuildContext context) => Welcome(),
           '/itemstabs': (BuildContext context) => ItemsTabs(),
           '/itemspage': (BuildContext context) => ItemsPage(model),
           '/endorder': (BuildContext context) => EndOrder(model),

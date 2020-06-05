@@ -49,6 +49,7 @@ class MainModel extends Model {
   List<GiftOrder> giftorderList = [];
   List<PromoOrder> promoOrderList = [];
   bool isBulk = false;
+  bool modify = false;
   String token = '';
 
   bool loading = false;
@@ -281,6 +282,18 @@ class MainModel extends Model {
 
     //print('Setting${settings.bannerUrl}');
     return settings;
+  }
+
+  String pass = '';
+  Future<String> getPass() async {
+    DataSnapshot snapshot =
+        await database.reference().child('$path/lockScreen/en-US/pass').once();
+    pass = snapshot.value.toString();
+    print('pass=$pass');
+    notifyListeners();
+
+    //print('Setting${settings.bannerUrl}');
+    return pass;
   }
 
   Future<List<Item>> fbItemList() async {
@@ -771,7 +784,6 @@ class MainModel extends Model {
       loadingSoPage = false;
     } else {
       checkSoDupl(getSorders, userId);
-      //print(_recheck);
     }
   }
 
@@ -780,12 +792,9 @@ class MainModel extends Model {
     final http.Response response = await http.get('$httpath/datetimenow');
     if (response.statusCode == 200) {
       String stn = json.encode(response.body);
-      // print(stn);
       String subTime = stn.substring(3, 22);
-      // print(subTime);
       _stn = DateTime.parse(subTime);
     }
-    // print("serverTime:$_stn");
     return _stn;
   }
 
@@ -1933,6 +1942,21 @@ for( var i = 0 ; i < _list.length; i++){
     return nodeJsonData;
   }
 
+  NewMember nodeEditData;
+  Future<NewMember> nodeEdit(String nodeid) async {
+    http.Response response = await http.get('$httpath/memberid/$nodeid');
+
+    if (response.statusCode == 200) {
+      List responseData = await json.decode(response.body);
+      nodeEditData = NewMember.formJson(responseData[0]);
+    } else {
+      return nodeEditData =
+          new NewMember(distrId: '00000000', name: 'NA', areaId: '');
+    }
+
+    return nodeEditData;
+  }
+
 //!--------*
   Future<String> regUser(String email, String password) async {
     FirebaseUser user = await FirebaseAuth.instance
@@ -1948,6 +1972,7 @@ for( var i = 0 ; i < _list.length; i++){
 
   User user;
   Future<User> userData(String key) async {
+    getPass();
     print('userData key:$key');
     final DataSnapshot snapshot =
         await database.reference().child('$path/users/en-US').child(key).once();

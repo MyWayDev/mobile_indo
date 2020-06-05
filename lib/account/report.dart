@@ -4,7 +4,6 @@
 
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:groovin_material_icons/groovin_material_icons.dart';
@@ -65,7 +64,6 @@ class _Report extends State<Report> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomPadding: false,
-      //drawer: Container(),
       floatingActionButton: FloatingActionButton(
         elevation: 21.5,
         backgroundColor: Colors.transparent,
@@ -83,7 +81,6 @@ class _Report extends State<Report> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
-
       body: ModalProgressHUD(
         child: Padding(
           padding: EdgeInsets.only(top: 28),
@@ -105,7 +102,6 @@ class _Report extends State<Report> {
     if (response.statusCode == 200) {
       List _summary = json.decode(response.body);
       member = Member.formJson(_summary[0]);
-      print(_summary);
     }
     isloading(false);
     return member;
@@ -283,6 +279,4 @@ class _Report extends State<Report> {
       );
     });
   }
-
-// One entry in the multilevel list displayed by this app.
 }

@@ -83,6 +83,7 @@ class User {
 }
 
 class NewMember {
+  String distrId;
   String sponsorId;
   String familyName;
   String name;
@@ -96,9 +97,12 @@ class NewMember {
   String bankAccountNumber;
   String taxNumber;
   String serviceCenter;
+  String areaName;
+  String held;
 
   NewMember(
-      {this.sponsorId,
+      {this.distrId,
+      this.sponsorId,
       this.familyName,
       this.name,
       this.personalId,
@@ -107,11 +111,28 @@ class NewMember {
       this.telephone,
       this.address,
       this.areaId,
+      this.areaName,
       this.bankAccoutName,
       this.bankAccountNumber,
       this.taxNumber,
-      this.serviceCenter});
+      this.serviceCenter,
+      this.held});
 
+  factory NewMember.formJson(Map<String, dynamic> json) {
+    return NewMember(
+        distrId: json['DISTR_ID'] ?? '',
+        name: json['LNAME'] ?? '',
+        personalId: json['DISTR_IDENT'] ?? '',
+        email: json['E_MAIL'] ?? '',
+        address: json['ADDRESS'] ?? '',
+        telephone: json['TELEPHONE'] ?? '',
+        bankAccoutName: json['ACCOUNT_OWNER'] ?? '',
+        bankAccountNumber: json['ACCOUNT_NUM'] ?? "",
+        taxNumber: json['TAX_NUM'],
+        areaId: json['AREA_ID'] ?? '',
+        areaName: json['AREA_NAME'] ?? '',
+        serviceCenter: json['SERVICE_CENTER'] ?? '');
+  }
   Map<String, dynamic> toJson() => {
         "SPONSOR_ID": sponsorId,
         "FAMILY_LNAME": familyName,
@@ -126,6 +147,17 @@ class NewMember {
         "SM_ID": bankAccountNumber,
         "AP_AC_ID": taxNumber,
         "SERVICE_CENTER": serviceCenter,
+      };
+  Map<String, dynamic> editToJson() => {
+        "LNAME": name,
+        "DISTR_IDENT": personalId,
+        "TELEPHONE": telephone,
+        "ADDRESS": address,
+        "NOTES": bankAccoutName,
+        "Hold_cre": held,
+        "SM_ID": bankAccountNumber,
+        "AP_AC_ID": taxNumber,
+        "SERVICE_CENTER": serviceCenter, //! NOT IN DOCUMENTATION BUT NEEDED
       };
 
   String postNewMemberToJson(NewMember newMember) {
