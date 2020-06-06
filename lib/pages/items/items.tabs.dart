@@ -72,7 +72,7 @@ class ItemsTabs extends StatelessWidget {
                         ),
                         title: model.modify
                             ? Text(
-                                ' Edit Data',
+                                'Edit Data',
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,

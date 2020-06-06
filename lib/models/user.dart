@@ -131,7 +131,8 @@ class NewMember {
         taxNumber: json['TAX_NUM'],
         areaId: json['AREA_ID'] ?? '',
         areaName: json['AREA_NAME'] ?? '',
-        serviceCenter: json['SERVICE_CENTER'] ?? '');
+        serviceCenter: json['SERVICE_CENTER'] ?? '',
+        held: json['HOLD_CRE'] ?? '1');
   }
   Map<String, dynamic> toJson() => {
         "SPONSOR_ID": sponsorId,
@@ -149,12 +150,13 @@ class NewMember {
         "SERVICE_CENTER": serviceCenter,
       };
   Map<String, dynamic> editToJson() => {
+        "DISTR_ID": distrId,
         "LNAME": name,
         "DISTR_IDENT": personalId,
         "TELEPHONE": telephone,
         "ADDRESS": address,
         "NOTES": bankAccoutName,
-        "Hold_cre": held,
+        "HOLD_CRE": held,
         "SM_ID": bankAccountNumber,
         "AP_AC_ID": taxNumber,
         "SERVICE_CENTER": serviceCenter, //! NOT IN DOCUMENTATION BUT NEEDED
@@ -180,6 +182,23 @@ class NewMember {
           //HttpHeaders.authorizationHeader: ''
         },
         body: postNewMemberToJson(newMember));
+
+    return response;
+  }
+
+  String editMemberEncode(NewMember newMember) {
+    final dyn = newMember.editToJson();
+    return json.encode(dyn);
+  }
+
+  Future<http.Response> editPost(NewMember newMember) async {
+    final response =
+        await http.post('http://mywayindoapi.azurewebsites.net/api/edit_distr/',
+            headers: {
+              HttpHeaders.contentTypeHeader: 'application/json',
+              //HttpHeaders.authorizationHeader: ''
+            },
+            body: editMemberEncode(newMember));
 
     return response;
   }
