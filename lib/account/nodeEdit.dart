@@ -58,6 +58,7 @@ class _NodeEditState extends State<NodeEdit> {
     });
   }
 
+  bool isChanged = false;
   bool veri = false;
   //int _courier;
   NewMember _nodeData;
@@ -109,7 +110,9 @@ class _NodeEditState extends State<NodeEdit> {
     response.statusCode == 200 ? msg = 'Updated :)' : msg = 'Failed';
     print(response.statusCode);
     isloading(false);
-
+    setState(() {
+      isChanged = false;
+    });
     return msg;
   }
 
@@ -269,6 +272,7 @@ class _NodeEditState extends State<NodeEdit> {
                         isSwitched
                             ? _nodeData.held = '0'
                             : _nodeData.held = '1';
+                        isChanged = true;
                       });
                     },
                     activeThumbImage:
@@ -288,7 +292,10 @@ class _NodeEditState extends State<NodeEdit> {
                     ),
                     controller: cName,
                     onChanged: (value) {
-                      _nodeData.name = value;
+                      setState(() {
+                        _nodeData.name = value;
+                        isChanged = true;
+                      });
                     },
                     focusNode: focusName,
                   ),
@@ -319,7 +326,10 @@ class _NodeEditState extends State<NodeEdit> {
                     ),
                     controller: cPersonalId,
                     onChanged: (value) {
-                      _nodeData.personalId = value;
+                      setState(() {
+                        _nodeData.personalId = value;
+                        isChanged = true;
+                      });
                     },
                     focusNode: focusPersonalId,
                   ),
@@ -350,7 +360,10 @@ class _NodeEditState extends State<NodeEdit> {
                     ),
                     controller: cTelePhone,
                     onChanged: (value) {
-                      _nodeData.telephone = value;
+                      setState(() {
+                        _nodeData.telephone = value;
+                        isChanged = true;
+                      });
                     },
                     focusNode: focusTelephone,
                   ),
@@ -383,7 +396,10 @@ class _NodeEditState extends State<NodeEdit> {
                     ),
                     controller: cAddress,
                     onChanged: (value) {
-                      _nodeData.address = value;
+                      setState(() {
+                        _nodeData.address = value;
+                        isChanged = true;
+                      });
                     },
                     focusNode: focusAddress,
                   ),
@@ -418,7 +434,10 @@ class _NodeEditState extends State<NodeEdit> {
                       ),
                       controller: cBanKAccountNumber,
                       onChanged: (value) {
-                        _nodeData.bankAccountNumber = value;
+                        setState(() {
+                          _nodeData.bankAccountNumber = value;
+                          isChanged = true;
+                        });
                       },
                       focusNode: focusBankAccount,
                     ),
@@ -441,7 +460,10 @@ class _NodeEditState extends State<NodeEdit> {
                       ),
                       controller: cBankAccountName,
                       onChanged: (value) {
-                        _nodeData.bankAccoutName = value;
+                        setState(() {
+                          _nodeData.bankAccoutName = value;
+                          isChanged = true;
+                        });
                       },
                       focusNode: focusAccountName,
                     ),
@@ -475,7 +497,10 @@ class _NodeEditState extends State<NodeEdit> {
                     ),
                     controller: cTaxNumber,
                     onChanged: (value) {
-                      _nodeData.taxNumber = value;
+                      setState(() {
+                        _nodeData.taxNumber = value;
+                        isChanged = true;
+                      });
                     },
                     focusNode: focusTaxNumber,
                   ),
@@ -487,45 +512,51 @@ class _NodeEditState extends State<NodeEdit> {
                       mainAxisSize: MainAxisSize.max,
                       alignment: MainAxisAlignment.spaceAround,
                       children: <Widget>[
-                        RaisedButton(
-                          elevation: 11,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(21.0)),
-                          child: Text(
-                            'Update',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          color: Colors.indigo[900],
-                          onPressed: () async {
-                            String _msg = await _saveNodeEdit(_nodeData);
-                            showDialog(
-                                context: context,
-                                builder: (_) => AlertDialog(
-                                      title: Text(_msg),
-                                      actions: <Widget>[
-                                        FlatButton(
-                                          highlightColor: Colors.greenAccent,
-                                          shape: RoundedRectangleBorder(
-                                              side: BorderSide(
-                                                  color: Colors.red[400],
-                                                  width: 2.5,
-                                                  style: BorderStyle.solid),
-                                              borderRadius:
-                                                  BorderRadius.circular(50)),
-                                          color: Colors.white,
-                                          child: Text(
-                                            'Close',
-                                            style: TextStyle(
-                                                color: Colors.red[900],
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          onPressed: () =>
-                                              Navigator.of(context).pop(),
-                                        ),
-                                      ],
-                                    ));
-                          },
-                        ),
+                        isChanged
+                            ? RaisedButton(
+                                elevation: 11,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(21.0)),
+                                child: Text(
+                                  'Update',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                color: Colors.indigo[900],
+                                onPressed: () async {
+                                  String _msg = await _saveNodeEdit(_nodeData);
+                                  showDialog(
+                                      context: context,
+                                      builder: (_) => AlertDialog(
+                                            title: Text(_msg),
+                                            actions: <Widget>[
+                                              FlatButton(
+                                                highlightColor:
+                                                    Colors.greenAccent,
+                                                shape: RoundedRectangleBorder(
+                                                    side: BorderSide(
+                                                        color: Colors.red[400],
+                                                        width: 2.5,
+                                                        style:
+                                                            BorderStyle.solid),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            50)),
+                                                color: Colors.white,
+                                                child: Text(
+                                                  'Close',
+                                                  style: TextStyle(
+                                                      color: Colors.red[900],
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                                onPressed: () =>
+                                                    Navigator.of(context).pop(),
+                                              ),
+                                            ],
+                                          ));
+                                },
+                              )
+                            : Container(),
                         RaisedButton(
                           elevation: 11,
                           shape: RoundedRectangleBorder(
