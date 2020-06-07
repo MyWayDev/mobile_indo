@@ -1,6 +1,3 @@
-import 'dart:convert';
-
-import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:groovin_material_icons/groovin_material_icons.dart';
 import 'package:http/http.dart';
@@ -74,6 +71,7 @@ class _NodeEditState extends State<NodeEdit> {
     cPersonalId.clear();
     cBankAccountName.clear();
     cAreaName.clear();
+    cServiceCenter.clear();
     isSwitched = false;
     veri = false;
     isChanged = false;
@@ -127,14 +125,9 @@ class _NodeEditState extends State<NodeEdit> {
       ),
       resizeToAvoidBottomPadding: false,
       body: ModalProgressHUD(
-        child: Column(children: <Widget>[
-          Padding(
-            padding: EdgeInsets.only(top: 28),
-            child: Container(
-              child: buildVeri(context),
-            ),
-          ),
-        ]),
+        child: Container(
+          child: buildVeri(context),
+        ),
         inAsyncCall: _isloading,
         opacity: 0.6,
         progressIndicator: ColorLoader2(),
@@ -145,6 +138,7 @@ class _NodeEditState extends State<NodeEdit> {
   Widget buildVeri(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           ListTile(
             contentPadding: EdgeInsets.only(left: 15),
@@ -191,6 +185,8 @@ class _NodeEditState extends State<NodeEdit> {
                     setState(() {
                       cAreaName =
                           TextEditingController(text: _nodeData.areaName);
+                      cServiceCenter =
+                          TextEditingController(text: _nodeData.serviceCenter);
                       cDistrId = TextEditingController(text: _nodeData.distrId);
                       cName = TextEditingController(text: _nodeData.name);
                       cAddress = TextEditingController(text: _nodeData.address);
@@ -232,14 +228,14 @@ class _NodeEditState extends State<NodeEdit> {
               ListTile(
                   leading: Container(
                     child: Text(
-                      'Member Id',
+                      'ID Member',
                       style: TextStyle(
                           fontSize: 13,
                           fontStyle: FontStyle.italic,
                           fontWeight: FontWeight.bold,
-                          color: primaryColor),
+                          color: Colors.blueGrey),
                     ),
-                    margin: EdgeInsets.only(left: 20.0, top: 5.0, bottom: 1.0),
+                    margin: EdgeInsets.only(left: 20.0),
                   ),
                   title: Container(
                     child: Theme(
@@ -251,9 +247,9 @@ class _NodeEditState extends State<NodeEdit> {
                           style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.bold,
-                              color: Colors.pink[900]),
+                              color: Colors.grey),
                           decoration: InputDecoration(
-                            hintText: 'Member Id',
+                            hintText: 'Member Info',
                             contentPadding: EdgeInsets.all(5.0),
                             hintStyle: TextStyle(color: greyColor),
                           ),
@@ -288,10 +284,13 @@ class _NodeEditState extends State<NodeEdit> {
                 child: Theme(
                   data: Theme.of(context).copyWith(primaryColor: primaryColor),
                   child: TextFormField(
+                    textAlign: TextAlign.center,
                     enabled: veri,
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
                     decoration: InputDecoration(
                       hintText: 'Name',
-                      contentPadding: EdgeInsets.all(5.0),
+                      contentPadding: EdgeInsets.all(1.0),
                       hintStyle: TextStyle(color: greyColor),
                     ),
                     controller: cName,
@@ -304,7 +303,7 @@ class _NodeEditState extends State<NodeEdit> {
                     focusNode: focusName,
                   ),
                 ),
-                margin: EdgeInsets.only(left: 30.0, right: 30.0),
+                margin: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 5),
               ),
               Container(
                 child: Text(
@@ -315,7 +314,7 @@ class _NodeEditState extends State<NodeEdit> {
                       fontWeight: FontWeight.bold,
                       color: primaryColor),
                 ),
-                margin: EdgeInsets.only(left: 30.0, top: 5.0, bottom: 1.0),
+                margin: EdgeInsets.only(left: 30.0),
               ),
               Container(
                 child: Theme(
@@ -338,7 +337,7 @@ class _NodeEditState extends State<NodeEdit> {
                     focusNode: focusPersonalId,
                   ),
                 ),
-                margin: EdgeInsets.only(left: 30.0, right: 30.0),
+                margin: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 5),
               ),
               Container(
                 child: Text(
@@ -349,7 +348,7 @@ class _NodeEditState extends State<NodeEdit> {
                       fontWeight: FontWeight.bold,
                       color: primaryColor),
                 ),
-                margin: EdgeInsets.only(left: 30.0, top: 5.0, bottom: 1.0),
+                margin: EdgeInsets.only(left: 30.0),
               ),
               Container(
                 child: Theme(
@@ -372,10 +371,7 @@ class _NodeEditState extends State<NodeEdit> {
                     focusNode: focusTelephone,
                   ),
                 ),
-                margin: EdgeInsets.only(left: 30.0, right: 30.0),
-              ),
-              ListTile(
-                leading: Text("data"),
+                margin: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 5),
               ),
               Container(
                 child: Text(
@@ -386,7 +382,7 @@ class _NodeEditState extends State<NodeEdit> {
                       fontWeight: FontWeight.bold,
                       color: primaryColor),
                 ),
-                margin: EdgeInsets.only(left: 30.0, top: 5.0, bottom: 1.0),
+                margin: EdgeInsets.only(left: 30.0),
               ),
               Container(
                 child: Theme(
@@ -416,14 +412,81 @@ class _NodeEditState extends State<NodeEdit> {
               ListTile(
                 leading: Container(
                   child: Text(
-                    'Bank Account & Name',
+                    'Area / Branch',
+                    style: TextStyle(
+                        fontSize: 13,
+                        fontStyle: FontStyle.italic,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blueGrey),
+                  ),
+                  margin: EdgeInsets.only(left: 15.0),
+                ),
+                title: Container(
+                  child: Theme(
+                    data:
+                        Theme.of(context).copyWith(primaryColor: primaryColor),
+                    child: TextFormField(
+                      enabled: false,
+                      keyboardType: TextInputType.multiline,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      decoration: InputDecoration(
+                        hintText: 'Area',
+                        contentPadding: EdgeInsets.all(5.0),
+                        hintStyle: TextStyle(color: greyColor),
+                      ),
+                      controller: cAreaName,
+                      onChanged: (value) {
+                        setState(() {
+                          _nodeData.areaName = value;
+                        });
+                      },
+                      focusNode: focusAreaName,
+                    ),
+                  ),
+                  margin: EdgeInsets.only(left: 50.0, right: 30.0),
+                ),
+                subtitle: Container(
+                  child: Theme(
+                    data:
+                        Theme.of(context).copyWith(primaryColor: primaryColor),
+                    child: TextFormField(
+                      enabled: false,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      decoration: InputDecoration(
+                        hintText: 'Branch',
+                        contentPadding: EdgeInsets.all(5.0),
+                        hintStyle: TextStyle(color: greyColor),
+                      ),
+                      controller: cServiceCenter,
+                      onChanged: (value) {
+                        setState(() {
+                          _nodeData.serviceCenter = value;
+                        });
+                      },
+                    ),
+                  ),
+                  margin: EdgeInsets.only(left: 50.0, right: 30.0),
+                ),
+              ),
+              ListTile(
+                leading: Container(
+                  child: Text(
+                    'Bank Account / Name',
                     style: TextStyle(
                         fontSize: 13,
                         fontStyle: FontStyle.italic,
                         fontWeight: FontWeight.bold,
                         color: primaryColor),
                   ),
-                  margin: EdgeInsets.only(left: 15.0, top: 5.0, bottom: 1.0),
+                  margin: EdgeInsets.only(left: 15.0),
                 ),
                 title: Container(
                   child: Theme(
@@ -449,7 +512,7 @@ class _NodeEditState extends State<NodeEdit> {
                       focusNode: focusBankAccount,
                     ),
                   ),
-                  margin: EdgeInsets.only(left: 1.0, right: 1.0),
+                  margin: EdgeInsets.only(left: 1.0, right: 30.0),
                 ),
                 subtitle: Container(
                   child: Theme(
@@ -475,7 +538,7 @@ class _NodeEditState extends State<NodeEdit> {
                       focusNode: focusAccountName,
                     ),
                   ),
-                  margin: EdgeInsets.only(left: 1.0, right: 1.0),
+                  margin: EdgeInsets.only(left: 1.0, right: 30.0),
                 ),
               ),
               Container(
@@ -487,7 +550,7 @@ class _NodeEditState extends State<NodeEdit> {
                       fontWeight: FontWeight.bold,
                       color: primaryColor),
                 ),
-                margin: EdgeInsets.only(left: 30.0, top: 5.0, bottom: 1.0),
+                margin: EdgeInsets.only(left: 30.0),
               ),
               Container(
                 child: Theme(
