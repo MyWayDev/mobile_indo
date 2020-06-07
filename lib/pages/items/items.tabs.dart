@@ -55,8 +55,10 @@ class ItemsTabs extends StatelessWidget {
                   Navigator.pushReplacementNamed(context, '/');
                 }),
             Divider(
-              height: 5,
-              color: Colors.purple,
+              height: 5.0,
+              color: Colors.purple[900],
+              indent: 18.0,
+              endIndent: 18.0,
             ),
             model.user.distrId != null
                 ? model.user.distrId == '00000001'
