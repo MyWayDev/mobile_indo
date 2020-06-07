@@ -73,8 +73,10 @@ class _NodeEditState extends State<NodeEdit> {
     cTelePhone.clear();
     cPersonalId.clear();
     cBankAccountName.clear();
+    cAreaName.clear();
     isSwitched = false;
     veri = false;
+    isChanged = false;
   }
 
   @override
@@ -144,6 +146,15 @@ class _NodeEditState extends State<NodeEdit> {
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
+          veri && _nodeData.areaName.isNotEmpty
+              ? Text(
+                  cAreaName.text,
+                  style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.pink[900]),
+                )
+              : Text(' '),
           ListTile(
             contentPadding: EdgeInsets.only(left: 15),
             leading: Icon(Icons.vpn_key, size: 25.0, color: Colors.pink[500]),
@@ -153,8 +164,8 @@ class _NodeEditState extends State<NodeEdit> {
               controller: distrController,
               enabled: !veri ? true : false,
               style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.black54,
+                  fontSize: 14.5,
+                  color: Colors.black87,
                   fontWeight: FontWeight.bold),
               decoration: InputDecoration(
                 hintText: 'Masukkan ID member',
@@ -187,6 +198,8 @@ class _NodeEditState extends State<NodeEdit> {
                     _nodeData = await widget.model
                         .nodeEdit(distrController.text.padLeft(8, '0'));
                     setState(() {
+                      cAreaName =
+                          TextEditingController(text: _nodeData.areaName);
                       cDistrId = TextEditingController(text: _nodeData.distrId);
                       cName = TextEditingController(text: _nodeData.name);
                       cAddress = TextEditingController(text: _nodeData.address);
@@ -245,7 +258,7 @@ class _NodeEditState extends State<NodeEdit> {
                           textAlign: TextAlign.center,
                           enabled: false,
                           style: TextStyle(
-                              fontSize: 14.5,
+                              fontSize: 15,
                               fontWeight: FontWeight.bold,
                               color: Colors.pink[900]),
                           decoration: InputDecoration(
