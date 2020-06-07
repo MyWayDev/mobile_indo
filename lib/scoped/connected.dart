@@ -1992,7 +1992,7 @@ for( var i = 0 ; i < _list.length; i++){
         print('user is allowed ${_userInfo.isAllowed.toString()}');
         versionControl(context);
         locKCart(context); //! uncomment this before buildR
-        // locKApp(context); //! uncomment this before buildR
+        //locKApp(context); //! uncomment this before buildR
         userAccess(key, context);
         // getAreauserTest(key, context);
         // getArea();

@@ -146,15 +146,6 @@ class _NodeEditState extends State<NodeEdit> {
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
-          veri && _nodeData.areaName.isNotEmpty
-              ? Text(
-                  cAreaName.text,
-                  style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.pink[900]),
-                )
-              : Text(' '),
           ListTile(
             contentPadding: EdgeInsets.only(left: 15),
             leading: Icon(Icons.vpn_key, size: 25.0, color: Colors.pink[500]),
@@ -382,6 +373,9 @@ class _NodeEditState extends State<NodeEdit> {
                   ),
                 ),
                 margin: EdgeInsets.only(left: 30.0, right: 30.0),
+              ),
+              ListTile(
+                leading: Text("data"),
               ),
               Container(
                 child: Text(
