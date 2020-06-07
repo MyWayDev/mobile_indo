@@ -1953,7 +1953,6 @@ for( var i = 0 ; i < _list.length; i++){
       return nodeEditData =
           new NewMember(distrId: '00000000', name: 'NA', areaId: '');
     }
-
     return nodeEditData;
   }
 
