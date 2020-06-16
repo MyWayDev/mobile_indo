@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:groovin_material_icons/groovin_material_icons.dart';
 import 'package:http/http.dart';
@@ -45,6 +47,7 @@ class _NodeEditState extends State<NodeEdit> {
   final FocusNode focusServiceCenter = new FocusNode();
 
   TextEditingController distrController = new TextEditingController();
+
   final FocusNode focusDistrController = new FocusNode();
 
   bool _isloading = false;
@@ -59,6 +62,7 @@ class _NodeEditState extends State<NodeEdit> {
   bool veri = false;
   //int _courier;
   NewMember _nodeData;
+  MemberSO _memberSO;
 
   void resetVeri() {
     distrController.clear();
@@ -75,6 +79,22 @@ class _NodeEditState extends State<NodeEdit> {
     isSwitched = false;
     veri = false;
     isChanged = false;
+  }
+
+  Future<MemberSO> getMemberSO(String distrId) async {
+    final _response = await http.get(
+        'http://mywayindoapi.azurewebsites.net/api/get_initial_so/$distrId');
+    if (_response.statusCode == 200) {
+      final responseData = await json.decode(_response.body);
+      _memberSO = MemberSO.fromJson(responseData);
+      setState(() {});
+      print(_memberSO.soId);
+    } else {
+      _memberSO = null;
+      print('member SO ?');
+      setState(() {});
+    }
+    return _memberSO;
   }
 
   @override
@@ -182,6 +202,7 @@ class _NodeEditState extends State<NodeEdit> {
                   if (veri) {
                     _nodeData = await widget.model
                         .nodeEdit(distrController.text.padLeft(8, '0'));
+                    getMemberSO(_nodeData.distrId);
                     setState(() {
                       cAreaName =
                           TextEditingController(text: _nodeData.areaName);
@@ -591,7 +612,7 @@ class _NodeEditState extends State<NodeEdit> {
                                   'Update',
                                   style: TextStyle(color: Colors.white),
                                 ),
-                                color: Colors.indigo[900],
+                                color: Colors.green[700],
                                 onPressed: () async {
                                   String _msg = await _saveNodeEdit(_nodeData);
                                   showDialog(
@@ -628,76 +649,141 @@ class _NodeEditState extends State<NodeEdit> {
                               )
                             : Container(),
                         RaisedButton(
-                          elevation: 11,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(21.0)),
-                          child: Text(
-                            'Delete',
-                            style: TextStyle(color: Colors.yellow[100]),
-                          ),
-                          color: Colors.red[900],
-                          onPressed: () => showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                    elevation: 15,
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(21.0)),
-                                    title: Text(
-                                      'Confirm Delete ?',
-                                      style: TextStyle(color: Colors.red),
-                                    ),
-                                    content: Text(
-                                      'Member: ${_nodeData.distrId}',
-                                      style: TextStyle(
-                                          fontStyle: FontStyle.italic),
-                                    ),
-                                    actions: <Widget>[
-                                      FlatButton(
-                                        highlightColor: Colors.greenAccent,
-                                        shape: RoundedRectangleBorder(
-                                            side: BorderSide(
-                                                color: Colors.greenAccent[400],
-                                                width: 2.5,
-                                                style: BorderStyle.solid),
-                                            borderRadius:
-                                                BorderRadius.circular(50)),
-                                        color: Colors.white,
-                                        child: Text(
-                                          'Cancel',
-                                          style: TextStyle(
-                                              color: Colors.green[900],
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        onPressed: () =>
-                                            Navigator.of(context).pop(),
+                            elevation: 11,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(21.0)),
+                            child: Text(
+                              'Delete',
+                              style: TextStyle(color: Colors.yellow[100]),
+                            ),
+                            color: Colors.red[900],
+                            disabledColor: Colors.blueGrey[200],
+                            onPressed: _memberSO != null
+                                ? () => showDialog(
+                                      context: context,
+                                      builder: (context) => ModalProgressHUD(
+                                        child: Container(
+                                            child: AlertDialog(
+                                          elevation: 15,
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(21.0)),
+                                          title: Text(
+                                            'Confirm Delete ?',
+                                            style: TextStyle(color: Colors.red),
+                                          ),
+                                          content: Text(
+                                            'Member: ${_nodeData.distrId}',
+                                            style: TextStyle(
+                                                fontStyle: FontStyle.italic),
+                                          ),
+                                          actions: <Widget>[
+                                            FlatButton(
+                                              highlightColor:
+                                                  Colors.greenAccent,
+                                              shape: RoundedRectangleBorder(
+                                                  side: BorderSide(
+                                                      color: Colors
+                                                          .greenAccent[400],
+                                                      width: 2.5,
+                                                      style: BorderStyle.solid),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          50)),
+                                              color: Colors.white,
+                                              child: Text(
+                                                'Cancel',
+                                                style: TextStyle(
+                                                    color: Colors.green[900],
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              onPressed: () =>
+                                                  Navigator.of(context).pop(),
+                                            ),
+                                            SizedBox(
+                                              width: 21,
+                                            ),
+                                            FlatButton(
+                                                colorBrightness:
+                                                    Brightness.light,
+                                                highlightColor:
+                                                    Colors.redAccent[400],
+                                                shape: RoundedRectangleBorder(
+                                                    side: BorderSide(
+                                                        color: Colors
+                                                            .redAccent[400],
+                                                        width: 2.5,
+                                                        style:
+                                                            BorderStyle.solid),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            50)),
+                                                color: Colors.white,
+                                                child: Text(
+                                                  'Delete',
+                                                  style: TextStyle(
+                                                      color: Colors.pink[900],
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                                onPressed: () async {
+                                                  String _deleteMsg;
+                                                  // Navigator.of(context).pop();
+                                                  isloading(true);
+                                                  _deleteMsg =
+                                                      await deleteMemberSO();
+                                                  isloading(false);
+                                                  showDialog(
+                                                      context: context,
+                                                      builder:
+                                                          (_) => AlertDialog(
+                                                                title: Text(
+                                                                    _deleteMsg),
+                                                                actions: <
+                                                                    Widget>[
+                                                                  FlatButton(
+                                                                      highlightColor:
+                                                                          Colors
+                                                                              .greenAccent,
+                                                                      shape: RoundedRectangleBorder(
+                                                                          side: BorderSide(
+                                                                              color: Colors.red[
+                                                                                  400],
+                                                                              width:
+                                                                                  2.5,
+                                                                              style: BorderStyle
+                                                                                  .solid),
+                                                                          borderRadius: BorderRadius.circular(
+                                                                              50)),
+                                                                      color: Colors
+                                                                          .white,
+                                                                      child:
+                                                                          Text(
+                                                                        'Close',
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                                Colors.red[900],
+                                                                            fontWeight: FontWeight.bold),
+                                                                      ),
+                                                                      onPressed:
+                                                                          () {
+                                                                        resetVeri();
+                                                                        Navigator.of(context)
+                                                                            .pop();
+                                                                      }),
+                                                                ],
+                                                              ));
+                                                  print('delete done');
+                                                }),
+                                          ],
+                                        )),
+                                        inAsyncCall: _isloading,
+                                        opacity: 0.6,
+                                        progressIndicator: ColorLoader2(),
                                       ),
-                                      SizedBox(
-                                        width: 21,
-                                      ),
-                                      FlatButton(
-                                        colorBrightness: Brightness.light,
-                                        highlightColor: Colors.redAccent[400],
-                                        shape: RoundedRectangleBorder(
-                                            side: BorderSide(
-                                                color: Colors.redAccent[400],
-                                                width: 2.5,
-                                                style: BorderStyle.solid),
-                                            borderRadius:
-                                                BorderRadius.circular(50)),
-                                        color: Colors.white,
-                                        child: Text(
-                                          'Delete',
-                                          style: TextStyle(
-                                              color: Colors.pink[900],
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        onPressed: () =>
-                                            Navigator.of(context).pop(),
-                                      ),
-                                    ],
-                                  )),
-                        ),
+                                    )
+                                : null)
                       ],
                     )
                   : Container(),
@@ -706,5 +792,40 @@ class _NodeEditState extends State<NodeEdit> {
         ],
       ),
     );
+  }
+
+  Future<String> deleteMemberSO() async {
+    String _msg = '';
+    http.Response response = await http.post(
+        'http://mywayindoapi.azurewebsites.net/api/delete_distr/${_nodeData.distrId}/${_memberSO.soId}/${_nodeData.serviceCenter}/${_memberSO.soType}/${_nodeData.serviceCenter}');
+    if (response.statusCode == 200) {
+      _msg = 'Deleted';
+    } else {
+      _msg = 'Error';
+    }
+    return _msg;
+  }
+}
+
+class MemberSO {
+  String soId;
+  String soType;
+
+  MemberSO({
+    this.soId,
+    this.soType,
+  });
+  toJson() {
+    return {"DOC_ID": soId, "SO_INV_TYPE": soType};
+  }
+
+  factory MemberSO.fromJson(Map<String, dynamic> json) {
+    return MemberSO(
+        soId: json['DOC_ID'] ?? '', soType: json['SO_INV_TYPE'] ?? '');
+  }
+
+  String memberSOToJson(MemberSO memberSO) {
+    final dyn = memberSO.toJson();
+    return json.encode(dyn);
   }
 }
