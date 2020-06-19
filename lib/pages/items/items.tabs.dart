@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:groovin_material_icons/groovin_material_icons.dart';
 import 'package:mor_release/account/nodeEdit.dart';
+import 'package:mor_release/account/supportReport.dart';
 import 'package:mor_release/pages/items/items.dart';
 import 'package:mor_release/pages/messages/local_note.dart';
 import 'package:mor_release/pages/order/order.dart';
 import 'package:mor_release/pages/order/widgets/passDialog.dart';
-import 'package:mor_release/pages/profile.dart';
 import 'package:mor_release/pages/user/phoneAuth.dart';
 import 'package:mor_release/scoped/connected.dart';
 import 'package:mor_release/track/track.tabs.dart';
@@ -195,7 +195,7 @@ class ItemsTabs extends StatelessWidget {
                 )),
                 Tab(
                   icon: Icon(
-                    GroovinMaterialIcons.message_processing,
+                    GroovinMaterialIcons.chart_arc,
                     size: 26.0,
                     color: Colors.grey[350],
                   ),
@@ -213,7 +213,8 @@ class ItemsTabs extends StatelessWidget {
               LocalNotification(
                 token: model.token,
               ),
-              PhoneAuth(title: 'Auth')
+              SupportReeport()
+              //  PhoneAuth(title: 'Auth')
 
               //ProductList(),
             ],

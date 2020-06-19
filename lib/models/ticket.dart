@@ -68,6 +68,12 @@ class Ticket {
       items: json['items'] ?? [],
     );
   }
+  toJson() {
+    return {
+      "id": id,
+      "ticketId": ticketId,
+    };
+  }
 }
 
 class Notify {

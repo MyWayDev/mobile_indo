@@ -232,7 +232,6 @@ class MainModel extends Model {
 
   Future<List<User>> getContacts(String distrId) async {
     List<User> _contactList = await messageKeys(distrId);
-
     return _contactList;
   }
 
@@ -299,9 +298,13 @@ class MainModel extends Model {
   Future<List<Item>> fbItemList() async {
     DataSnapshot snapshot =
         await database.reference().child('$path/items/en-US/').once();
+
     Map<dynamic, dynamic> fbitemsList = snapshot.value;
+
     List fblist = fbitemsList.values.toList();
+
     List<Item> fbItems = fblist.map((f) => Item.fromList(f)).toList();
+
     return fbItems;
   }
 
@@ -333,7 +336,9 @@ class MainModel extends Model {
         app: app, storageBucket: 'gs://mobile-coco.appspot.com/');
 
     final StorageReference storageRef = storage.ref().child('imgs');
+
     List<Item> items = [];
+
     for (var i = 0; i < fbItems.length; i++) {
       for (var x = 0; x < dbItems.length; x++) {
         if (fbItems[i].itemId == dbItems[x].itemId) {
@@ -493,7 +498,7 @@ class MainModel extends Model {
       qty: qty,
       name: item.name,
       img: item.imageUrl,
-    );
+    ); 
   }*/
 
 //!--------*
