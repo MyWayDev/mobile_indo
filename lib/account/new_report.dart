@@ -264,5 +264,4 @@ class _NewReport extends State<NewReport> {
     });
     setState(() {});
   }
-// One entry in the multilevel list displayed by this app.
 }

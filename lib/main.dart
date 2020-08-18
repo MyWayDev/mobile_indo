@@ -37,8 +37,7 @@ class _MyApp extends State<MyApp> {
   final MainModel model = MainModel();
 
   Random random = Random();
-  final String pathLink =
-      'flamelink/environments/indoProduction/content/tokens/en-US/';
+  final String pathLink = 'indoDb/tokens/';
   static final FirebaseDatabase database = FirebaseDatabase.instance;
   final DatabaseReference databaseReference = database.reference();
   final firebaseMessaging = new FirebaseMessaging();
@@ -124,6 +123,7 @@ class _MyApp extends State<MyApp> {
   void initTokenListen() {
     firebaseMessaging.getToken().then((_token) {
       final String path = pathLink + 'tokens-list/$_token';
+
       subAdd =
           databaseReference.child(path).onChildAdded.listen(_onItemEntryAdded);
 
@@ -182,13 +182,6 @@ class _MyApp extends State<MyApp> {
     var platform = new NotificationDetails(android, iOS);
     await notify.show(0, "This is title", "this is demo", platform);
   }
-
-  /*updateMsg(Map<String, dynamic> msg) {
-    DatabaseReference databaseReference = new FirebaseDatabase().reference();
-    databaseReference
-        .child('tokens-list/$_token/${DateTime.now().millisecondsSinceEpoch}')
-        .set({"Title": msg['notification']['title']});
-  }*/
 
   update(String token) {
     print(token);

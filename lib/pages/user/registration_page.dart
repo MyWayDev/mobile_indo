@@ -98,7 +98,9 @@ class _RegistrationPage extends State<RegistrationPage> {
 
   bool regCheck() {
     if (_registrationFormData['userId'] == _legacyData.distrId &&
-        _registrationFormData['personalId'] == _legacyData.distrIdent) {
+        _registrationFormData['personalId'] ==
+            _legacyData.distrIdent
+                .substring(_legacyData.distrIdent.length - 6)) {
       print('regcheck:OK');
       return true;
     } else
@@ -180,7 +182,7 @@ class _RegistrationPage extends State<RegistrationPage> {
                     ),
                     TextFormField(
                       decoration: InputDecoration(
-                          labelText: 'Nomor Tanda Pengenal',
+                          labelText: 'Nomor Tanda Pengenal (6 angka terakhir)',
                           contentPadding: EdgeInsets.all(8.0),
                           icon: Icon(Icons.assignment_ind,
                               color: Colors.pink[500])),
@@ -328,11 +330,15 @@ class _RegistrationPage extends State<RegistrationPage> {
         print('fireDataExits:$_fireDataExits');
         isloading(false);
         print(errorM);
+        print(_legacyData.distrIdent
+            .substring(_legacyData.distrIdent.length - 6));
       } else {
         print('legacyDataExits:$_legacyDataExits');
         print('fireDataExits:$_fireDataExits');
         errorM = 'Good to GO';
         print(errorM);
+        print(_legacyData.distrIdent
+            .substring(_legacyData.distrIdent.length - 6));
         validateAndSubmit();
       }
     }

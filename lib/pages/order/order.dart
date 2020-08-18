@@ -66,187 +66,191 @@ class _OrderPage extends State<OrderPage> {
         context: context,
         builder: (BuildContext bc) {
           return ScopedModelDescendant<MainModel>(
-              builder: (BuildContext context, Widget child, MainModel model) {
-            return Stack(
-              fit: StackFit.expand,
-              children: <Widget>[
-                Positioned(
-                    top: 1,
-                    left: MediaQuery.of(context).size.width / 6,
-                    right: MediaQuery.of(context).size.width / 6,
-                    child: IconButton(
-                      icon: Icon(
-                        Icons.add_location,
-                        size: 32,
-                        color: Colors.pink[900],
-                      ),
-                      onPressed: () {
-                        //Navigator.of(context).pop();
-                        showDialog(
-                            context: context,
-                            builder: (_) => ShipmentPlace(
-                                  model: widget.model,
-                                  memberId: model.userInfo.distrId,
-                                  isEdit: true,
-                                ));
-                      },
-                    )),
-                Positioned(
-                  top: 40,
-                  left: MediaQuery.of(context).size.width / 10,
-                  right: MediaQuery.of(context).size.width / 10,
-                  child: Container(
-                    width: MediaQuery.of(context).size.width / 2,
-                    child: Row(
-                      children: <Widget>[
-                        Container(
-                          //width: MediaQuery.of(context).size.width * 0.8,
-                          child: Flexible(
-                              flex: 1,
-                              child: Column(
-                                children: <Widget>[
-                                  Flex(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceAround,
-                                      direction: Axis.horizontal,
-                                      //  direction: Axis.horizontal,
-                                      children: <Widget>[
-                                        Expanded(
-                                            flex: 1,
-                                            // width: 113,
-                                            child: Padding(
-                                              padding:
-                                                  EdgeInsets.only(right: 8),
-                                              child: Text(
-                                                '${model.shipmentAddress}/${model.shipmentName}',
-                                                softWrap: true,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: TextStyle(
-                                                  fontSize: 13.0,
-                                                  color: Colors.grey[600],
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            )),
-                                      ]),
-                                ],
-                              )),
+            builder: (BuildContext context, Widget child, MainModel model) {
+              return Stack(
+                fit: StackFit.expand,
+                children: <Widget>[
+                  Positioned(
+                      top: 1,
+                      left: MediaQuery.of(context).size.width / 6,
+                      right: MediaQuery.of(context).size.width / 6,
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.add_location,
+                          size: 32,
+                          color: Colors.pink[900],
                         ),
-                      ],
+                        onPressed: () {
+                          //Navigator.of(context).pop();
+                          showDialog(
+                              context: context,
+                              builder: (_) => ShipmentPlace(
+                                    model: widget.model,
+                                    memberId: model.userInfo.distrId,
+                                    isEdit: true,
+                                  ));
+                        },
+                      )),
+                  Positioned(
+                    top: 40,
+                    left: MediaQuery.of(context).size.width / 10,
+                    right: MediaQuery.of(context).size.width / 10,
+                    child: Container(
+                      width: MediaQuery.of(context).size.width / 2,
+                      child: Row(
+                        children: <Widget>[
+                          Container(
+                            //width: MediaQuery.of(context).size.width * 0.8,
+                            child: Flexible(
+                                flex: 1,
+                                child: Column(
+                                  children: <Widget>[
+                                    Flex(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                        direction: Axis.horizontal,
+                                        //  direction: Axis.horizontal,
+                                        children: <Widget>[
+                                          Expanded(
+                                              flex: 1,
+                                              // width: 113,
+                                              child: Padding(
+                                                padding:
+                                                    EdgeInsets.only(right: 8),
+                                                child: Text(
+                                                  '${model.shipmentAddress}/${model.shipmentName}',
+                                                  softWrap: true,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                    fontSize: 13.0,
+                                                    color: Colors.grey[600],
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              )),
+                                        ]),
+                                  ],
+                                )),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: 68),
-                  child: ListView.builder(
-                    itemCount: model.bulkOrder.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        enabled: true,
-                        selected: true,
-                        onTap: () {
-                          if (model.itemorderlist.length > 0) {
-                            Navigator.of(context).pop();
-                            showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: Text('Hapus pesanan di keranjang ?',
-                                        style:
-                                            TextStyle(color: Colors.pink[900])),
-                                    actions: <Widget>[
-                                      IconButton(
-                                        icon: Icon(Icons.close),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                      IconButton(
-                                        icon: Icon(Icons.check),
-                                        onPressed: () {
-                                          model.itemorderlist.clear();
-                                          model.itemorderlist.addAll(
-                                              model.bulkOrder[index].order);
-                                          model.bulkOrder
-                                              .remove(model.bulkOrder[index]);
-                                          model.bulkOrder.length == 0
-                                              ? model.shipmentAddress = ''
-                                              : null;
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                    ],
-                                  );
-                                });
-                          } else {
-                            model.itemorderlist
-                                .addAll(model.bulkOrder[index].order);
-                            model.giftorderList
-                                .addAll(model.bulkOrder[index].gifts);
-                            model.promoOrderList
-                                .addAll(model.bulkOrder[index].promos);
-                            model.bulkOrder.remove(model.bulkOrder[index]);
-                            model.bulkOrder.length == 0
-                                ? model.shipmentAddress = ''
-                                : null;
-                            print(model.shipmentArea);
-                            Navigator.of(context).pop();
-                          }
-                        },
-                        leading: Column(
-                          children: <Widget>[
-                            Icon(Icons.vpn_key, size: 18),
-                            Text(model.bulkOrder[index].distrId,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 12)),
-                          ],
-                        ),
-                        title: Column(
-                          children: <Widget>[
-                            Text(
-                              "Rp ${formatter.format(model.bulkOrder[index].total)}",
-                              style: TextStyle(
-                                  color: Colors.green,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 11),
-                            ),
-                            Text(
-                              "Bp ${formatter.format(model.bulkOrder[index].totalBp)}",
-                              style: TextStyle(
-                                  color: Colors.red,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 11),
-                            ),
-                            Text(
-                              "kg ${formatWeight.format(model.bulkOrder[index].weight)}",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 11),
-                            ),
-                            Divider(height: 12, color: Colors.black)
-                          ],
-                        ),
-                        trailing: IconButton(
-                          onPressed: () {
-                            model.bulkOrder.remove(model.bulkOrder[index]);
-                            if (model.bulkOrder.length == 0) {
-                              isBulk(false, model);
-                              model.shipmentAddress = '';
-                              //model.shipmentArea = '';
+                  Padding(
+                    padding: EdgeInsets.only(top: 68),
+                    child: ListView.builder(
+                      itemCount: model.bulkOrder.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          enabled: true,
+                          selected: true,
+                          onTap: () {
+                            if (model.itemorderlist.length > 0) {
+                              Navigator.of(context).pop();
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text(
+                                          'Hapus pesanan di keranjang ?',
+                                          style: TextStyle(
+                                              color: Colors.pink[900])),
+                                      actions: <Widget>[
+                                        IconButton(
+                                          icon: Icon(Icons.close),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                        IconButton(
+                                          icon: Icon(Icons.check),
+                                          onPressed: () {
+                                            model.itemorderlist.clear();
+                                            model.itemorderlist.addAll(
+                                                model.bulkOrder[index].order);
+                                            model.bulkOrder
+                                                .remove(model.bulkOrder[index]);
+                                            model.bulkOrder.length == 0
+                                                ? model.shipmentAddress = ''
+                                                : null;
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  });
+                            } else {
+                              model.itemorderlist
+                                  .addAll(model.bulkOrder[index].order);
+                              model.giftorderList
+                                  .addAll(model.bulkOrder[index].gifts);
+                              model.promoOrderList
+                                  .addAll(model.bulkOrder[index].promos);
+                              model.bulkOrder.remove(model.bulkOrder[index]);
+                              model.bulkOrder.length == 0
+                                  ? model.shipmentAddress = ''
+                                  : null;
+                              print(model.shipmentArea);
+                              Navigator.of(context).pop();
                             }
-
-                            Navigator.of(context).pop();
                           },
-                          icon: Icon(Icons.delete_forever),
-                        ),
-                      );
-                    },
+                          leading: Column(
+                            children: <Widget>[
+                              Icon(Icons.vpn_key, size: 18),
+                              Text(model.bulkOrder[index].distrId,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12)),
+                            ],
+                          ),
+                          title: Column(
+                            children: <Widget>[
+                              Text(
+                                "Rp ${formatter.format(model.bulkOrder[index].total)}",
+                                style: TextStyle(
+                                    color: Colors.green,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 11),
+                              ),
+                              Text(
+                                "Bp ${formatter.format(model.bulkOrder[index].totalBp)}",
+                                style: TextStyle(
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 11),
+                              ),
+                              Text(
+                                "kg ${formatWeight.format(model.bulkOrder[index].weight)}",
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 11),
+                              ),
+                              Divider(height: 12, color: Colors.black)
+                            ],
+                          ),
+                          trailing: IconButton(
+                            onPressed: () {
+                              model.bulkOrder.remove(model.bulkOrder[index]);
+                              if (model.bulkOrder.length == 0) {
+                                isBulk(false, model);
+                                model.shipmentAddress = '';
+                                //model.shipmentArea = '';
+                              }
+
+                              Navigator.of(context).pop();
+                            },
+                            icon: Icon(Icons.delete_forever),
+                          ),
+                        );
+                      },
+                    ),
                   ),
-                )
-              ],
-            );
-          });
+                ],
+              );
+            },
+          );
         });
   }
 
@@ -700,7 +704,7 @@ Widget _buildIconButton(BuildContext context, int i, MainModel model) {
     ), // required
     //badgeColor: Colors.pink[900],
     badgeTextColor: Colors.white,
-    onPressed: () async {
+    onPressed: () {
       showDialog(
           context: context,
           builder: (_) => StockDialog(model.itemData, model.getItemIndex(i),
@@ -730,7 +734,6 @@ class _BulkGiftsAndPromosState extends State<BulkGiftsAndPromos> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
   }
 
@@ -774,33 +777,33 @@ class _BulkGiftsAndPromosState extends State<BulkGiftsAndPromos> {
         widget.model.promoPacks.length > 0
             ? Flexible(
                 child: SizedBox(
-                    height: 45.0,
-                    child: Card(
-                      color: Color(0xFFFFFFF1),
-                      elevation: 5,
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: ModalProgressHUD(
-                                color: Colors.transparent,
-                                inAsyncCall: widget.model.isloading,
-                                opacity: 0.1,
-                                progressIndicator: LinearProgressIndicator(
-                                  backgroundColor: Colors.grey[200],
-                                ),
-                                child: ListView.builder(
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount: widget.model.promoPacks.length,
-                                  itemBuilder: (context, i) {
-                                    return PromoCard(
-                                        widget.model.promoPacks, i);
-                                  },
-                                )),
-                          )
-                        ],
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      ),
-                    )),
+                  height: 45.0,
+                  child: Card(
+                    color: Color(0xFFFFFFF1),
+                    elevation: 5,
+                    child: Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: ModalProgressHUD(
+                              color: Colors.transparent,
+                              inAsyncCall: widget.model.isloading,
+                              opacity: 0.1,
+                              progressIndicator: LinearProgressIndicator(
+                                backgroundColor: Colors.grey[200],
+                              ),
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: widget.model.promoPacks.length,
+                                itemBuilder: (context, i) {
+                                  return PromoCard(widget.model.promoPacks, i);
+                                },
+                              )),
+                        )
+                      ],
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    ),
+                  ),
+                ),
               )
             : Container(),
         widget.model.giftorderList.length > 0

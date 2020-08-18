@@ -6,7 +6,6 @@ import 'package:mor_release/pages/items/items.dart';
 import 'package:mor_release/pages/messages/local_note.dart';
 import 'package:mor_release/pages/order/order.dart';
 import 'package:mor_release/pages/order/widgets/passDialog.dart';
-import 'package:mor_release/pages/user/phoneAuth.dart';
 import 'package:mor_release/scoped/connected.dart';
 import 'package:mor_release/track/track.tabs.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -27,7 +26,7 @@ class ItemsTabs extends StatelessWidget {
       model.userDetails();
 
       return DefaultTabController(
-        length: 5,
+        length: 4,
         child: Scaffold(
           drawer: Drawer(
               child: Column(children: <Widget>[
@@ -193,13 +192,13 @@ class ItemsTabs extends StatelessWidget {
                     color: Colors.grey[350],
                   ),
                 )),
-                Tab(
+                /* Tab(
                   icon: Icon(
                     GroovinMaterialIcons.chart_arc,
                     size: 26.0,
                     color: Colors.grey[350],
                   ),
-                ),
+                ),*/
               ],
             ),
           ),
@@ -213,7 +212,7 @@ class ItemsTabs extends StatelessWidget {
               LocalNotification(
                 token: model.token,
               ),
-              SupportReeport()
+              // SupportReeport()
               //  PhoneAuth(title: 'Auth')
 
               //ProductList(),

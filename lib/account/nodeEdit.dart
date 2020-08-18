@@ -146,8 +146,9 @@ class _NodeEditState extends State<NodeEdit> {
       resizeToAvoidBottomPadding: false,
       body: ModalProgressHUD(
         child: Container(
-          child: buildVeri(context),
-        ),
+            child: SingleChildScrollView(
+          child: Stack(children: <Widget>[buildVeri(context)]),
+        )),
         inAsyncCall: _isloading,
         opacity: 0.6,
         progressIndicator: ColorLoader2(),
@@ -156,424 +157,354 @@ class _NodeEditState extends State<NodeEdit> {
   }
 
   Widget buildVeri(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          ListTile(
-            contentPadding: EdgeInsets.only(left: 15),
-            leading: Icon(Icons.vpn_key, size: 25.0, color: Colors.pink[500]),
-            title: TextFormField(
-              focusNode: focusDistrController,
-              textAlign: TextAlign.center,
-              controller: distrController,
-              enabled: !veri ? true : false,
-              style: TextStyle(
-                  fontSize: 14.5,
-                  color: Colors.black87,
-                  fontWeight: FontWeight.bold),
-              decoration: InputDecoration(
-                hintText: 'Masukkan ID member',
-                hintStyle: TextStyle(color: Colors.grey[400]),
-              ),
-              keyboardType: TextInputType.number,
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        ListTile(
+          contentPadding: EdgeInsets.only(left: 15),
+          leading: Icon(Icons.vpn_key, size: 25.0, color: Colors.pink[500]),
+          title: TextFormField(
+            focusNode: focusDistrController,
+            textAlign: TextAlign.center,
+            controller: distrController,
+            enabled: !veri ? true : false,
+            style: TextStyle(
+                fontSize: 14.5,
+                color: Colors.black87,
+                fontWeight: FontWeight.bold),
+            decoration: InputDecoration(
+              hintText: 'Masukkan ID member',
+              hintStyle: TextStyle(color: Colors.grey[400]),
             ),
-            trailing: IconButton(
-              icon: !veri && distrController.text.length > 0
-                  ? Icon(
-                      Icons.check,
-                      size: 30.0,
-                      color: Colors.lightBlue,
-                    )
-                  : distrController.text.length > 0
-                      ? Icon(
-                          GroovinMaterialIcons.close,
-                          size: 24.0,
-                          color: Colors.blueGrey,
-                        )
-                      : Container(),
-              color: Colors.pink[900],
-              onPressed: () async {
-                isloading(true);
-                if (!veri) {
-                  veri = true;
-                  // await widget.model
-                  //  .leaderVerification(distrController.text.padLeft(8, '0'));
-                  if (veri) {
-                    _nodeData = await widget.model
-                        .nodeEdit(distrController.text.padLeft(8, '0'));
-                    getMemberSO(_nodeData.distrId);
-                    setState(() {
-                      cAreaName =
-                          TextEditingController(text: _nodeData.areaName);
-                      cServiceCenter =
-                          TextEditingController(text: _nodeData.serviceCenter);
-                      cDistrId = TextEditingController(text: _nodeData.distrId);
-                      cName = TextEditingController(text: _nodeData.name);
-                      cAddress = TextEditingController(text: _nodeData.address);
-                      cBanKAccountNumber = TextEditingController(
-                          text: _nodeData.bankAccountNumber);
-                      cTaxNumber =
-                          TextEditingController(text: _nodeData.taxNumber);
-                      cTelePhone =
-                          TextEditingController(text: _nodeData.telephone);
-                      cPersonalId =
-                          TextEditingController(text: _nodeData.personalId);
-                      cBankAccountName =
-                          TextEditingController(text: _nodeData.bankAccoutName);
-                      _isSwitched();
-                    });
+            keyboardType: TextInputType.number,
+          ),
+          trailing: IconButton(
+            icon: !veri && distrController.text.length > 0
+                ? Icon(
+                    Icons.check,
+                    size: 30.0,
+                    color: Colors.lightBlue,
+                  )
+                : distrController.text.length > 0
+                    ? Icon(
+                        GroovinMaterialIcons.close,
+                        size: 24.0,
+                        color: Colors.blueGrey,
+                      )
+                    : Container(),
+            color: Colors.pink[900],
+            onPressed: () async {
+              isloading(true);
+              if (!veri) {
+                veri = true;
+                // await widget.model
+                //  .leaderVerification(distrController.text.padLeft(8, '0'));
+                if (veri) {
+                  _nodeData = await widget.model
+                      .nodeEdit(distrController.text.padLeft(8, '0'));
+                  getMemberSO(_nodeData.distrId);
+                  setState(() {
+                    cAreaName = TextEditingController(text: _nodeData.areaName);
+                    cServiceCenter =
+                        TextEditingController(text: _nodeData.serviceCenter);
+                    cDistrId = TextEditingController(text: _nodeData.distrId);
+                    cName = TextEditingController(text: _nodeData.name);
+                    cAddress = TextEditingController(text: _nodeData.address);
+                    cBanKAccountNumber = TextEditingController(
+                        text: _nodeData.bankAccountNumber);
+                    cTaxNumber =
+                        TextEditingController(text: _nodeData.taxNumber);
+                    cTelePhone =
+                        TextEditingController(text: _nodeData.telephone);
+                    cPersonalId =
+                        TextEditingController(text: _nodeData.personalId);
+                    cBankAccountName =
+                        TextEditingController(text: _nodeData.bankAccoutName);
+                    _isSwitched();
+                  });
 
-                    setState(() {});
-                    _nodeData.distrId == '00000000'
-                        ? resetVeri()
-                        : distrController.text =
-                            _nodeData.distrId + '  ' + _nodeData.name;
-                    isloading(false);
-                  } else {
-                    resetVeri();
-                    isloading(false);
-                  }
+                  setState(() {});
+                  _nodeData.distrId == '00000000'
+                      ? resetVeri()
+                      : distrController.text =
+                          _nodeData.distrId + '  ' + _nodeData.name;
+                  isloading(false);
                 } else {
                   resetVeri();
                   isloading(false);
                 }
-              },
-              splashColor: Colors.pink,
-            ),
+              } else {
+                resetVeri();
+                isloading(false);
+              }
+            },
+            splashColor: Colors.pink,
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.max,
-            children: <Widget>[
-              ListTile(
-                  leading: Container(
-                    child: Text(
-                      'ID Member',
-                      style: TextStyle(
-                          fontSize: 13,
-                          fontStyle: FontStyle.italic,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blueGrey),
-                    ),
-                    margin: EdgeInsets.only(left: 20.0),
-                  ),
-                  title: Container(
-                    child: Theme(
-                        data: Theme.of(context)
-                            .copyWith(primaryColor: primaryColor),
-                        child: TextFormField(
-                          textAlign: TextAlign.center,
-                          enabled: false,
-                          style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey),
-                          decoration: InputDecoration(
-                            hintText: 'Member Info',
-                            contentPadding: EdgeInsets.all(5.0),
-                            hintStyle: TextStyle(color: greyColor),
-                          ),
-                          controller: cDistrId,
-                          onChanged: (value) {
-                            _nodeData.distrId = value;
-                          },
-                          focusNode: focusDistrId,
-                        )),
-                    margin: EdgeInsets.only(left: 20.0, right: 20.0),
-                  ),
-                  trailing: Switch(
-                    inactiveTrackColor:
-                        veri ? Colors.red[200] : Colors.transparent,
-                    activeTrackColor: Colors.green[200],
-                    value: isSwitched,
-                    onChanged: (bool value) {
-                      setState(() {
-                        isSwitched = value;
-                        isSwitched
-                            ? _nodeData.held = '0'
-                            : _nodeData.held = '1';
-                        isChanged = true;
-                      });
-                    },
-                    activeThumbImage:
-                        veri ? AssetImage('assets/images/check.jpg') : null,
-                    inactiveThumbImage:
-                        veri ? AssetImage('assets/images/xmark.png') : null,
-                  )),
-              Container(
-                child: Theme(
-                  data: Theme.of(context).copyWith(primaryColor: primaryColor),
-                  child: TextFormField(
-                    textAlign: TextAlign.center,
-                    enabled: veri,
-                    keyboardType: TextInputType.multiline,
-                    maxLines: null,
-                    decoration: InputDecoration(
-                      hintText: 'Name',
-                      contentPadding: EdgeInsets.all(1.0),
-                      hintStyle: TextStyle(color: greyColor),
-                    ),
-                    controller: cName,
-                    onChanged: (value) {
-                      setState(() {
-                        _nodeData.name = value;
-                        isChanged = true;
-                      });
-                    },
-                    focusNode: focusName,
-                  ),
-                ),
-                margin: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 5),
-              ),
-              Container(
-                child: Text(
-                  'Personal Id',
-                  style: TextStyle(
-                      fontSize: 12,
-                      fontStyle: FontStyle.italic,
-                      fontWeight: FontWeight.bold,
-                      color: primaryColor),
-                ),
-                margin: EdgeInsets.only(left: 30.0),
-              ),
-              Container(
-                child: Theme(
-                  data: Theme.of(context).copyWith(primaryColor: primaryColor),
-                  child: TextFormField(
-                    enabled: veri,
-                    style: TextStyle(fontSize: 14),
-                    decoration: InputDecoration(
-                      hintText: 'Personal Id',
-                      contentPadding: EdgeInsets.all(5.0),
-                      hintStyle: TextStyle(color: greyColor),
-                    ),
-                    controller: cPersonalId,
-                    onChanged: (value) {
-                      setState(() {
-                        _nodeData.personalId = value;
-                        isChanged = true;
-                      });
-                    },
-                    focusNode: focusPersonalId,
-                  ),
-                ),
-                margin: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 5),
-              ),
-              Container(
-                child: Text(
-                  'Telephone',
-                  style: TextStyle(
-                      fontSize: 12,
-                      fontStyle: FontStyle.italic,
-                      fontWeight: FontWeight.bold,
-                      color: primaryColor),
-                ),
-                margin: EdgeInsets.only(left: 30.0),
-              ),
-              Container(
-                child: Theme(
-                  data: Theme.of(context).copyWith(primaryColor: primaryColor),
-                  child: TextFormField(
-                    enabled: veri,
-                    style: TextStyle(fontSize: 14),
-                    decoration: InputDecoration(
-                      hintText: 'Telephone',
-                      contentPadding: EdgeInsets.all(5.0),
-                      hintStyle: TextStyle(color: greyColor),
-                    ),
-                    controller: cTelePhone,
-                    onChanged: (value) {
-                      setState(() {
-                        _nodeData.telephone = value;
-                        isChanged = true;
-                      });
-                    },
-                    focusNode: focusTelephone,
-                  ),
-                ),
-                margin: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 5),
-              ),
-              Container(
-                child: Text(
-                  'Address',
-                  style: TextStyle(
-                      fontSize: 13,
-                      fontStyle: FontStyle.italic,
-                      fontWeight: FontWeight.bold,
-                      color: primaryColor),
-                ),
-                margin: EdgeInsets.only(left: 30.0),
-              ),
-              Container(
-                child: Theme(
-                  data: Theme.of(context).copyWith(primaryColor: primaryColor),
-                  child: TextFormField(
-                    enabled: veri,
-                    maxLines: null,
-                    keyboardType: TextInputType.multiline,
-                    style: TextStyle(fontSize: 14),
-                    decoration: InputDecoration(
-                      hintText: 'Address',
-                      contentPadding: EdgeInsets.all(5.0),
-                      hintStyle: TextStyle(color: greyColor),
-                    ),
-                    controller: cAddress,
-                    onChanged: (value) {
-                      setState(() {
-                        _nodeData.address = value;
-                        isChanged = true;
-                      });
-                    },
-                    focusNode: focusAddress,
-                  ),
-                ),
-                margin: EdgeInsets.only(left: 30.0, right: 30.0),
-              ),
-              ListTile(
+        ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
+          children: <Widget>[
+            ListTile(
                 leading: Container(
                   child: Text(
-                    'Area / Branch',
+                    'ID Member',
                     style: TextStyle(
                         fontSize: 13,
                         fontStyle: FontStyle.italic,
                         fontWeight: FontWeight.bold,
                         color: Colors.blueGrey),
                   ),
-                  margin: EdgeInsets.only(left: 15.0),
+                  margin: EdgeInsets.only(left: 20.0),
                 ),
                 title: Container(
                   child: Theme(
-                    data:
-                        Theme.of(context).copyWith(primaryColor: primaryColor),
-                    child: TextFormField(
-                      enabled: false,
-                      keyboardType: TextInputType.multiline,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      decoration: InputDecoration(
-                        hintText: 'Area',
-                        contentPadding: EdgeInsets.all(5.0),
-                        hintStyle: TextStyle(color: greyColor),
-                      ),
-                      controller: cAreaName,
-                      onChanged: (value) {
-                        setState(() {
-                          _nodeData.areaName = value;
-                        });
-                      },
-                      focusNode: focusAreaName,
-                    ),
-                  ),
-                  margin: EdgeInsets.only(left: 50.0, right: 30.0),
+                      data: Theme.of(context)
+                          .copyWith(primaryColor: primaryColor),
+                      child: TextFormField(
+                        textAlign: TextAlign.center,
+                        enabled: false,
+                        style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey),
+                        decoration: InputDecoration(
+                          hintText: 'Member Info',
+                          contentPadding: EdgeInsets.all(5.0),
+                          hintStyle: TextStyle(color: greyColor),
+                        ),
+                        controller: cDistrId,
+                        onChanged: (value) {
+                          _nodeData.distrId = value;
+                        },
+                        focusNode: focusDistrId,
+                      )),
+                  margin: EdgeInsets.only(left: 20.0, right: 20.0),
                 ),
-                subtitle: Container(
-                  child: Theme(
-                    data:
-                        Theme.of(context).copyWith(primaryColor: primaryColor),
-                    child: TextFormField(
-                      enabled: false,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      decoration: InputDecoration(
-                        hintText: 'Branch',
-                        contentPadding: EdgeInsets.all(5.0),
-                        hintStyle: TextStyle(color: greyColor),
-                      ),
-                      controller: cServiceCenter,
-                      onChanged: (value) {
-                        setState(() {
-                          _nodeData.serviceCenter = value;
-                        });
-                      },
-                    ),
+                trailing: Switch(
+                  inactiveTrackColor:
+                      veri ? Colors.red[200] : Colors.transparent,
+                  activeTrackColor: Colors.green[200],
+                  value: isSwitched,
+                  onChanged: (bool value) {
+                    setState(() {
+                      isSwitched = value;
+                      isSwitched ? _nodeData.held = '0' : _nodeData.held = '1';
+                      isChanged = true;
+                    });
+                  },
+                  activeThumbImage:
+                      veri ? AssetImage('assets/images/check.jpg') : null,
+                  inactiveThumbImage:
+                      veri ? AssetImage('assets/images/xmark.png') : null,
+                )),
+            Container(
+              child: Theme(
+                data: Theme.of(context).copyWith(primaryColor: primaryColor),
+                child: TextFormField(
+                  textAlign: TextAlign.center,
+                  enabled: veri,
+                  keyboardType: TextInputType.multiline,
+                  maxLines: null,
+                  decoration: InputDecoration(
+                    hintText: 'Name',
+                    contentPadding: EdgeInsets.all(1.0),
+                    hintStyle: TextStyle(color: greyColor),
                   ),
-                  margin: EdgeInsets.only(left: 50.0, right: 30.0),
-                ),
-              ),
-              ListTile(
-                leading: Container(
-                  child: Text(
-                    'Bank Account / Name',
-                    style: TextStyle(
-                        fontSize: 13,
-                        fontStyle: FontStyle.italic,
-                        fontWeight: FontWeight.bold,
-                        color: primaryColor),
-                  ),
-                  margin: EdgeInsets.only(left: 15.0),
-                ),
-                title: Container(
-                  child: Theme(
-                    data:
-                        Theme.of(context).copyWith(primaryColor: primaryColor),
-                    child: TextFormField(
-                      enabled: veri,
-                      maxLines: null,
-                      keyboardType: TextInputType.multiline,
-                      style: TextStyle(fontSize: 14),
-                      decoration: InputDecoration(
-                        hintText: 'Bank Account',
-                        contentPadding: EdgeInsets.all(8.0),
-                        hintStyle: TextStyle(color: greyColor),
-                      ),
-                      controller: cBanKAccountNumber,
-                      onChanged: (value) {
-                        setState(() {
-                          _nodeData.bankAccountNumber = value;
-                          isChanged = true;
-                        });
-                      },
-                      focusNode: focusBankAccount,
-                    ),
-                  ),
-                  margin: EdgeInsets.only(left: 1.0, right: 30.0),
-                ),
-                subtitle: Container(
-                  child: Theme(
-                    data:
-                        Theme.of(context).copyWith(primaryColor: primaryColor),
-                    child: TextFormField(
-                      enabled: veri,
-                      maxLines: null,
-                      keyboardType: TextInputType.multiline,
-                      style: TextStyle(fontSize: 13),
-                      decoration: InputDecoration(
-                        hintText: 'Account Name',
-                        contentPadding: EdgeInsets.all(5.0),
-                        hintStyle: TextStyle(color: greyColor),
-                      ),
-                      controller: cBankAccountName,
-                      onChanged: (value) {
-                        setState(() {
-                          _nodeData.bankAccoutName = value;
-                          isChanged = true;
-                        });
-                      },
-                      focusNode: focusAccountName,
-                    ),
-                  ),
-                  margin: EdgeInsets.only(left: 1.0, right: 30.0),
+                  controller: cName,
+                  onChanged: (value) {
+                    setState(() {
+                      _nodeData.name = value;
+                      isChanged = true;
+                    });
+                  },
+                  focusNode: focusName,
                 ),
               ),
-              Container(
+              margin: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 5),
+            ),
+            Container(
+              child: Text(
+                'Personal Id',
+                style: TextStyle(
+                    fontSize: 12,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.bold,
+                    color: primaryColor),
+              ),
+              margin: EdgeInsets.only(left: 30.0),
+            ),
+            Container(
+              child: Theme(
+                data: Theme.of(context).copyWith(primaryColor: primaryColor),
+                child: TextFormField(
+                  enabled: veri,
+                  style: TextStyle(fontSize: 14),
+                  decoration: InputDecoration(
+                    hintText: 'Personal Id',
+                    contentPadding: EdgeInsets.all(5.0),
+                    hintStyle: TextStyle(color: greyColor),
+                  ),
+                  controller: cPersonalId,
+                  onChanged: (value) {
+                    setState(() {
+                      _nodeData.personalId = value;
+                      isChanged = true;
+                    });
+                  },
+                  focusNode: focusPersonalId,
+                ),
+              ),
+              margin: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 5),
+            ),
+            Container(
+              child: Text(
+                'Telephone',
+                style: TextStyle(
+                    fontSize: 12,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.bold,
+                    color: primaryColor),
+              ),
+              margin: EdgeInsets.only(left: 30.0),
+            ),
+            Container(
+              child: Theme(
+                data: Theme.of(context).copyWith(primaryColor: primaryColor),
+                child: TextFormField(
+                  enabled: veri,
+                  style: TextStyle(fontSize: 14),
+                  decoration: InputDecoration(
+                    hintText: 'Telephone',
+                    contentPadding: EdgeInsets.all(5.0),
+                    hintStyle: TextStyle(color: greyColor),
+                  ),
+                  controller: cTelePhone,
+                  onChanged: (value) {
+                    setState(() {
+                      _nodeData.telephone = value;
+                      isChanged = true;
+                    });
+                  },
+                  focusNode: focusTelephone,
+                ),
+              ),
+              margin: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 5),
+            ),
+            Container(
+              child: Text(
+                'Address',
+                style: TextStyle(
+                    fontSize: 13,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.bold,
+                    color: primaryColor),
+              ),
+              margin: EdgeInsets.only(left: 30.0),
+            ),
+            Container(
+              child: Theme(
+                data: Theme.of(context).copyWith(primaryColor: primaryColor),
+                child: TextFormField(
+                  enabled: veri,
+                  maxLines: null,
+                  keyboardType: TextInputType.multiline,
+                  style: TextStyle(fontSize: 14),
+                  decoration: InputDecoration(
+                    hintText: 'Address',
+                    contentPadding: EdgeInsets.all(5.0),
+                    hintStyle: TextStyle(color: greyColor),
+                  ),
+                  controller: cAddress,
+                  onChanged: (value) {
+                    setState(() {
+                      _nodeData.address = value;
+                      isChanged = true;
+                    });
+                  },
+                  focusNode: focusAddress,
+                ),
+              ),
+              margin: EdgeInsets.only(left: 30.0, right: 30.0),
+            ),
+            ListTile(
+              leading: Container(
                 child: Text(
-                  'Tax Number',
+                  'Area / Branch',
+                  style: TextStyle(
+                      fontSize: 13,
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blueGrey),
+                ),
+                margin: EdgeInsets.only(left: 15.0),
+              ),
+              title: Container(
+                child: Theme(
+                  data: Theme.of(context).copyWith(primaryColor: primaryColor),
+                  child: TextFormField(
+                    enabled: false,
+                    keyboardType: TextInputType.multiline,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    decoration: InputDecoration(
+                      hintText: 'Area',
+                      contentPadding: EdgeInsets.all(5.0),
+                      hintStyle: TextStyle(color: greyColor),
+                    ),
+                    controller: cAreaName,
+                    onChanged: (value) {
+                      setState(() {
+                        _nodeData.areaName = value;
+                      });
+                    },
+                    focusNode: focusAreaName,
+                  ),
+                ),
+                margin: EdgeInsets.only(left: 50.0, right: 30.0),
+              ),
+              subtitle: Container(
+                child: Theme(
+                  data: Theme.of(context).copyWith(primaryColor: primaryColor),
+                  child: TextFormField(
+                    enabled: false,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    decoration: InputDecoration(
+                      hintText: 'Branch',
+                      contentPadding: EdgeInsets.all(5.0),
+                      hintStyle: TextStyle(color: greyColor),
+                    ),
+                    controller: cServiceCenter,
+                    onChanged: (value) {
+                      setState(() {
+                        _nodeData.serviceCenter = value;
+                      });
+                    },
+                  ),
+                ),
+                margin: EdgeInsets.only(left: 50.0, right: 30.0),
+              ),
+            ),
+            ListTile(
+              leading: Container(
+                child: Text(
+                  'Bank Account / Name',
                   style: TextStyle(
                       fontSize: 13,
                       fontStyle: FontStyle.italic,
                       fontWeight: FontWeight.bold,
                       color: primaryColor),
                 ),
-                margin: EdgeInsets.only(left: 30.0),
+                margin: EdgeInsets.only(left: 15.0),
               ),
-              Container(
+              title: Container(
                 child: Theme(
                   data: Theme.of(context).copyWith(primaryColor: primaryColor),
                   child: TextFormField(
@@ -582,109 +513,112 @@ class _NodeEditState extends State<NodeEdit> {
                     keyboardType: TextInputType.multiline,
                     style: TextStyle(fontSize: 14),
                     decoration: InputDecoration(
-                      hintText: 'Tax Number',
-                      contentPadding: EdgeInsets.all(5.0),
+                      hintText: 'Bank Account',
+                      contentPadding: EdgeInsets.all(8.0),
                       hintStyle: TextStyle(color: greyColor),
                     ),
-                    controller: cTaxNumber,
+                    controller: cBanKAccountNumber,
                     onChanged: (value) {
                       setState(() {
-                        _nodeData.taxNumber = value;
+                        _nodeData.bankAccountNumber = value;
                         isChanged = true;
                       });
                     },
-                    focusNode: focusTaxNumber,
+                    focusNode: focusBankAccount,
                   ),
                 ),
-                margin: EdgeInsets.only(left: 30.0, right: 30.0),
+                margin: EdgeInsets.only(left: 1.0, right: 30.0),
               ),
-              veri
-                  ? ButtonBar(
-                      mainAxisSize: MainAxisSize.max,
-                      alignment: MainAxisAlignment.spaceAround,
-                      children: <Widget>[
-                        isChanged
-                            ? RaisedButton(
-                                elevation: 11,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(21.0)),
-                                child: Text(
-                                  'Update',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                color: Colors.green[700],
-                                onPressed: () async {
-                                  String _msg = await _saveNodeEdit(_nodeData);
-                                  showDialog(
-                                      context: context,
-                                      builder: (_) => AlertDialog(
-                                            title: Text(_msg),
-                                            actions: <Widget>[
-                                              FlatButton(
-                                                highlightColor:
-                                                    Colors.greenAccent,
-                                                shape: RoundedRectangleBorder(
-                                                    side: BorderSide(
-                                                        color: Colors.red[400],
-                                                        width: 2.5,
-                                                        style:
-                                                            BorderStyle.solid),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            50)),
-                                                color: Colors.white,
-                                                child: Text(
-                                                  'Close',
-                                                  style: TextStyle(
-                                                      color: Colors.red[900],
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                                onPressed: () =>
-                                                    Navigator.of(context).pop(),
-                                              ),
-                                            ],
-                                          ));
-                                },
-                              )
-                            : Container(),
-                        RaisedButton(
-                            elevation: 11,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(21.0)),
-                            child: Text(
-                              'Delete',
-                              style: TextStyle(color: Colors.yellow[100]),
-                            ),
-                            color: Colors.red[900],
-                            disabledColor: Colors.blueGrey[200],
-                            onPressed: _memberSO != null
-                                ? () => showDialog(
-                                      context: context,
-                                      builder: (context) => ModalProgressHUD(
-                                        child: Container(
-                                            child: AlertDialog(
-                                          elevation: 15,
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(21.0)),
-                                          title: Text(
-                                            'Confirm Delete ?',
-                                            style: TextStyle(color: Colors.red),
-                                          ),
-                                          content: Text(
-                                            'Member: ${_nodeData.distrId}',
-                                            style: TextStyle(
-                                                fontStyle: FontStyle.italic),
-                                          ),
+              subtitle: Container(
+                child: Theme(
+                  data: Theme.of(context).copyWith(primaryColor: primaryColor),
+                  child: TextFormField(
+                    enabled: veri,
+                    maxLines: null,
+                    keyboardType: TextInputType.multiline,
+                    style: TextStyle(fontSize: 13),
+                    decoration: InputDecoration(
+                      hintText: 'Account Name',
+                      contentPadding: EdgeInsets.all(5.0),
+                      hintStyle: TextStyle(color: greyColor),
+                    ),
+                    controller: cBankAccountName,
+                    onChanged: (value) {
+                      setState(() {
+                        _nodeData.bankAccoutName = value;
+                        isChanged = true;
+                      });
+                    },
+                    focusNode: focusAccountName,
+                  ),
+                ),
+                margin: EdgeInsets.only(left: 1.0, right: 30.0),
+              ),
+            ),
+            Container(
+              child: Text(
+                'Tax Number',
+                style: TextStyle(
+                    fontSize: 13,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.bold,
+                    color: primaryColor),
+              ),
+              margin: EdgeInsets.only(left: 30.0),
+            ),
+            Container(
+              child: Theme(
+                data: Theme.of(context).copyWith(primaryColor: primaryColor),
+                child: TextFormField(
+                  enabled: veri,
+                  maxLines: null,
+                  keyboardType: TextInputType.multiline,
+                  style: TextStyle(fontSize: 14),
+                  decoration: InputDecoration(
+                    hintText: 'Tax Number',
+                    contentPadding: EdgeInsets.all(5.0),
+                    hintStyle: TextStyle(color: greyColor),
+                  ),
+                  controller: cTaxNumber,
+                  onChanged: (value) {
+                    setState(() {
+                      _nodeData.taxNumber = value;
+                      isChanged = true;
+                    });
+                  },
+                  focusNode: focusTaxNumber,
+                ),
+              ),
+              margin: EdgeInsets.only(left: 30.0, right: 30.0),
+            ),
+            veri
+                ? ButtonBar(
+                    mainAxisSize: MainAxisSize.max,
+                    alignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      isChanged
+                          ? RaisedButton(
+                              elevation: 11,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(21.0)),
+                              child: Text(
+                                'Update',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              color: Colors.green[700],
+                              onPressed: () async {
+                                String _msg = await _saveNodeEdit(_nodeData);
+                                showDialog(
+                                    context: context,
+                                    builder: (_) => AlertDialog(
+                                          title: Text(_msg),
                                           actions: <Widget>[
                                             FlatButton(
                                               highlightColor:
                                                   Colors.greenAccent,
                                               shape: RoundedRectangleBorder(
                                                   side: BorderSide(
-                                                      color: Colors
-                                                          .greenAccent[400],
+                                                      color: Colors.red[400],
                                                       width: 2.5,
                                                       style: BorderStyle.solid),
                                                   borderRadius:
@@ -692,105 +626,158 @@ class _NodeEditState extends State<NodeEdit> {
                                                           50)),
                                               color: Colors.white,
                                               child: Text(
-                                                'Cancel',
+                                                'Close',
                                                 style: TextStyle(
-                                                    color: Colors.green[900],
+                                                    color: Colors.red[900],
                                                     fontWeight:
                                                         FontWeight.bold),
                                               ),
                                               onPressed: () =>
                                                   Navigator.of(context).pop(),
                                             ),
-                                            SizedBox(
-                                              width: 21,
-                                            ),
-                                            FlatButton(
-                                                colorBrightness:
-                                                    Brightness.light,
-                                                highlightColor:
-                                                    Colors.redAccent[400],
-                                                shape: RoundedRectangleBorder(
-                                                    side: BorderSide(
-                                                        color: Colors
-                                                            .redAccent[400],
-                                                        width: 2.5,
-                                                        style:
-                                                            BorderStyle.solid),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            50)),
-                                                color: Colors.white,
-                                                child: Text(
-                                                  'Delete',
-                                                  style: TextStyle(
-                                                      color: Colors.pink[900],
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                                onPressed: () async {
-                                                  String _deleteMsg;
-                                                  // Navigator.of(context).pop();
-                                                  isloading(true);
-                                                  _deleteMsg =
-                                                      await deleteMemberSO();
-                                                  isloading(false);
-                                                  showDialog(
-                                                      context: context,
-                                                      builder:
-                                                          (_) => AlertDialog(
-                                                                title: Text(
-                                                                    _deleteMsg),
-                                                                actions: <
-                                                                    Widget>[
-                                                                  FlatButton(
-                                                                      highlightColor:
-                                                                          Colors
-                                                                              .greenAccent,
-                                                                      shape: RoundedRectangleBorder(
-                                                                          side: BorderSide(
-                                                                              color: Colors.red[
-                                                                                  400],
-                                                                              width:
-                                                                                  2.5,
-                                                                              style: BorderStyle
-                                                                                  .solid),
-                                                                          borderRadius: BorderRadius.circular(
-                                                                              50)),
-                                                                      color: Colors
-                                                                          .white,
-                                                                      child:
-                                                                          Text(
-                                                                        'Close',
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                                Colors.red[900],
-                                                                            fontWeight: FontWeight.bold),
-                                                                      ),
-                                                                      onPressed:
-                                                                          () {
-                                                                        resetVeri();
-                                                                        Navigator.of(context)
-                                                                            .pop();
-                                                                      }),
-                                                                ],
-                                                              ));
-                                                  print('delete done');
-                                                }),
                                           ],
-                                        )),
-                                        inAsyncCall: _isloading,
-                                        opacity: 0.6,
-                                        progressIndicator: ColorLoader2(),
-                                      ),
-                                    )
-                                : null)
-                      ],
-                    )
-                  : Container(),
-            ],
-          )
-        ],
-      ),
+                                        ));
+                              },
+                            )
+                          : Container(),
+                      RaisedButton(
+                          elevation: 11,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(21.0)),
+                          child: Text(
+                            'Delete',
+                            style: TextStyle(color: Colors.yellow[100]),
+                          ),
+                          color: Colors.red[900],
+                          disabledColor: Colors.blueGrey[200],
+                          onPressed: _memberSO != null
+                              ? () => showDialog(
+                                    context: context,
+                                    builder: (context) => ModalProgressHUD(
+                                      child: Container(
+                                          child: AlertDialog(
+                                        elevation: 15,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(21.0)),
+                                        title: Text(
+                                          'Confirm Delete ?',
+                                          style: TextStyle(color: Colors.red),
+                                        ),
+                                        content: Text(
+                                          'Member: ${_nodeData.distrId}',
+                                          style: TextStyle(
+                                              fontStyle: FontStyle.italic),
+                                        ),
+                                        actions: <Widget>[
+                                          FlatButton(
+                                            highlightColor: Colors.greenAccent,
+                                            shape: RoundedRectangleBorder(
+                                                side: BorderSide(
+                                                    color:
+                                                        Colors.greenAccent[400],
+                                                    width: 2.5,
+                                                    style: BorderStyle.solid),
+                                                borderRadius:
+                                                    BorderRadius.circular(50)),
+                                            color: Colors.white,
+                                            child: Text(
+                                              'Cancel',
+                                              style: TextStyle(
+                                                  color: Colors.green[900],
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            onPressed: () =>
+                                                Navigator.of(context).pop(),
+                                          ),
+                                          SizedBox(
+                                            width: 21,
+                                          ),
+                                          FlatButton(
+                                              colorBrightness: Brightness.light,
+                                              highlightColor:
+                                                  Colors.redAccent[400],
+                                              shape: RoundedRectangleBorder(
+                                                  side: BorderSide(
+                                                      color:
+                                                          Colors.redAccent[400],
+                                                      width: 2.5,
+                                                      style: BorderStyle.solid),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          50)),
+                                              color: Colors.white,
+                                              child: Text(
+                                                'Delete',
+                                                style: TextStyle(
+                                                    color: Colors.pink[900],
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              onPressed: () async {
+                                                String _deleteMsg;
+                                                // Navigator.of(context).pop();
+                                                isloading(true);
+                                                _deleteMsg =
+                                                    await deleteMemberSO();
+                                                isloading(false);
+                                                showDialog(
+                                                    context: context,
+                                                    builder: (_) => AlertDialog(
+                                                          title:
+                                                              Text(_deleteMsg),
+                                                          actions: <Widget>[
+                                                            FlatButton(
+                                                                highlightColor:
+                                                                    Colors
+                                                                        .greenAccent,
+                                                                shape: RoundedRectangleBorder(
+                                                                    side: BorderSide(
+                                                                        color: Colors.red[
+                                                                            400],
+                                                                        width:
+                                                                            2.5,
+                                                                        style: BorderStyle
+                                                                            .solid),
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            50)),
+                                                                color: Colors
+                                                                    .white,
+                                                                child: Text(
+                                                                  'Close',
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                              .red[
+                                                                          900],
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold),
+                                                                ),
+                                                                onPressed: () {
+                                                                  resetVeri();
+                                                                  Navigator.of(
+                                                                          context)
+                                                                      .pop();
+                                                                }),
+                                                          ],
+                                                        ));
+                                                print('delete done');
+                                              }),
+                                        ],
+                                      )),
+                                      inAsyncCall: _isloading,
+                                      opacity: 0.6,
+                                      progressIndicator: ColorLoader2(),
+                                    ),
+                                  )
+                              : null)
+                    ],
+                  )
+                : Container(),
+          ],
+        )
+      ],
     );
   }
 

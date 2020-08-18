@@ -23,12 +23,13 @@ import 'package:firebase_core/firebase_core.dart';
 
 class MainModel extends Model {
   // ** items //** */
-  static String _version = '3.220r'; //!Modify for every release version./.
+  static String _version = '3.23r'; //!Modify for every release version./.
   static String firebaseDb = "indoProduction"; //!modify back to indoProduction;
   static String stage = "indoProduction";
   static String updateDb = "indoProduction";
   final FirebaseDatabase database = FirebaseDatabase.instance;
   DatabaseReference databaseReference;
+  final String pathDB = "indoDb/";
   final String path = 'flamelink/environments/$firebaseDb/content';
   final String httpath = 'http://mywayindoapi.azurewebsites.net/api';
   //!production azure'http://mywayindoapi.azurewebsites.net/api'//
@@ -239,7 +240,7 @@ class MainModel extends Model {
     List<String> keys = [];
     List<User> _contactList = [];
     DataSnapshot snapshot =
-        await database.reference().child('$path/messages/en-US/').once();
+        await database.reference().child('$pathDB/messages/').once();
     Map<dynamic, dynamic> msg = snapshot.value;
     // print('mkeys:=>${msg.keys}');
 
@@ -261,7 +262,7 @@ class MainModel extends Model {
   Future<User> contact(String key) async {
     User contactUser;
     DataSnapshot snapshot =
-        await database.reference().child('$path/users/en-US/$key').once();
+        await database.reference().child('$pathDB/users/en-US/$key').once();
     if (snapshot.value != null) {
       contactUser = User.fromSnapshot(snapshot);
       print(
@@ -1906,7 +1907,7 @@ for( var i = 0 ; i < _list.length; i++){
 //!--------*Users/Members*-----------//
   void userPushToFirebase(String id, User user) {
     String memberId = int.parse(id).toString();
-    databaseReference = database.reference().child('$path/users/en-US');
+    databaseReference = database.reference().child('$pathDB/users/en-US');
     databaseReference.child(memberId).set(user.toJson());
   }
 
@@ -1978,8 +1979,11 @@ for( var i = 0 ; i < _list.length; i++){
   Future<User> userData(String key) async {
     getPass();
     print('userData key:$key');
-    final DataSnapshot snapshot =
-        await database.reference().child('$path/users/en-US').child(key).once();
+    final DataSnapshot snapshot = await database
+        .reference()
+        .child('$pathDB/users/en-US')
+        .child(key)
+        .once();
     user = User.fromSnapshot(snapshot);
     print('userData user.distrId:${user.distrId}');
     print('userData user.token:${user.token}');
@@ -1997,7 +2001,7 @@ for( var i = 0 ; i < _list.length; i++){
         print('user is allowed ${_userInfo.isAllowed.toString()}');
         versionControl(context);
         locKCart(context); //! uncomment this before buildR
-        //locKApp(context); //! uncomment this before buildR
+        locKApp(context); //! uncomment this before buildR
         userAccess(key, context);
         // getAreauserTest(key, context);
         // getArea();
@@ -2020,7 +2024,7 @@ for( var i = 0 ; i < _list.length; i++){
   }
 
   updateToke(String _key) {
-    databaseReference = database.reference().child('$path/users/en-US/$_key');
+    databaseReference = database.reference().child('$pathDB/users/en-US/$_key');
     if (token != null) {
       databaseReference.update({"token": token});
     }
@@ -2030,7 +2034,7 @@ for( var i = 0 ; i < _list.length; i++){
   bool access = true;
   bool tester = false;
   void userTest(key, BuildContext context) {
-    databaseReference = database.reference().child('$path/users/en-US/$key/');
+    databaseReference = database.reference().child('$pathDB/users/en-US/$key/');
     databaseReference.onValue.listen((event) async {
       tester = await setIsTester(User.fromSnapshot(event.snapshot).tester);
       print('isTesterxx:$tester');
@@ -2052,7 +2056,7 @@ for( var i = 0 ; i < _list.length; i++){
   }
 
   void userAccess(key, BuildContext context) {
-    databaseReference = database.reference().child('$path/users/en-US/$key/');
+    databaseReference = database.reference().child('$pathDB/users/en-US/$key/');
     databaseReference.onValue.listen((event) async {
       access = await setIsAllowed(User.fromSnapshot(event.snapshot).isAllowed);
       print('isAllowedxx:$access');
@@ -2197,7 +2201,7 @@ for( var i = 0 ; i < _list.length; i++){
   //!--------*
   User userInfo;
   void userDetails() {
-    database.reference().child('$path/users/en-US/${user.key}/');
+    database.reference().child('$pathDB/users/en-US/${user.key}/');
     databaseReference.onValue.listen((event) async {
       userInfo = User.fromSnapshot(event.snapshot);
     });
