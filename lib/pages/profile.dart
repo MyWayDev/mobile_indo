@@ -6,6 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mor_release/pages/messages/chat.dart';
 import 'package:mor_release/scoped/connected.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -26,10 +27,11 @@ class Settings extends StatelessWidget {
             centerTitle: true,
           ),
           body: SettingsScreen(
-              id: model.user.key,
-              name: model.user.name,
-              areaId: model.user.areaId,
-              photoUrl: model.user.photoUrl));
+              model: model,
+              id: model.userInfo.key,
+              name: model.userInfo.name,
+              areaId: model.userInfo.areaId,
+              photoUrl: model.userInfo.photoUrl));
     });
   }
 }
@@ -87,6 +89,7 @@ class SettingsScreenState extends State<SettingsScreen> {
       widget.photoUrl == null || widget.photoUrl.isEmpty
           ? image = ''
           : image = widget.photoUrl;
+      print(image);
       return image;
     }
 
@@ -127,14 +130,13 @@ class SettingsScreenState extends State<SettingsScreen> {
           photoUrl = downloadUrl;
           FirebaseDatabase.instance
               .reference()
-              .child(
-                  'flamelink/environments/indoProduction/content/users/en-US/$id')
+              .child('indoDb/users/en-US/$id')
               .update({
             'name': name,
             'areaId': areaId,
             'photoUrl': photoUrl
           }).then((data) async {
-            // await prefs.setString('photoUrl', photoUrl);
+            await prefs.setString('photoUrl', photoUrl);
             setState(() {
               isLoading = false;
             });
@@ -174,7 +176,7 @@ class SettingsScreenState extends State<SettingsScreen> {
     });
     FirebaseDatabase.instance
         .reference()
-        .child('flamelink/environments//en-US/content/users/en-US/$id')
+        .child('indoDb/users/en-US/$id')
         .update({'name': name, 'areaId': areaId, 'photoUrl': photoUrl}).then(
             (data) async {
       //await prefs.setString('name', name);
@@ -201,68 +203,8 @@ class SettingsScreenState extends State<SettingsScreen> {
         SingleChildScrollView(
           child: Column(
             children: <Widget>[
-              // Avatar
-              Container(
-                child: Center(
-                  child: Stack(
-                    children: <Widget>[
-                      (avatarImageFile == null)
-                          ? (photoUrl != ''
-                              ? Material(
-                                  child: CachedNetworkImage(
-                                    placeholder: (context, url) => Container(
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2.0,
-                                        valueColor:
-                                            AlwaysStoppedAnimation<Color>(
-                                                themeColor),
-                                      ),
-                                      width: 90.0,
-                                      height: 90.0,
-                                      padding: EdgeInsets.all(20.0),
-                                    ),
-                                    imageUrl: photoUrl,
-                                    width: 90.0,
-                                    height: 90.0,
-                                    fit: BoxFit.cover,
-                                  ),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(45.0)),
-                                  clipBehavior: Clip.hardEdge,
-                                )
-                              : Icon(
-                                  Icons.account_circle,
-                                  size: 90.0,
-                                  color: greyColor,
-                                ))
-                          : Material(
-                              child: Image.file(
-                                avatarImageFile,
-                                width: 90.0,
-                                height: 90.0,
-                                fit: BoxFit.cover,
-                              ),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(45.0)),
-                              clipBehavior: Clip.hardEdge,
-                            ),
-                      IconButton(
-                        icon: Icon(
-                          Icons.camera_alt,
-                          color: primaryColor.withOpacity(0.5),
-                        ),
-                        onPressed: getImage,
-                        padding: EdgeInsets.all(30.0),
-                        splashColor: Colors.transparent,
-                        highlightColor: greyColor,
-                        iconSize: 30.0,
-                      ),
-                    ],
-                  ),
-                ),
-                width: double.infinity,
-                margin: EdgeInsets.all(20.0),
-              ),
+              // Avatar,
+
               // Input
               Column(
                 children: <Widget>[
@@ -332,6 +274,187 @@ class SettingsScreenState extends State<SettingsScreen> {
               ),
 
               // Button
+
+              Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      child: Center(
+                        child: Stack(
+                          children: <Widget>[
+                            (avatarImageFile == null)
+                                ? (photoUrl != ''
+                                    ? Material(
+                                        child: CachedNetworkImage(
+                                          placeholder: (context, url) =>
+                                              Container(
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2.0,
+                                              valueColor:
+                                                  AlwaysStoppedAnimation<Color>(
+                                                      themeColor),
+                                            ),
+                                            width: MediaQuery.of(context)
+                                                        .devicePixelRatio <=
+                                                    1.5
+                                                ? 180
+                                                : 220,
+                                            height: MediaQuery.of(context)
+                                                        .devicePixelRatio <=
+                                                    1.5
+                                                ? 90
+                                                : 100,
+                                            padding: EdgeInsets.all(10.0),
+                                          ),
+                                          imageUrl: photoUrl,
+                                          width: MediaQuery.of(context)
+                                                      .devicePixelRatio <=
+                                                  1.5
+                                              ? 180
+                                              : 220,
+                                          height: MediaQuery.of(context)
+                                                      .devicePixelRatio <=
+                                                  1.5
+                                              ? 90
+                                              : 100,
+                                          fit: BoxFit.fitWidth,
+                                        ),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(0.0)),
+                                        clipBehavior: Clip.hardEdge,
+                                      )
+                                    : Icon(
+                                        Icons.account_circle,
+                                        size: 100.0,
+                                        color: greyColor,
+                                      ))
+                                : Material(
+                                    child: Image.file(
+                                      avatarImageFile,
+                                      width: MediaQuery.of(context)
+                                                  .devicePixelRatio <=
+                                              1.5
+                                          ? 230
+                                          : 250,
+                                      height: MediaQuery.of(context)
+                                                  .devicePixelRatio <=
+                                              1.5
+                                          ? 90
+                                          : 100,
+                                      fit: BoxFit.fitWidth,
+                                    ),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(0.0)),
+                                    clipBehavior: Clip.hardEdge,
+                                  ),
+                            Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: <Widget>[
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.add_a_photo,
+                                      color: Colors.black.withOpacity(0.7),
+                                    ),
+                                    onPressed: getImage,
+                                    padding: EdgeInsets.all(10.0),
+                                    splashColor: Colors.transparent,
+                                    highlightColor: greyColor,
+                                    iconSize: 25.0,
+                                  ),
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.zoom_in,
+                                      color: Colors.black.withOpacity(0.7),
+                                    ),
+                                    onPressed: () {
+                                      Navigator.push(context,
+                                          MaterialPageRoute(builder: (_) {
+                                        return ImageDetails(
+                                          image: widget.photoUrl,
+                                        );
+                                      }));
+                                    },
+                                    padding: EdgeInsets.all(10.0),
+                                    splashColor: Colors.transparent,
+                                    highlightColor: greyColor,
+                                    iconSize: 25.0,
+                                  ),
+                                ])
+                          ],
+                        ),
+                      ),
+                      width: double.infinity,
+                      margin: EdgeInsets.all(20.0),
+                    ),
+                  ),
+                  Expanded(
+                    child: Container(
+                      child: Center(
+                        child: Stack(
+                          children: <Widget>[
+                            (avatarImageFile == null)
+                                ? (photoUrl != ''
+                                    ? Material(
+                                        child: CachedNetworkImage(
+                                          placeholder: (context, url) =>
+                                              Container(
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2.0,
+                                              valueColor:
+                                                  AlwaysStoppedAnimation<Color>(
+                                                      themeColor),
+                                            ),
+                                            width: 150.0,
+                                            height: 150.0,
+                                            padding: EdgeInsets.all(10.0),
+                                          ),
+                                          imageUrl: photoUrl,
+                                          width: 150.0,
+                                          height: 150.0,
+                                          fit: BoxFit.fitWidth,
+                                        ),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(0.0)),
+                                        clipBehavior: Clip.antiAlias,
+                                      )
+                                    : Icon(
+                                        Icons.account_circle,
+                                        size: 90.0,
+                                        color: greyColor,
+                                      ))
+                                : Material(
+                                    child: Image.file(
+                                      avatarImageFile,
+                                      width: 150.0,
+                                      height: 150.0,
+                                      fit: BoxFit.fitWidth,
+                                    ),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(0.0)),
+                                    clipBehavior: Clip.antiAlias,
+                                  ),
+                            IconButton(
+                              icon: Icon(
+                                Icons.camera_alt,
+                                color: primaryColor.withOpacity(0.2),
+                              ),
+                              onPressed: getImage,
+                              padding: EdgeInsets.all(30.0),
+                              splashColor: Colors.transparent,
+                              highlightColor: greyColor,
+                              iconSize: 30.0,
+                            ),
+                          ],
+                        ),
+                      ),
+                      width: double.infinity,
+                      margin: EdgeInsets.all(20.0),
+                    ),
+                  )
+                ],
+              ),
               Container(
                 child: FlatButton(
                   onPressed: handleUpdateData,

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:groovin_material_icons/groovin_material_icons.dart';
 import 'package:mor_release/account/nodeEdit.dart';
-import 'package:mor_release/account/supportReport.dart';
 import 'package:mor_release/pages/items/items.dart';
 import 'package:mor_release/pages/messages/local_note.dart';
 import 'package:mor_release/pages/order/order.dart';
 import 'package:mor_release/pages/order/widgets/passDialog.dart';
+import 'package:mor_release/pages/profile.dart';
 import 'package:mor_release/scoped/connected.dart';
 import 'package:mor_release/track/track.tabs.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -33,6 +33,15 @@ class ItemsTabs extends StatelessWidget {
             AppBar(
               title: Text('MENU'),
             ),
+            ListTile(
+                leading: Icon(Icons.person),
+                title: Text('Profile'),
+                onTap: () {
+                  //print(model.settings.pdfUrl);
+
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => Settings()));
+                }),
             ListTile(
                 leading: Icon(Icons.image),
                 title: Text('Katalog'),

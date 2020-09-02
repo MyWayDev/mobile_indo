@@ -147,12 +147,10 @@ class _NodeEditState extends State<NodeEdit> {
         backgroundColor: Colors.indigo[900],
         title: Text('Edit Member'),
       ),
+      resizeToAvoidBottomInset: false,
       resizeToAvoidBottomPadding: false,
       body: ModalProgressHUD(
-        child: Container(
-            child: SingleChildScrollView(
-          child: Stack(children: <Widget>[buildVeri(context)]),
-        )),
+        child: buildVeri(context),
         inAsyncCall: _isloading,
         opacity: 0.6,
         progressIndicator: ColorLoader2(),
@@ -161,97 +159,101 @@ class _NodeEditState extends State<NodeEdit> {
   }
 
   Widget buildVeri(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        ListTile(
-          contentPadding: EdgeInsets.only(left: 15),
-          leading: Icon(Icons.vpn_key, size: 25.0, color: Colors.pink[500]),
-          title: TextFormField(
-            focusNode: focusDistrController,
-            textAlign: TextAlign.center,
-            controller: distrController,
-            enabled: !veri ? true : false,
-            style: TextStyle(
-                fontSize: 14.5,
-                color: Colors.black87,
-                fontWeight: FontWeight.bold),
-            decoration: InputDecoration(
-              hintText: 'Masukkan ID member',
-              hintStyle: TextStyle(color: Colors.grey[400]),
-            ),
-            keyboardType: TextInputType.number,
-          ),
-          trailing: IconButton(
-            icon: !veri && distrController.text.length > 0
-                ? Icon(
-                    Icons.check,
-                    size: 30.0,
-                    color: Colors.lightBlue,
-                  )
-                : distrController.text.length > 0
-                    ? Icon(
-                        GroovinMaterialIcons.close,
-                        size: 24.0,
-                        color: Colors.blueGrey,
-                      )
-                    : Container(),
-            color: Colors.pink[900],
-            onPressed: () async {
-              isloading(true);
-              if (!veri) {
-                veri = true;
-                // await widget.model
-                //  .leaderVerification(distrController.text.padLeft(8, '0'));
-                if (veri) {
-                  _nodeData = await widget.model
-                      .nodeEdit(distrController.text.padLeft(8, '0'));
-                  getMemberSO(_nodeData.distrId);
-                  setState(() {
-                    cAreaName = TextEditingController(text: _nodeData.areaName);
-                    cServiceCenter =
-                        TextEditingController(text: _nodeData.serviceCenter);
-                    cDistrId = TextEditingController(text: _nodeData.distrId);
-                    cName = TextEditingController(text: _nodeData.name);
-                    cAddress = TextEditingController(text: _nodeData.address);
-                    cBanKAccountNumber = TextEditingController(
-                        text: _nodeData.bankAccountNumber);
-                    cTaxNumber =
-                        TextEditingController(text: _nodeData.taxNumber);
-                    cTelePhone =
-                        TextEditingController(text: _nodeData.telephone);
-                    cPersonalId =
-                        TextEditingController(text: _nodeData.personalId);
-                    cBankAccountName =
-                        TextEditingController(text: _nodeData.bankAccoutName);
-                    cBirthDate =
-                        TextEditingController(text: _nodeData.birthDate);
-                    cEmail = TextEditingController(text: _nodeData.email);
-                    _isSwitched();
-                  });
-
-                  setState(() {});
-                  _nodeData.distrId == '00000000'
-                      ? resetVeri()
-                      : distrController.text =
-                          _nodeData.distrId + '  ' + _nodeData.name;
-                  isloading(false);
-                } else {
-                  resetVeri();
-                  isloading(false);
-                }
-              } else {
-                resetVeri();
-                isloading(false);
-              }
-            },
-            splashColor: Colors.pink,
-          ),
-        ),
-        Column(
+    return SingleChildScrollView(
+        padding:
+            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        reverse: true,
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.max,
+          mainAxisSize: MainAxisSize.min,
           children: <Widget>[
+            ListTile(
+              contentPadding: EdgeInsets.only(left: 15),
+              leading: Icon(Icons.vpn_key, size: 25.0, color: Colors.pink[500]),
+              title: TextFormField(
+                focusNode: focusDistrController,
+                textAlign: TextAlign.center,
+                controller: distrController,
+                enabled: !veri ? true : false,
+                style: TextStyle(
+                    fontSize: 14.5,
+                    color: Colors.black87,
+                    fontWeight: FontWeight.bold),
+                decoration: InputDecoration(
+                  hintText: 'Masukkan ID member',
+                  hintStyle: TextStyle(color: Colors.grey[400]),
+                ),
+                keyboardType: TextInputType.number,
+              ),
+              trailing: IconButton(
+                icon: !veri && distrController.text.length > 0
+                    ? Icon(
+                        Icons.check,
+                        size: 30.0,
+                        color: Colors.lightBlue,
+                      )
+                    : distrController.text.length > 0
+                        ? Icon(
+                            GroovinMaterialIcons.close,
+                            size: 24.0,
+                            color: Colors.blueGrey,
+                          )
+                        : Container(),
+                color: Colors.pink[900],
+                onPressed: () async {
+                  isloading(true);
+                  if (!veri) {
+                    veri = true;
+                    // await widget.model
+                    //  .leaderVerification(distrController.text.padLeft(8, '0'));
+                    if (veri) {
+                      _nodeData = await widget.model
+                          .nodeEdit(distrController.text.padLeft(8, '0'));
+                      getMemberSO(_nodeData.distrId);
+                      setState(() {
+                        cAreaName =
+                            TextEditingController(text: _nodeData.areaName);
+                        cServiceCenter = TextEditingController(
+                            text: _nodeData.serviceCenter);
+                        cDistrId =
+                            TextEditingController(text: _nodeData.distrId);
+                        cName = TextEditingController(text: _nodeData.name);
+                        cAddress =
+                            TextEditingController(text: _nodeData.address);
+                        cBanKAccountNumber = TextEditingController(
+                            text: _nodeData.bankAccountNumber);
+                        cTaxNumber =
+                            TextEditingController(text: _nodeData.taxNumber);
+                        cTelePhone =
+                            TextEditingController(text: _nodeData.telephone);
+                        cPersonalId =
+                            TextEditingController(text: _nodeData.personalId);
+                        cBankAccountName = TextEditingController(
+                            text: _nodeData.bankAccoutName);
+                        cBirthDate =
+                            TextEditingController(text: _nodeData.birthDate);
+                        cEmail = TextEditingController(text: _nodeData.email);
+                        _isSwitched();
+                      });
+
+                      setState(() {});
+                      _nodeData.distrId == '00000000'
+                          ? resetVeri()
+                          : distrController.text =
+                              _nodeData.distrId + '  ' + _nodeData.name;
+                      isloading(false);
+                    } else {
+                      resetVeri();
+                      isloading(false);
+                    }
+                  } else {
+                    resetVeri();
+                    isloading(false);
+                  }
+                },
+                splashColor: Colors.pink,
+              ),
+            ),
             ListTile(
                 leading: Container(
                   child: Text(
@@ -648,7 +650,7 @@ class _NodeEditState extends State<NodeEdit> {
               child: Text(
                 'Tax Number',
                 style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 13,
                     fontStyle: FontStyle.italic,
                     fontWeight: FontWeight.bold,
                     color: primaryColor),
@@ -865,9 +867,7 @@ class _NodeEditState extends State<NodeEdit> {
                   )
                 : Container(),
           ],
-        )
-      ],
-    );
+        ));
   }
 
   Future<String> deleteMemberSO() async {

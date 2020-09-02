@@ -58,6 +58,7 @@ class MainModel extends Model {
   bool isBalanceChecked = true;
   bool isTypeing = false;
   final List<Item> _recoImage = List();
+
   String get distrPointNames {
     String _distrPointNames;
     _distrPointNames = distrPointName;
@@ -570,7 +571,6 @@ class MainModel extends Model {
         return l.single.qty; //use to be l.first.qty
       } catch (e) {
         notifyListeners();
-
         return 0;
       }
     }
@@ -1559,7 +1559,7 @@ class MainModel extends Model {
     itemorderlist.forEach((i) => print({i.itemId: i.qty}));
     giftorderList.forEach((p) => print(p.pack.map((g) => {g.itemId: p.qty})));
     print('OrderListLength:${itemorderlist.length}');
-    //!! fix errors on bottom commentted block;
+    //? fix errors on bottom commentted block;
 
     //addCatToOrder(settings.catCode);
     //addAdminToOrder('91');
@@ -1724,11 +1724,11 @@ for(var area in areas){
         .once();
 
     var courierList = snapshot
-        .value; //! changed list to var in this line for firebase key genrated
+        .value; // changed list to var in this line for firebase key genrated
 
     List ships = [];
     for (var c in courierList.values) {
-      //! add .values to courierlist to loop through values while firebase key is generated
+      // add .values to courierlist to loop through values while firebase key is generated
       if (c != null) {
         if (c['region'] == distrPoint && c['disabled'] != true) {
           for (var s in c['service']) {
@@ -2000,8 +2000,8 @@ for( var i = 0 ; i < _list.length; i++){
       if (_userInfo.isAllowed) {
         print('user is allowed ${_userInfo.isAllowed.toString()}');
         versionControl(context);
-        locKCart(context); //! uncomment this before buildR
-        locKApp(context); //! uncomment this before buildR
+        locKCart(context); // uncomment this before buildR
+        locKApp(context); // uncomment this before buildR
         userAccess(key, context);
         // getAreauserTest(key, context);
         // getArea();
@@ -2108,7 +2108,8 @@ for( var i = 0 ; i < _list.length; i++){
     databaseReference.onValue.listen((event) async {
       appLocked = await event.snapshot.value;
       print('APPLOCKED-XXXXX:$appLocked');
-      if (appLocked) {
+      if (appLocked && !userInfo.tester) {
+        //? add tester to open app on lock
         itemorderlist.clear();
         giftorderList.clear();
         promoOrderList.clear();

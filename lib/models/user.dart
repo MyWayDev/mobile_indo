@@ -13,6 +13,9 @@ class User {
   String phone;
   String areaId;
   String photoUrl;
+  String idPhotoUrl;
+  String taxPhotoUrl;
+
   String serviceCenter;
   bool isAllowed;
   bool isleader;
@@ -27,6 +30,8 @@ class User {
       this.name,
       this.areaId,
       this.photoUrl,
+      this.idPhotoUrl,
+      this.taxPhotoUrl,
       this.serviceCenter,
       this.isAllowed,
       this.isleader,
@@ -68,7 +73,9 @@ class User {
         areaId = snapshot.value["areaId"],
         token = snapshot.value["token"],
         tester = snapshot.value["tester"] ?? false,
-        photoUrl = snapshot.value["photoUrl"];
+        photoUrl = snapshot.value["photoUrl"] ?? '',
+        idPhotoUrl = snapshot.value["idPhotoUrl"] ?? '',
+        taxPhotoUrl = snapshot.value["taxPhotoUrl"] ?? '';
 
   User.useSnapshot(DataSnapshot snapshot)
       : name = snapshot.value["name"] ?? '',
@@ -78,8 +85,10 @@ class User {
         isleader = snapshot.value["isleader"],
         areaId = snapshot.value["areaId"],
         token = snapshot.value["token"],
-        tester = snapshot.value["tester"],
-        photoUrl = snapshot.value["photoUrl"];
+        tester = snapshot.value["tester"] ?? false,
+        photoUrl = snapshot.value["photoUrl"] ?? '',
+        idPhotoUrl = snapshot.value["idPhotoUrl"] ?? '',
+        taxPhotoUrl = snapshot.value["taxPhotoUrl"] ?? '';
 }
 
 class NewMember {
@@ -135,6 +144,7 @@ class NewMember {
         serviceCenter: json['SERVICE_CENTER'] ?? '',
         held: json['HOLD_CRE'] ?? '1');
   }
+
   Map<String, dynamic> toJson() => {
         "SPONSOR_ID": sponsorId,
         "FAMILY_LNAME": familyName,
@@ -150,6 +160,7 @@ class NewMember {
         "AP_AC_ID": taxNumber,
         "SERVICE_CENTER": serviceCenter,
       };
+
   Map<String, dynamic> editToJson() => {
         "DISTR_ID": distrId,
         "LNAME": name,
@@ -160,14 +171,14 @@ class NewMember {
         "HOLD_CRE": held,
         "SM_ID": bankAccountNumber,
         "AP_AC_ID": taxNumber,
-        "SERVICE_CENTER": serviceCenter, //! NOT IN DOCUMENTATION BUT NEEDED
+        "SERVICE_CENTER": serviceCenter, // NOT IN DOCUMENTATION BUT NEEDED
       };
 
   String postNewMemberToJson(NewMember newMember) {
     final dyn = newMember.toJson();
     return json.encode(dyn);
   }
-  //!! refactor to new schema from api documentation;
+  // refactor to new schema from api documentation;
 
   Future<http.Response> createPost(
       NewMember newMember,
