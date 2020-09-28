@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
-import 'package:mor_release/pages/profile.dart';
+import 'package:mor_release/pages/profile/profile.dart';
 import 'package:mor_release/scoped/connected.dart';
 import 'package:scoped_model/scoped_model.dart';
 

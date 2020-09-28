@@ -5,7 +5,7 @@ import 'package:mor_release/pages/items/items.dart';
 import 'package:mor_release/pages/messages/local_note.dart';
 import 'package:mor_release/pages/order/order.dart';
 import 'package:mor_release/pages/order/widgets/passDialog.dart';
-import 'package:mor_release/pages/profile.dart';
+import 'package:mor_release/pages/profile/profile.dart';
 import 'package:mor_release/scoped/connected.dart';
 import 'package:mor_release/track/track.tabs.dart';
 import 'package:scoped_model/scoped_model.dart';

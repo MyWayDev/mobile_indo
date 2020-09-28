@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -8,53 +9,29 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mor_release/pages/messages/chat.dart';
 import 'package:mor_release/scoped/connected.dart';
-import 'package:scoped_model/scoped_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'const.dart';
+import '../const.dart';
 
-class Settings extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return ScopedModelDescendant<MainModel>(
-        builder: (BuildContext context, Widget child, MainModel model) {
-      return Scaffold(
-          appBar: AppBar(
-            title: Text(
-              model.user.key,
-              style:
-                  TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
-            ),
-            centerTitle: true,
-          ),
-          body: SettingsScreen(
-              model: model,
-              id: model.userInfo.key,
-              name: model.userInfo.name,
-              areaId: model.userInfo.areaId,
-              photoUrl: model.userInfo.photoUrl));
-    });
-  }
-}
-
-class SettingsScreen extends StatefulWidget {
+class ProfileAlbum extends StatefulWidget {
   final MainModel model;
   final String id;
   final String name;
   final String areaId;
-  final String photoUrl;
+  final String idPhotoUrl;
+  final String taxPhotoUrl;
 
-  SettingsScreen(
+  ProfileAlbum(
       {@required this.model,
       @required this.id,
       @required this.name,
       @required this.areaId,
-      @required this.photoUrl});
-
+      @required this.idPhotoUrl,
+      @required this.taxPhotoUrl});
   @override
-  State createState() => new SettingsScreenState();
+  _ProfileAlbumState createState() => _ProfileAlbumState();
 }
 
-class SettingsScreenState extends State<SettingsScreen> {
+class _ProfileAlbumState extends State<ProfileAlbum> {
   TextEditingController controllerNickname;
   TextEditingController controllerAboutMe;
 
@@ -63,10 +40,12 @@ class SettingsScreenState extends State<SettingsScreen> {
   String id = '';
   String name = '';
   String areaId = '';
-  String photoUrl = '';
+  String idPhotoUrl = '';
+  String taxPhotoUrl = '';
 
   bool isLoading = false;
-  File avatarImageFile;
+  File idImageFile;
+  File taxImageFile;
 
   final FocusNode focusNodeNickname = new FocusNode();
   final FocusNode focusNodeAboutMe = new FocusNode();
@@ -84,19 +63,27 @@ class SettingsScreenState extends State<SettingsScreen> {
 
   void readLocal() async {
     prefs = await SharedPreferences.getInstance();
-    String imageString() {
-      String image;
-      widget.photoUrl == null || widget.photoUrl.isEmpty
-          ? image = ''
-          : image = widget.photoUrl;
-      print(image);
-      return image;
+    String idImageString() {
+      String idImage;
+      widget.idPhotoUrl == null || widget.idPhotoUrl.isEmpty
+          ? idImage = ''
+          : idImage = widget.idPhotoUrl;
+      return idImage;
+    }
+
+    String taxImageString() {
+      String taxImage;
+      widget.taxPhotoUrl == null || widget.taxPhotoUrl.isEmpty
+          ? taxImage = ''
+          : taxImage = widget.taxPhotoUrl;
+      return taxImage;
     }
 
     id = widget.id;
     name = widget.name;
     areaId = widget.areaId;
-    photoUrl = imageString();
+    idPhotoUrl = idImageString();
+    taxPhotoUrl = taxImageString();
 
     controllerNickname = new TextEditingController(text: widget.name);
     controllerAboutMe = new TextEditingController(text: widget.areaId);
@@ -105,38 +92,105 @@ class SettingsScreenState extends State<SettingsScreen> {
     setState(() {});
   }
 
-  Future getImage() async {
-    File image = await ImagePicker.pickImage(source: ImageSource.gallery);
+  Future getIdImage() async {
+    File _image =
+        await ImagePicker.pickImage(source: ImageSource.gallery) ?? null;
 
-    if (image != null) {
+    if (_image != null) {
       setState(() {
-        avatarImageFile = image;
+        idImageFile = _image;
         isLoading = true;
       });
     }
-    uploadFile();
+    uploadFileId();
   }
 
-  Future uploadFile() async {
-    String fileName = "1";
+  Future getTaxImage() async {
+    File _image = await ImagePicker.pickImage(source: ImageSource.gallery);
+
+    if (_image != null) {
+      setState(() {
+        taxImageFile = _image;
+        isLoading = true;
+      });
+    }
+    uploadFileTax();
+  }
+
+  Future uploadFileTax() async {
+    Random random = new Random();
+    String fileName = widget.id + '-' + random.nextInt(100000).toString();
     StorageReference reference =
         FirebaseStorage.instance.ref().child("avatars/$fileName");
-    StorageUploadTask uploadTask = reference.putFile(avatarImageFile);
+    StorageUploadTask uploadTask = reference.putFile(taxImageFile);
     StorageTaskSnapshot storageTaskSnapshot;
     uploadTask.onComplete.then((value) {
       if (value.error == null) {
         storageTaskSnapshot = value;
         storageTaskSnapshot.ref.getDownloadURL().then((downloadUrl) {
-          photoUrl = downloadUrl;
+          taxPhotoUrl = downloadUrl;
           FirebaseDatabase.instance
               .reference()
               .child('indoDb/users/en-US/$id')
               .update({
-            'name': name,
-            'areaId': areaId,
-            'photoUrl': photoUrl
+            //'name': name,
+            //'areaId': areaId,
+            // 'idPhotoUrl': idPhotoUrl,
+            'taxPhotoUrl': taxPhotoUrl
           }).then((data) async {
-            await prefs.setString('photoUrl', photoUrl);
+            await prefs.setString('taxPhotoUrl', taxPhotoUrl);
+            setState(() {
+              isLoading = false;
+            });
+            Fluttertoast.showToast(msg: "Upload success");
+          }).catchError((err) {
+            setState(() {
+              isLoading = false;
+            });
+            Fluttertoast.showToast(msg: err.toString());
+          });
+        }, onError: (err) {
+          setState(() {
+            isLoading = false;
+          });
+          Fluttertoast.showToast(msg: 'This file is not an image');
+        });
+      } else {
+        setState(() {
+          isLoading = false;
+        });
+        Fluttertoast.showToast(msg: 'This file is not an image');
+      }
+    }, onError: (err) {
+      setState(() {
+        isLoading = false;
+      });
+      Fluttertoast.showToast(msg: err.toString());
+    });
+  }
+
+  Future uploadFileId() async {
+    Random random = new Random();
+    String fileName = widget.id + '-' + random.nextInt(100000).toString();
+    StorageReference reference =
+        FirebaseStorage.instance.ref().child("avatars/$fileName");
+    StorageUploadTask uploadTask = reference.putFile(idImageFile);
+    StorageTaskSnapshot storageTaskSnapshot;
+    uploadTask.onComplete.then((value) {
+      if (value.error == null) {
+        storageTaskSnapshot = value;
+        storageTaskSnapshot.ref.getDownloadURL().then((downloadUrl) {
+          idPhotoUrl = downloadUrl;
+          FirebaseDatabase.instance
+              .reference()
+              .child('indoDb/users/en-US/$id')
+              .update({
+            //'name': name,
+            // 'areaId': areaId,
+            'idPhotoUrl': idPhotoUrl,
+            //'taxPhotoUrl': taxPhotoUrl
+          }).then((data) async {
+            await prefs.setString('idPhotoUrl', idPhotoUrl);
             setState(() {
               isLoading = false;
             });
@@ -177,11 +231,15 @@ class SettingsScreenState extends State<SettingsScreen> {
     FirebaseDatabase.instance
         .reference()
         .child('indoDb/users/en-US/$id')
-        .update({'name': name, 'areaId': areaId, 'photoUrl': photoUrl}).then(
-            (data) async {
+        .update({
+      'name': name,
+      'areaId': areaId,
+      'idPhotoUrl': idPhotoUrl ?? '',
+      'taxPhotoUrl': taxPhotoUrl ?? ''
+    }).then((data) async {
       //await prefs.setString('name', name);
       // await prefs.setString('areaId', areaId);
-      // await prefs.setString('photoUrl', photoUrl);
+      // await prefs.setString('idPhotoUrl', idPhotoUrl);
       setState(() {
         isLoading = false;
       });
@@ -282,8 +340,8 @@ class SettingsScreenState extends State<SettingsScreen> {
                       child: Center(
                         child: Stack(
                           children: <Widget>[
-                            (avatarImageFile == null)
-                                ? (photoUrl != ''
+                            (idImageFile == null)
+                                ? (idPhotoUrl != ''
                                     ? Material(
                                         child: CachedNetworkImage(
                                           placeholder: (context, url) =>
@@ -306,7 +364,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                                                 : 100,
                                             padding: EdgeInsets.all(10.0),
                                           ),
-                                          imageUrl: photoUrl,
+                                          imageUrl: idPhotoUrl,
                                           width: MediaQuery.of(context)
                                                       .devicePixelRatio <=
                                                   1.5
@@ -330,7 +388,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                                       ))
                                 : Material(
                                     child: Image.file(
-                                      avatarImageFile,
+                                      idImageFile,
                                       width: MediaQuery.of(context)
                                                   .devicePixelRatio <=
                                               1.5
@@ -357,7 +415,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                                       Icons.add_a_photo,
                                       color: Colors.black.withOpacity(0.7),
                                     ),
-                                    onPressed: getImage,
+                                    onPressed: getIdImage,
                                     padding: EdgeInsets.all(10.0),
                                     splashColor: Colors.transparent,
                                     highlightColor: greyColor,
@@ -372,7 +430,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                                       Navigator.push(context,
                                           MaterialPageRoute(builder: (_) {
                                         return ImageDetails(
-                                          image: widget.photoUrl,
+                                          image: widget.idPhotoUrl,
                                         );
                                       }));
                                     },
@@ -394,8 +452,8 @@ class SettingsScreenState extends State<SettingsScreen> {
                       child: Center(
                         child: Stack(
                           children: <Widget>[
-                            (avatarImageFile == null)
-                                ? (photoUrl != ''
+                            (taxImageFile == null)
+                                ? (taxPhotoUrl != ''
                                     ? Material(
                                         child: CachedNetworkImage(
                                           placeholder: (context, url) =>
@@ -410,7 +468,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                                             height: 150.0,
                                             padding: EdgeInsets.all(10.0),
                                           ),
-                                          imageUrl: photoUrl,
+                                          imageUrl: taxPhotoUrl,
                                           width: 150.0,
                                           height: 150.0,
                                           fit: BoxFit.fitWidth,
@@ -426,7 +484,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                                       ))
                                 : Material(
                                     child: Image.file(
-                                      avatarImageFile,
+                                      taxImageFile,
                                       width: 150.0,
                                       height: 150.0,
                                       fit: BoxFit.fitWidth,
@@ -435,17 +493,41 @@ class SettingsScreenState extends State<SettingsScreen> {
                                         BorderRadius.all(Radius.circular(0.0)),
                                     clipBehavior: Clip.antiAlias,
                                   ),
-                            IconButton(
-                              icon: Icon(
-                                Icons.camera_alt,
-                                color: primaryColor.withOpacity(0.2),
-                              ),
-                              onPressed: getImage,
-                              padding: EdgeInsets.all(30.0),
-                              splashColor: Colors.transparent,
-                              highlightColor: greyColor,
-                              iconSize: 30.0,
-                            ),
+                            Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: <Widget>[
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.add_a_photo,
+                                      color: Colors.black.withOpacity(0.7),
+                                    ),
+                                    onPressed: getTaxImage,
+                                    padding: EdgeInsets.all(10.0),
+                                    splashColor: Colors.transparent,
+                                    highlightColor: greyColor,
+                                    iconSize: 25.0,
+                                  ),
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.zoom_in,
+                                      color: Colors.black.withOpacity(0.7),
+                                    ),
+                                    onPressed: () {
+                                      Navigator.push(context,
+                                          MaterialPageRoute(builder: (_) {
+                                        return ImageDetails(
+                                          image: widget.taxPhotoUrl,
+                                        );
+                                      }));
+                                    },
+                                    padding: EdgeInsets.all(10.0),
+                                    splashColor: Colors.transparent,
+                                    highlightColor: greyColor,
+                                    iconSize: 25.0,
+                                  ),
+                                ])
                           ],
                         ),
                       ),

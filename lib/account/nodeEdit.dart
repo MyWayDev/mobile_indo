@@ -372,7 +372,7 @@ class _NodeEditState extends State<NodeEdit> {
                           focusNode: focusPersonalId,
                         ),
                       ])),
-                      Text(' / '),
+                      Padding(padding: EdgeInsets.all(10)),
                       Expanded(
                           child: Column(children: <Widget>[
                         Container(
@@ -408,41 +408,6 @@ class _NodeEditState extends State<NodeEdit> {
                   ])),
               margin: EdgeInsets.only(left: 30.0, right: 5.0, bottom: 5),
             ),
-            /* Container(
-              child: Text(
-                'Telephone',
-                style: TextStyle(
-                    fontSize: 12,
-                    fontStyle: FontStyle.italic,
-                    fontWeight: FontWeight.bold,
-                    color: primaryColor),
-              ),
-              margin: EdgeInsets.only(left: 30.0),
-            ),
-            Container(
-              child: Theme(
-                data: Theme.of(context).copyWith(primaryColor: primaryColor),
-                child: TextFormField(
-                  enabled: veri,
-                  style: TextStyle(fontSize: 14),
-                  decoration: InputDecoration(
-                    hintText: 'Telephone',
-                    contentPadding: EdgeInsets.all(5.0),
-                    hintStyle: TextStyle(color: greyColor),
-                  ),
-                  controller: cTelePhone,
-                  onChanged: (value) {
-                    setState(() {
-                      _nodeData.telephone = value;
-                      isChanged = true;
-                    });
-                  },
-                  focusNode: focusTelephone,
-                ),
-              ),
-              margin: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 5),
-            ),*/
-
             Container(
               child: Theme(
                   data: Theme.of(context).copyWith(primaryColor: primaryColor),
@@ -481,6 +446,7 @@ class _NodeEditState extends State<NodeEdit> {
                           focusNode: focusAddress,
                         ),
                       ])),
+                      Padding(padding: EdgeInsets.all(10)),
                       Expanded(
                           child: Column(children: <Widget>[
                         Container(
@@ -667,8 +633,7 @@ class _NodeEditState extends State<NodeEdit> {
                   style: TextStyle(fontSize: 14),
                   decoration: InputDecoration(
                     hintText: 'Tax Number',
-                    contentPadding: EdgeInsets.all(3.0),
-                    hintStyle: TextStyle(color: greyColor),
+                    hintStyle: TextStyle(color: greyColor, fontSize: 12),
                   ),
                   controller: cTaxNumber,
                   onChanged: (value) {
@@ -681,6 +646,9 @@ class _NodeEditState extends State<NodeEdit> {
                 ),
               ),
               margin: EdgeInsets.only(left: 30.0, right: 30.0),
+            ),
+            Padding(
+              padding: EdgeInsets.all(5),
             ),
             veri
                 ? ButtonBar(

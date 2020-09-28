@@ -11,7 +11,7 @@ import 'package:mor_release/pages/messages/local_note.dart';
 import 'package:mor_release/pages/order/bulkOrder.dart';
 import 'package:mor_release/pages/order/end_order.dart';
 import 'package:mor_release/pages/order/order.dart';
-import 'package:mor_release/pages/profile.dart';
+import 'package:mor_release/pages/profile/profile.dart';
 import 'package:mor_release/pages/user/phoneAuth.dart';
 import 'package:mor_release/scoped/connected.dart';
 import './pages/user/registration_page.dart';
