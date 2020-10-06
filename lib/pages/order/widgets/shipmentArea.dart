@@ -172,7 +172,7 @@ class _ShipmentAreaState extends State<ShipmentPlace>
                   children: <Widget>[
                     FormBuilder(
                         key: _fbKey,
-                        autovalidate: true,
+                        // autovalidate: true,
                         child: Column(
                           children: <Widget>[
                             FormBuilderDropdown(

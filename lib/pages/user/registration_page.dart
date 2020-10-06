@@ -242,7 +242,7 @@ class _RegistrationPage extends State<RegistrationPage> {
               padding: const EdgeInsets.only(left: 20.0, right: 20.0),
               child: Row(
                 children: <Widget>[
-                  /* Container(
+                  Container(
                     padding: EdgeInsets.only(right: 10.0),
                     child: FlatButton.icon(
                       label: Text('Test Code'),
@@ -252,10 +252,10 @@ class _RegistrationPage extends State<RegistrationPage> {
                       ),
                       onPressed: () {
                         //model.getTickets(1);
-                        // model.fbItemsUpdateFromDb();//! activate month begin
+                        model.fbItemsUpdateFromDb(); //! activate month begin
                       },
                     ),
-                  ),*/
+                  ),
                   Expanded(
                     child: FlatButton(
                       shape: RoundedRectangleBorder(

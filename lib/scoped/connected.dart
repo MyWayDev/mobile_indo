@@ -1955,6 +1955,7 @@ for( var i = 0 ; i < _list.length; i++){
     if (response.statusCode == 200) {
       List responseData = await json.decode(response.body);
       nodeEditData = NewMember.formJson(responseData[0]);
+      print(nodeEditData.bankAccountNumber);
     } else {
       return nodeEditData =
           new NewMember(distrId: '00000000', name: 'NA', areaId: '');

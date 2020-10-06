@@ -268,12 +268,12 @@ class _AddAddressState extends State<AddAddress> {
             areaSplit != null
                 ? FormBuilder(
                     key: _addressFormKey,
-                    autovalidate: true,
+                    //  autovalidate: true,
                     child: FormBuilderTextField(
                       enableInteractiveSelection: false,
                       expands: false,
                       autocorrect: true,
-                      autovalidate: true,
+                      // autovalidate: true,
                       maxLengthEnforced: false,
                       maxLines: 3,
                       attribute: "comment",

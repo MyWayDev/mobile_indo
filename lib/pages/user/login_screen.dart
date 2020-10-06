@@ -453,6 +453,7 @@ class _LoginScreen extends State<LoginScreen> {
     if (await model.formEntry(validateFormEntry(),
         model.logIn(_userFormData['id'], _userFormData['password'], context))) {
       print('userFormId:${_userFormData['id']}');
+      await model.nodeEdit(_userFormData['id'].toString().padLeft(8, '0'));
       Navigator.push(
         context,
         MaterialPageRoute(

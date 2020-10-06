@@ -87,7 +87,7 @@ class _DocFormState extends State<DocForm> {
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
           content: FormBuilder(
               key: _formKey,
-              autovalidate: true,
+              //    autovalidate: true,
               child: Column(
                 children: <Widget>[
                   Text("${widget.type}"),
@@ -364,7 +364,7 @@ class _DocFormState extends State<DocForm> {
                           enableInteractiveSelection: true,
                           expands: false,
                           autocorrect: true,
-                          autovalidate: true,
+                          //autovalidate: true,
                           maxLengthEnforced: true,
                           maxLines: 4,
                           attribute: "comment",

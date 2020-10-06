@@ -85,3 +85,14 @@ class Store {
     );
   }
 }
+
+class Bank {
+  String bankId;
+  String bankName;
+
+  Bank({this.bankId, this.bankName});
+
+  factory Bank.json(Map<dynamic, dynamic> json) {
+    return Bank(bankId: json['DS_BANK'], bankName: json['LNAME']);
+  }
+}

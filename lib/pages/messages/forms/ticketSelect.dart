@@ -32,7 +32,7 @@ class _TicketSelectState extends State<TicketSelect> {
         textDirection: TextDirection.rtl,
       ),
       content: FormBuilder(
-        autovalidate: true,
+        // autovalidate: true,
         child: FormBuilderCustomField(
           attribute: "type",
           validators: [

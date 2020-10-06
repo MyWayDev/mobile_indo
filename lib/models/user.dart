@@ -137,7 +137,7 @@ class NewMember {
         address: json['ADDRESS'] ?? '',
         telephone: json['TELEPHONE'] ?? '',
         bankAccoutName: json['ACCOUNT_OWNER'] ?? '',
-        bankAccountNumber: json['ACCOUNT_NUM'] ?? "",
+        bankAccountNumber: json['ACCOUNT_NUM'] ?? '',
         taxNumber: json['TAX_NUM'] ?? '',
         areaId: json['AREA_ID'] ?? '',
         areaName: json['AREA_NAME'] ?? '',

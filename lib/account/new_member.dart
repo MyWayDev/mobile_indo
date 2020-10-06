@@ -628,6 +628,7 @@ class _NewMemberPage extends State<NewMemberPage> {
                                                 Icon(Icons.add_location,
                                                     color: Colors.pink[500]),
                                                 SearchableDropdown(
+                                                  isExpanded: true,
                                                   //style: TextStyle(fontSize: 12),
                                                   hint: Text('Area'),
                                                   iconEnabledColor:
