@@ -13,6 +13,7 @@ import 'package:mor_release/widgets/color_loader_2.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:groovin_material_icons/groovin_material_icons.dart';
 import 'package:http/http.dart' as http;
+import 'package:mor_release/pages/profile/album.dart';
 
 import 'package:intl/intl.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
@@ -167,6 +168,23 @@ class _NewMemberPage extends State<NewMemberPage> {
     });
   }
 
+  void _profileAlbumBottomSheet(context, MainModel model) {
+    showModalBottomSheet(
+        isScrollControlled: true,
+        barrierColor: Colors.white70,
+        elevation: 26,
+        backgroundColor: Colors.transparent,
+        context: context,
+        builder: (BuildContext bc) {
+          return ProfileAlbum(
+            model: model,
+            idPhotoUrl: model.userInfo.idPhotoUrl,
+            taxPhotoUrl: model.userInfo.taxPhotoUrl,
+            bankPhotoUrl: model.userInfo.bankPhotoUrl,
+          );
+        });
+  }
+
   bool validData;
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   bool validateAndSave(String userId, String sc) {
@@ -196,264 +214,295 @@ class _NewMemberPage extends State<NewMemberPage> {
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant<MainModel>(
-        builder: (BuildContext context, Widget child, MainModel model) {
-      return Scaffold(
-        floatingActionButton: FloatingActionButton.extended(
-            onPressed: null,
-            label: StoreFloat(model),
-            isExtended: true,
-            elevation: 30,
-            backgroundColor: Colors.transparent),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
-        resizeToAvoidBottomPadding: false,
-        body: ModalProgressHUD(
-          child: Container(
-            child: buildRegForm(context),
+      builder: (BuildContext context, Widget child, MainModel model) {
+        return Scaffold(
+          floatingActionButton: FloatingActionButton.extended(
+              onPressed: null,
+              label: StoreFloat(model),
+              isExtended: true,
+              elevation: 30,
+              backgroundColor: Colors.transparent),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerDocked,
+          floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
+          resizeToAvoidBottomPadding: false,
+          body: ModalProgressHUD(
+            child: Container(
+              child: buildRegForm(context),
+            ),
+            inAsyncCall: _isloading,
+            opacity: 0.6,
+            progressIndicator: ColorLoader2(),
           ),
-          inAsyncCall: _isloading,
-          opacity: 0.6,
-          progressIndicator: ColorLoader2(),
-        ),
-      );
-    });
+        );
+      },
+    );
   }
 
   Widget buildRegForm(BuildContext context) {
     return ScopedModelDescendant<MainModel>(
         builder: (BuildContext context, Widget child, MainModel model) {
-      return Container(
-        child: Form(
-          key: _newMemberFormKey,
-          child: ListView(
-            children: <Widget>[
-              Container(
-                  padding: EdgeInsets.all(8.0),
-                  child: SingleChildScrollView(
-                    primary: true,
-                    child: Center(
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            ListTile(
-                              contentPadding: EdgeInsets.only(left: 8),
-                              leading: Icon(Icons.vpn_key,
-                                  size: 25.0, color: Colors.pink[500]),
-                              title: TextFormField(
-                                textAlign: TextAlign.center,
-                                controller: controller,
-                                enabled: !veri ? true : false,
-                                style: TextStyle(
-                                    fontSize: 15,
-                                    color: Colors.black87,
-                                    fontWeight: FontWeight.bold),
-                                decoration: InputDecoration(
-                                  hintText: ' Masukkan ID sponsor',
-                                  hintStyle: TextStyle(color: Colors.grey[400]),
-                                ),
-                                keyboardType: TextInputType.number,
-                                validator: (value) => value.isEmpty
-                                    ? 'Code is Empty !!'
-                                    : RegExp('[0-9]').hasMatch(value)
-                                        ? null
-                                        : 'invalid code !!',
-                                onSaved: (_) {
-                                  _newMemberForm.sponsorId = _nodeData.distrId;
-                                },
-                              ),
-                              trailing: IconButton(
-                                icon: !veri && controller.text.length > 0
-                                    ? Icon(
-                                        Icons.check,
-                                        size: 30.0,
-                                        color: Colors.blue,
-                                      )
-                                    : controller.text.length > 0
+      return Scaffold(
+          floatingActionButton: FloatingActionButton(
+            elevation: 30,
+            clipBehavior: Clip.none,
+            child: Stack(fit: StackFit.expand, children: [
+              Positioned(
+                top: 1,
+                right: 8,
+                child: Icon(
+                  Icons.add,
+                  size: 18,
+                ),
+              ),
+              Positioned(
+                  bottom: 8,
+                  left: 2,
+                  right: 2,
+                  child: Icon(
+                    Icons.photo_album,
+                    size: 32,
+                  ))
+            ]),
+            backgroundColor: Colors.pink[500],
+            onPressed: () => _profileAlbumBottomSheet(context, model),
+          ),
+          body: Container(
+            child: Form(
+              key: _newMemberFormKey,
+              child: ListView(
+                children: <Widget>[
+                  Container(
+                      padding: EdgeInsets.all(8.0),
+                      child: SingleChildScrollView(
+                        primary: true,
+                        child: Center(
+                          child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                ListTile(
+                                  contentPadding: EdgeInsets.only(left: 8),
+                                  leading: Icon(Icons.vpn_key,
+                                      size: 25.0, color: Colors.pink[500]),
+                                  title: TextFormField(
+                                    textAlign: TextAlign.center,
+                                    controller: controller,
+                                    enabled: !veri ? true : false,
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        color: Colors.black87,
+                                        fontWeight: FontWeight.bold),
+                                    decoration: InputDecoration(
+                                      hintText: ' Masukkan ID sponsor',
+                                      hintStyle:
+                                          TextStyle(color: Colors.grey[400]),
+                                    ),
+                                    keyboardType: TextInputType.number,
+                                    validator: (value) => value.isEmpty
+                                        ? 'Code is Empty !!'
+                                        : RegExp('[0-9]').hasMatch(value)
+                                            ? null
+                                            : 'invalid code !!',
+                                    onSaved: (_) {
+                                      _newMemberForm.sponsorId =
+                                          _nodeData.distrId;
+                                    },
+                                  ),
+                                  trailing: IconButton(
+                                    icon: !veri && controller.text.length > 0
                                         ? Icon(
-                                            Icons.close,
-                                            size: 28.0,
-                                            color: Colors.grey,
+                                            Icons.check,
+                                            size: 30.0,
+                                            color: Colors.blue,
                                           )
-                                        : Container(),
-                                color: Colors.pink[900],
-                                onPressed: () async {
-                                  isloading(true);
-                                  if (!veri) {
-                                    veri = await model.leaderVerification(
-                                        controller.text.padLeft(8, '0'));
-                                    if (veri) {
-                                      _nodeData = await model.nodeJson(
-                                          controller.text.padLeft(8, '0'));
-                                      _nodeData.distrId == '00000000'
-                                          ? resetVeri()
-                                          : controller.text =
-                                              _nodeData.distrId +
-                                                  ' ' +
-                                                  _nodeData.name;
-                                    } else {
-                                      resetVeri();
-                                    }
-                                  } else {
-                                    resetVeri();
-                                  }
-                                  isloading(false);
-                                },
-                                splashColor: Colors.pink,
-                              ),
-                            ),
-                            ModalProgressHUD(
-                                inAsyncCall: _loading,
-                                opacity: 0.6,
-                                progressIndicator: ColorLoader2(),
-                                child: veri
-                                    ? Container(
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.max,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.stretch,
-                                          children: <Widget>[
-                                            ListTile(
-                                              trailing: Row(
-                                                mainAxisSize: MainAxisSize.min,
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceEvenly,
-                                                children: <Widget>[
-                                                  Text(model.settings.catCode,
-                                                      style: TextStyle(
-                                                          color: Colors
-                                                              .lightGreen[900],
-                                                          fontSize: 15,
-                                                          fontStyle:
-                                                              FontStyle.italic,
-                                                          fontWeight:
-                                                              FontWeight.bold)),
-                                                  veri
-                                                      ? Container(
-                                                          /*margin: const EdgeInsets.only(top: 8.0),
+                                        : controller.text.length > 0
+                                            ? Icon(
+                                                Icons.close,
+                                                size: 28.0,
+                                                color: Colors.grey,
+                                              )
+                                            : Container(),
+                                    color: Colors.pink[900],
+                                    onPressed: () async {
+                                      isloading(true);
+                                      if (!veri) {
+                                        veri = await model.leaderVerification(
+                                            controller.text.padLeft(8, '0'));
+                                        if (veri) {
+                                          _nodeData = await model.nodeJson(
+                                              controller.text.padLeft(8, '0'));
+                                          _nodeData.distrId == '00000000'
+                                              ? resetVeri()
+                                              : controller.text =
+                                                  _nodeData.distrId +
+                                                      ' ' +
+                                                      _nodeData.name;
+                                        } else {
+                                          resetVeri();
+                                        }
+                                      } else {
+                                        resetVeri();
+                                      }
+                                      isloading(false);
+                                    },
+                                    splashColor: Colors.pink,
+                                  ),
+                                ),
+                                ModalProgressHUD(
+                                    inAsyncCall: _loading,
+                                    opacity: 0.6,
+                                    progressIndicator: ColorLoader2(),
+                                    child: veri
+                                        ? Container(
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.max,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceEvenly,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.stretch,
+                                              children: <Widget>[
+                                                ListTile(
+                                                  trailing: Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceEvenly,
+                                                    children: <Widget>[
+                                                      Text(
+                                                          model
+                                                              .settings.catCode,
+                                                          style: TextStyle(
+                                                              color: Colors
+                                                                      .lightGreen[
+                                                                  900],
+                                                              fontSize: 15,
+                                                              fontStyle:
+                                                                  FontStyle
+                                                                      .italic,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold)),
+                                                      veri
+                                                          ? Container(
+                                                              /*margin: const EdgeInsets.only(top: 8.0),
                                 padding: const EdgeInsets.only(
                                     left: 20.0, right: 20.0),*/
-                                                          child: Row(
-                                                            children: <Widget>[
-                                                              /*margin: const EdgeContainer(
+                                                              child: Row(
+                                                                children: <
+                                                                    Widget>[
+                                                                  /*margin: const EdgeContainer(
                                       padding: EdgeInsets.only(right: 10.0),
                                     ),*/
-                                                              Center(
-                                                                child:
-                                                                    IconButton(
-                                                                  icon: Center(
-                                                                    child: Icon(
-                                                                      Icons
-                                                                          .check_circle,
-                                                                      color: Colors
-                                                                              .greenAccent[
-                                                                          400],
-                                                                      size: 42,
+                                                                  Center(
+                                                                    child:
+                                                                        IconButton(
+                                                                      icon:
+                                                                          Center(
+                                                                        child:
+                                                                            Icon(
+                                                                          Icons
+                                                                              .check_circle,
+                                                                          color:
+                                                                              Colors.greenAccent[400],
+                                                                          size:
+                                                                              42,
+                                                                        ),
+                                                                      ),
+                                                                      onPressed:
+                                                                          () async {
+                                                                        String
+                                                                            msg =
+                                                                            '';
+                                                                        if (validateAndSave(
+                                                                            model.userInfo.distrId,
+                                                                            model.setStoreId)) {
+                                                                          msg = await _saveNewMember(
+                                                                              model.userInfo.distrId,
+                                                                              model.docType,
+                                                                              model.setStoreId);
+                                                                          showReview(
+                                                                              context,
+                                                                              msg);
+
+                                                                          _newMemberFormKey
+                                                                              .currentState
+                                                                              .reset();
+
+                                                                          PaymentInfo(model)
+                                                                              .flushAction(context)
+                                                                              .show(context);
+                                                                          ;
+                                                                        }
+
+                                                                        //  s
+
+                                                                        //_newMemberFormKey.currentState.reset();
+                                                                      },
                                                                     ),
                                                                   ),
-                                                                  onPressed:
-                                                                      () async {
-                                                                    String msg =
-                                                                        '';
-                                                                    if (validateAndSave(
-                                                                        model
-                                                                            .userInfo
-                                                                            .distrId,
-                                                                        model
-                                                                            .setStoreId)) {
-                                                                      msg = await _saveNewMember(
-                                                                          model
-                                                                              .userInfo
-                                                                              .distrId,
-                                                                          model
-                                                                              .docType,
-                                                                          model
-                                                                              .setStoreId);
-                                                                      showReview(
-                                                                          context,
-                                                                          msg);
-
-                                                                      _newMemberFormKey
-                                                                          .currentState
-                                                                          .reset();
-
-                                                                      PaymentInfo(
-                                                                              model)
-                                                                          .flushAction(
-                                                                              context)
-                                                                          .show(
-                                                                              context);
-                                                                      ;
-                                                                    }
-
-                                                                    //  s
-
-                                                                    //_newMemberFormKey.currentState.reset();
-                                                                  },
-                                                                ),
+                                                                ],
                                                               ),
-                                                            ],
-                                                          ),
-                                                        )
-                                                      : Container()
-                                                ],
-                                              ),
-                                              leading: RawMaterialButton(
-                                                child: Icon(
-                                                  GroovinMaterialIcons
-                                                      .calendar_check,
-                                                  size: 24.0,
-                                                  color: Colors.white,
-                                                ),
-                                                shape: CircleBorder(),
-                                                highlightColor:
-                                                    Colors.pink[500],
-                                                elevation: 8,
-                                                fillColor: Colors.pink[500],
-                                                onPressed: () {
-                                                  _showDateTimePicker(
-                                                      model.userInfo.distrId);
-                                                },
-                                                splashColor: Colors.pink[900],
-                                              ),
-                                              title: Padding(
-                                                padding:
-                                                    EdgeInsets.only(top: 30),
-                                                child: selected != null
-                                                    ? Text(
-                                                        DateFormat('yyyy-MM-dd')
+                                                            )
+                                                          : Container()
+                                                    ],
+                                                  ),
+                                                  leading: RawMaterialButton(
+                                                    child: Icon(
+                                                      GroovinMaterialIcons
+                                                          .calendar_check,
+                                                      size: 24.0,
+                                                      color: Colors.white,
+                                                    ),
+                                                    shape: CircleBorder(),
+                                                    highlightColor:
+                                                        Colors.pink[500],
+                                                    elevation: 8,
+                                                    fillColor: Colors.pink[500],
+                                                    onPressed: () {
+                                                      _showDateTimePicker(model
+                                                          .userInfo.distrId);
+                                                    },
+                                                    splashColor:
+                                                        Colors.pink[900],
+                                                  ),
+                                                  title: Padding(
+                                                    padding: EdgeInsets.only(
+                                                        top: 30),
+                                                    child: selected != null
+                                                        ? Text(DateFormat(
+                                                                'yyyy-MM-dd')
                                                             .format(selected)
                                                             .toString())
-                                                    : Text(''),
-                                              ),
-                                              subtitle: Padding(
-                                                padding:
-                                                    EdgeInsets.only(right: 1),
-                                                child: selected == null
-                                                    ? Text('Tanggal lahir')
-                                                    : Text(''),
-                                              ),
+                                                        : Text(''),
+                                                  ),
+                                                  subtitle: Padding(
+                                                    padding: EdgeInsets.only(
+                                                        right: 1),
+                                                    child: selected == null
+                                                        ? Text('Tanggal lahir')
+                                                        : Text(''),
+                                                  ),
 
-                                              //trailing:
-                                            ),
-                                            Divider(
-                                              height: 4,
-                                              color: Colors.black,
-                                            ),
-                                            TextFormField(
-                                              // autovalidate: true,
-                                              decoration: InputDecoration(
-                                                  labelText: 'Nama',
-                                                  contentPadding:
-                                                      EdgeInsets.all(2.0),
-                                                  icon: Icon(
-                                                      GroovinMaterialIcons
-                                                          .format_title,
-                                                      color: Colors.pink[500])),
-                                              /* validator: (value) {
+                                                  //trailing:
+                                                ),
+                                                Divider(
+                                                  height: 4,
+                                                  color: Colors.black,
+                                                ),
+                                                TextFormField(
+                                                  // autovalidate: true,
+                                                  decoration: InputDecoration(
+                                                      labelText: 'Nama',
+                                                      contentPadding:
+                                                          EdgeInsets.all(2.0),
+                                                      icon: Icon(
+                                                          GroovinMaterialIcons
+                                                              .format_title,
+                                                          color: Colors
+                                                              .pink[500])),
+                                                  /* validator: (value) {
                                               String _msg;
                                               value.length > 6
                                                   ? _msg =
@@ -461,21 +510,23 @@ class _NewMemberPage extends State<NewMemberPage> {
                                                   : _msg = null;
                                               return _msg;
                                             },*/
-                                              keyboardType: TextInputType.text,
-                                              onSaved: (String value) {
-                                                _newMemberForm.name = value;
-                                              },
-                                            ),
-                                            TextFormField(
-                                              decoration: InputDecoration(
-                                                  labelText:
-                                                      'Nomor tanda pengenal',
-                                                  contentPadding:
-                                                      EdgeInsets.all(4.0),
-                                                  icon: Icon(
-                                                      Icons.assignment_ind,
-                                                      color: Colors.pink[500])),
-                                              /*  'validator: (value) {
+                                                  keyboardType:
+                                                      TextInputType.text,
+                                                  onSaved: (String value) {
+                                                    _newMemberForm.name = value;
+                                                  },
+                                                ),
+                                                TextFormField(
+                                                  decoration: InputDecoration(
+                                                      labelText:
+                                                          'Nomor tanda pengenal',
+                                                      contentPadding:
+                                                          EdgeInsets.all(4.0),
+                                                      icon: Icon(
+                                                          Icons.assignment_ind,
+                                                          color: Colors
+                                                              .pink[500])),
+                                                  /*  'validator: (value) {
                                               String _msg;
                                               value.length <=16
                                                   ? _msg =
@@ -483,105 +534,118 @@ class _NewMemberPage extends State<NewMemberPage> {
                                                   : _msg = null;
                                               return _msg;
                                             },*/
-                                              autocorrect: true,
-                                              textCapitalization:
-                                                  TextCapitalization.sentences,
-                                              keyboardType: TextInputType.text,
-                                              onSaved: (String value) {
-                                                _newMemberForm.personalId =
-                                                    value;
-                                              },
-                                            ),
-                                            TextFormField(
-                                              decoration: InputDecoration(
-                                                  labelText: 'Nomor telepon',
-                                                  filled: true,
-                                                  fillColor: Colors.transparent,
-                                                  contentPadding:
-                                                      EdgeInsets.all(2.0),
-                                                  icon: Icon(
-                                                    Icons.phone,
-                                                    color: Colors.pink[500],
-                                                  )),
-                                              validator: (value) {
-                                                String _msg;
-                                                value.length < 8
-                                                    ? _msg =
-                                                        ' خطأ فى حفظ  الهاتف'
-                                                    : _msg = null;
-                                                return _msg;
-                                              },
-                                              keyboardType: TextInputType
-                                                  .numberWithOptions(
-                                                      signed: true),
-                                              onSaved: (String value) {
-                                                _newMemberForm.telephone =
-                                                    value;
-                                              },
-                                            ),
-                                            TextFormField(
-                                              decoration: InputDecoration(
-                                                  labelText: 'Alamat',
-                                                  filled: true,
-                                                  fillColor: Colors.transparent,
-                                                  contentPadding:
-                                                      EdgeInsets.all(2.0),
-                                                  icon: Icon(
-                                                    GroovinMaterialIcons.home,
-                                                    color: Colors.pink[500],
-                                                  )),
-                                              validator: (value) {
-                                                String _msg;
-                                                value.length < 9
-                                                    ? _msg =
-                                                        'خطأ فى حفظ العنوان'
-                                                    : _msg = null;
-                                                return _msg;
-                                              },
-                                              keyboardType: TextInputType.text,
-                                              onSaved: (String value) {
-                                                _newMemberForm.address = value;
-                                              },
-                                            ),
-                                            TextFormField(
-                                              decoration: InputDecoration(
-                                                  labelText:
-                                                      'Bank Account Name',
-                                                  filled: true,
-                                                  fillColor: Colors.transparent,
-                                                  contentPadding:
-                                                      EdgeInsets.all(2.0),
-                                                  icon: Icon(
-                                                    GroovinMaterialIcons.bank,
-                                                    color: Colors.pink[500],
-                                                  )),
-                                              validator: (value) {
-                                                String _msg;
-                                                value.length < 3
-                                                    ? _msg = 'Name is too short'
-                                                    : _msg = null;
-                                                return _msg;
-                                              },
-                                              keyboardType: TextInputType.text,
-                                              onSaved: (String value) {
-                                                _newMemberForm.bankAccoutName =
-                                                    value;
-                                              },
-                                            ),
-                                            TextFormField(
-                                              decoration: InputDecoration(
-                                                  labelText:
-                                                      'Bank Account Number',
-                                                  filled: true,
-                                                  fillColor: Colors.transparent,
-                                                  contentPadding:
-                                                      EdgeInsets.all(2.0),
-                                                  icon: Icon(
-                                                    GroovinMaterialIcons
-                                                        .numeric,
-                                                    color: Colors.pink[500],
-                                                  )),
-                                              /*  validator: (value) {
+                                                  autocorrect: true,
+                                                  textCapitalization:
+                                                      TextCapitalization
+                                                          .sentences,
+                                                  keyboardType:
+                                                      TextInputType.text,
+                                                  onSaved: (String value) {
+                                                    _newMemberForm.personalId =
+                                                        value;
+                                                  },
+                                                ),
+                                                TextFormField(
+                                                  decoration: InputDecoration(
+                                                      labelText:
+                                                          'Nomor telepon',
+                                                      filled: true,
+                                                      fillColor:
+                                                          Colors.transparent,
+                                                      contentPadding:
+                                                          EdgeInsets.all(2.0),
+                                                      icon: Icon(
+                                                        Icons.phone,
+                                                        color: Colors.pink[500],
+                                                      )),
+                                                  validator: (value) {
+                                                    String _msg;
+                                                    value.length < 8
+                                                        ? _msg =
+                                                            ' خطأ فى حفظ  الهاتف'
+                                                        : _msg = null;
+                                                    return _msg;
+                                                  },
+                                                  keyboardType: TextInputType
+                                                      .numberWithOptions(
+                                                          signed: true),
+                                                  onSaved: (String value) {
+                                                    _newMemberForm.telephone =
+                                                        value;
+                                                  },
+                                                ),
+                                                TextFormField(
+                                                  decoration: InputDecoration(
+                                                      labelText: 'Alamat',
+                                                      filled: true,
+                                                      fillColor:
+                                                          Colors.transparent,
+                                                      contentPadding:
+                                                          EdgeInsets.all(2.0),
+                                                      icon: Icon(
+                                                        GroovinMaterialIcons
+                                                            .home,
+                                                        color: Colors.pink[500],
+                                                      )),
+                                                  validator: (value) {
+                                                    String _msg;
+                                                    value.length < 9
+                                                        ? _msg =
+                                                            'خطأ فى حفظ العنوان'
+                                                        : _msg = null;
+                                                    return _msg;
+                                                  },
+                                                  keyboardType:
+                                                      TextInputType.text,
+                                                  onSaved: (String value) {
+                                                    _newMemberForm.address =
+                                                        value;
+                                                  },
+                                                ),
+                                                TextFormField(
+                                                  decoration: InputDecoration(
+                                                      labelText:
+                                                          'Bank Account Name',
+                                                      filled: true,
+                                                      fillColor:
+                                                          Colors.transparent,
+                                                      contentPadding:
+                                                          EdgeInsets.all(2.0),
+                                                      icon: Icon(
+                                                        GroovinMaterialIcons
+                                                            .bank,
+                                                        color: Colors.pink[500],
+                                                      )),
+                                                  validator: (value) {
+                                                    String _msg;
+                                                    value.length < 3
+                                                        ? _msg =
+                                                            'Name is too short'
+                                                        : _msg = null;
+                                                    return _msg;
+                                                  },
+                                                  keyboardType:
+                                                      TextInputType.text,
+                                                  onSaved: (String value) {
+                                                    _newMemberForm
+                                                        .bankAccoutName = value;
+                                                  },
+                                                ),
+                                                TextFormField(
+                                                  decoration: InputDecoration(
+                                                      labelText:
+                                                          'Bank Account Number',
+                                                      filled: true,
+                                                      fillColor:
+                                                          Colors.transparent,
+                                                      contentPadding:
+                                                          EdgeInsets.all(2.0),
+                                                      icon: Icon(
+                                                        GroovinMaterialIcons
+                                                            .numeric,
+                                                        color: Colors.pink[500],
+                                                      )),
+                                                  /*  validator: (value) {
                                               String _msg;
                                               value.length < 16
                                                   ? _msg =
@@ -589,64 +653,69 @@ class _NewMemberPage extends State<NewMemberPage> {
                                                   : _msg = null;
                                               return _msg;
                                             },*/
-                                              keyboardType:
-                                                  TextInputType.number,
-                                              onSaved: (String value) {
-                                                _newMemberForm
-                                                    .bankAccountNumber = value;
-                                              },
-                                            ),
-                                            TextFormField(
-                                              decoration: InputDecoration(
-                                                  labelText: 'Tax Number',
-                                                  filled: true,
-                                                  fillColor: Colors.transparent,
-                                                  contentPadding:
-                                                      EdgeInsets.all(2.0),
-                                                  icon: Icon(
-                                                    GroovinMaterialIcons
-                                                        .tag_text_outline,
-                                                    color: Colors.pink[500],
-                                                  )),
-                                              /*  validator: (value) {
+                                                  keyboardType:
+                                                      TextInputType.number,
+                                                  onSaved: (String value) {
+                                                    _newMemberForm
+                                                            .bankAccountNumber =
+                                                        value;
+                                                  },
+                                                ),
+                                                TextFormField(
+                                                  decoration: InputDecoration(
+                                                      labelText: 'Tax Number',
+                                                      filled: true,
+                                                      fillColor:
+                                                          Colors.transparent,
+                                                      contentPadding:
+                                                          EdgeInsets.all(2.0),
+                                                      icon: Icon(
+                                                        GroovinMaterialIcons
+                                                            .tag_text_outline,
+                                                        color: Colors.pink[500],
+                                                      )),
+                                                  /*  validator: (value) {
                                               String _msg;
                                               value.length < 12
                                                   ? _msg = 'Tax is too short'
                                                   : _msg = null;
                                               return _msg;
                                             },*/
-                                              keyboardType:
-                                                  TextInputType.number,
-                                              onSaved: (String value) {
-                                                _newMemberForm.taxNumber =
-                                                    value;
-                                              },
-                                            ),
-                                            Container(
-                                              width: 300,
-                                              child: Wrap(children: <Widget>[
-                                                Icon(Icons.add_location,
-                                                    color: Colors.pink[500]),
-                                                SearchableDropdown(
-                                                  isExpanded: true,
-                                                  //style: TextStyle(fontSize: 12),
-                                                  hint: Text('Area'),
-                                                  iconEnabledColor:
-                                                      Colors.pink[200],
-                                                  iconDisabledColor:
-                                                      Colors.grey,
-                                                  items: places,
-                                                  value: selectedValue,
-                                                  onChanged: (value) {
-                                                    setState(() {
-                                                      selectedValue = value;
-                                                      placeSplit = selectedValue
-                                                          .split('\ ');
-                                                      print(placeSplit);
-                                                    });
+                                                  keyboardType:
+                                                      TextInputType.number,
+                                                  onSaved: (String value) {
+                                                    _newMemberForm.taxNumber =
+                                                        value;
                                                   },
-                                                )
-                                              ]), /* Row(
+                                                ),
+                                                Container(
+                                                  width: 300,
+                                                  child:
+                                                      Wrap(children: <Widget>[
+                                                    Icon(Icons.add_location,
+                                                        color:
+                                                            Colors.pink[500]),
+                                                    SearchableDropdown(
+                                                      isExpanded: true,
+                                                      //style: TextStyle(fontSize: 12),
+                                                      hint: Text('Area'),
+                                                      iconEnabledColor:
+                                                          Colors.pink[200],
+                                                      iconDisabledColor:
+                                                          Colors.grey,
+                                                      items: places,
+                                                      value: selectedValue,
+                                                      onChanged: (value) {
+                                                        setState(() {
+                                                          selectedValue = value;
+                                                          placeSplit =
+                                                              selectedValue
+                                                                  .split('\ ');
+                                                          print(placeSplit);
+                                                        });
+                                                      },
+                                                    )
+                                                  ]), /* Row(
                                               mainAxisSize: MainAxisSize.min,
                                               children: <Widget>[
                                                 SearchableDropdown(
@@ -677,18 +746,18 @@ class _NewMemberPage extends State<NewMemberPage> {
                                                 ),
                                               ],
                                             ),*/
+                                                ),
+                                              ],
                                             ),
-                                          ],
-                                        ),
-                                      )
-                                    : Container()),
-                          ]),
-                    ),
-                  )),
-            ],
-          ),
-        ), //this line
-      );
+                                          )
+                                        : Container()),
+                              ]),
+                        ),
+                      )),
+                ],
+              ),
+            ), //this line
+          ));
     });
   }
 

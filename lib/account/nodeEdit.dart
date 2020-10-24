@@ -6,6 +6,7 @@ import 'package:http/http.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:mor_release/models/user.dart';
 import 'package:mor_release/pages/const.dart';
+import 'package:mor_release/pages/profile/album.dart';
 import 'package:mor_release/scoped/connected.dart';
 import 'package:mor_release/widgets/color_loader_2.dart';
 
@@ -143,6 +144,30 @@ class _NodeEditState extends State<NodeEdit> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        elevation: 30,
+        clipBehavior: Clip.none,
+        child: Stack(fit: StackFit.expand, children: [
+          Positioned(
+            top: 1,
+            right: 8,
+            child: Icon(
+              Icons.add,
+              size: 18,
+            ),
+          ),
+          Positioned(
+              bottom: 8,
+              left: 2,
+              right: 2,
+              child: Icon(
+                Icons.photo_album,
+                size: 32,
+              ))
+        ]),
+        backgroundColor: Colors.pink[500],
+        onPressed: () => _profileAlbumBottomSheet(context),
+      ),
       appBar: AppBar(
         backgroundColor: Colors.indigo[900],
         title: Text('Edit Member'),
@@ -847,6 +872,23 @@ class _NodeEditState extends State<NodeEdit> {
       _msg = 'Error';
     }
     return _msg;
+  }
+
+  void _profileAlbumBottomSheet(context) {
+    showModalBottomSheet(
+        isScrollControlled: true,
+        barrierColor: Colors.white70,
+        elevation: 26,
+        backgroundColor: Colors.transparent,
+        context: context,
+        builder: (BuildContext bc) {
+          return ProfileAlbum(
+            model: widget.model,
+            idPhotoUrl: widget.model.userInfo.idPhotoUrl,
+            taxPhotoUrl: widget.model.userInfo.taxPhotoUrl,
+            bankPhotoUrl: widget.model.userInfo.bankPhotoUrl,
+          );
+        });
   }
 }
 

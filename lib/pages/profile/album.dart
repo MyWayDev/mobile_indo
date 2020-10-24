@@ -565,7 +565,7 @@ class _ProfileAlbumState extends State<ProfileAlbum> {
                                           fit: BoxFit.cover,
                                         )
                                       : Opacity(
-                                          opacity: .1,
+                                          opacity: 0.1,
                                           child: Icon(
                                             Icons.image_search,
                                             size: 100.0,
