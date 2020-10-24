@@ -821,7 +821,6 @@ class _NodeEditState extends State<NodeEdit> {
                                                                 }),
                                                           ],
                                                         ));
-                                                print('delete done');
                                               }),
                                         ],
                                       )),

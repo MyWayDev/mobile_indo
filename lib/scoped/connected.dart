@@ -250,7 +250,9 @@ class MainModel extends Model {
     for (var k in mkeys) {
       k.split('-')[0] == distrId
           ? keys.add(k.split('-')[1])
-          : k.split('-')[1] == distrId ? keys.add(k.split('-')[0]) : print('');
+          : k.split('-')[1] == distrId
+              ? keys.add(k.split('-')[0])
+              : print('');
     }
     keys.forEach((k) => k.toString() != null
         ? contact(k.toString()).then((c) {
@@ -1954,6 +1956,7 @@ for( var i = 0 ; i < _list.length; i++){
 
     if (response.statusCode == 200) {
       List responseData = await json.decode(response.body);
+      print(responseData);
       nodeEditData = NewMember.formJson(responseData[0]);
       print(nodeEditData.bankAccountNumber);
     } else {

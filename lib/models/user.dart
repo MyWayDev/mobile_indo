@@ -15,12 +15,13 @@ class User {
   String photoUrl;
   String idPhotoUrl;
   String taxPhotoUrl;
-
+  String bankPhotoUrl;
   String serviceCenter;
   bool isAllowed;
   bool isleader;
   bool tester;
   String token;
+  String bankId;
 
   User(
       {this.distrId,
@@ -32,10 +33,12 @@ class User {
       this.photoUrl,
       this.idPhotoUrl,
       this.taxPhotoUrl,
+      this.bankPhotoUrl,
       this.serviceCenter,
       this.isAllowed,
       this.isleader,
       this.tester,
+      this.bankId,
       this.token});
 
   toJson() {
@@ -48,7 +51,8 @@ class User {
       "isleader": false,
       "areaId": areaId,
       "name": name ?? '',
-      "tele": phone,
+      "tele": phone ?? '',
+      "bankId": bankId ?? ''
     };
   }
 
@@ -60,7 +64,8 @@ class User {
         email: json['E_MAIL'] ?? '',
         phone: json['TELEPHONE'] ?? '',
         areaId: json['AREA_ID'] ?? '',
-        serviceCenter: json['SERVICE_CENTER']);
+        serviceCenter: json['SERVICE_CENTER'] ?? '',
+        bankId: json['bankId'] ?? '');
   }
   // * firebase sample code for model..
   User.fromSnapshot(DataSnapshot snapshot)
@@ -74,6 +79,7 @@ class User {
         token = snapshot.value["token"],
         tester = snapshot.value["tester"] ?? false,
         photoUrl = snapshot.value["photoUrl"] ?? '',
+        bankPhotoUrl = snapshot.value["bankPhotoUrl"] ?? '',
         idPhotoUrl = snapshot.value["idPhotoUrl"] ?? '',
         taxPhotoUrl = snapshot.value["taxPhotoUrl"] ?? '';
 
@@ -88,7 +94,8 @@ class User {
         tester = snapshot.value["tester"] ?? false,
         photoUrl = snapshot.value["photoUrl"] ?? '',
         idPhotoUrl = snapshot.value["idPhotoUrl"] ?? '',
-        taxPhotoUrl = snapshot.value["taxPhotoUrl"] ?? '';
+        taxPhotoUrl = snapshot.value["taxPhotoUrl"] ?? '',
+        bankPhotoUrl = snapshot.value["bankPhotoUrl"] ?? '';
 }
 
 class NewMember {
@@ -108,6 +115,7 @@ class NewMember {
   String serviceCenter;
   String areaName;
   String held;
+  String bankId;
 
   NewMember(
       {this.distrId,
@@ -125,7 +133,8 @@ class NewMember {
       this.bankAccountNumber,
       this.taxNumber,
       this.serviceCenter,
-      this.held});
+      this.held,
+      this.bankId});
 
   factory NewMember.formJson(Map<String, dynamic> json) {
     return NewMember(
@@ -142,6 +151,7 @@ class NewMember {
         areaId: json['AREA_ID'] ?? '',
         areaName: json['AREA_NAME'] ?? '',
         serviceCenter: json['SERVICE_CENTER'] ?? '',
+        bankId: json['DS_BANK'] ?? '',
         held: json['HOLD_CRE'] ?? '1');
   }
 
@@ -171,7 +181,8 @@ class NewMember {
         "HOLD_CRE": held,
         "SM_ID": bankAccountNumber,
         "AP_AC_ID": taxNumber,
-        "SERVICE_CENTER": serviceCenter, // NOT IN DOCUMENTATION BUT NEEDED
+        "SERVICE_CENTER": serviceCenter,
+        "DS_BANK": bankId, // NOT IN DOCUMENTATION BUT NEEDED
       };
 
   String postNewMemberToJson(NewMember newMember) {

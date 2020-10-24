@@ -17,24 +17,29 @@ class ProfileAlbum extends StatefulWidget {
 
   final String idPhotoUrl;
   final String taxPhotoUrl;
+  final String bankPhotoUrl;
 
   ProfileAlbum(
       {@required this.model,
       @required this.idPhotoUrl,
-      @required this.taxPhotoUrl});
+      @required this.taxPhotoUrl,
+      @required this.bankPhotoUrl});
   @override
   _ProfileAlbumState createState() => _ProfileAlbumState();
 }
 
 class _ProfileAlbumState extends State<ProfileAlbum> {
   SharedPreferences prefs;
-
+  final String noImage =
+      'https://firebasestorage.googleapis.com/v0/b/mobile-coco.appspot.com/o/flamelink%2Fmedia%2Fsized%2F375_9999_100%2Fno%20image.png?alt=media&token=6a6764c8-9d01-4887-b22c-7e13b40ff5e8';
   String idPhotoUrl = '';
   String taxPhotoUrl = '';
+  String bankPhotoUrl = '';
 
   bool isLoading = false;
   File idImageFile;
   File taxImageFile;
+  File bankImageFile;
 
   @override
   void initState() {
@@ -51,7 +56,7 @@ class _ProfileAlbumState extends State<ProfileAlbum> {
     prefs = await SharedPreferences.getInstance();
     String idImageString() {
       String idImage;
-      widget.idPhotoUrl == null || widget.idPhotoUrl.isEmpty
+      widget.idPhotoUrl == '' || widget.idPhotoUrl.isEmpty
           ? idImage = ''
           : idImage = widget.idPhotoUrl;
       return idImage;
@@ -59,48 +64,127 @@ class _ProfileAlbumState extends State<ProfileAlbum> {
 
     String taxImageString() {
       String taxImage;
-      widget.taxPhotoUrl == null || widget.taxPhotoUrl.isEmpty
+      widget.taxPhotoUrl == '' || widget.taxPhotoUrl.isEmpty
           ? taxImage = ''
           : taxImage = widget.taxPhotoUrl;
       return taxImage;
     }
 
+    String bankImageString() {
+      String bankImage;
+      widget.bankPhotoUrl == '' || widget.bankPhotoUrl.isEmpty
+          ? bankImage = ''
+          : bankImage = widget.bankPhotoUrl;
+      return bankImage;
+    }
+
     idPhotoUrl = idImageString();
     taxPhotoUrl = taxImageString();
-
+    bankPhotoUrl = bankImageString();
     // Force refresh input
     setState(() {});
   }
 
   Future getIdImage() async {
-    File _image =
-        await ImagePicker.pickImage(source: ImageSource.gallery) ?? null;
+    final _picker = ImagePicker();
+    final _img =
+        await _picker.getImage(source: ImageSource.gallery, imageQuality: 10);
 
-    if (_image != null) {
+    if (_img != null) {
       setState(() {
-        idImageFile = _image;
+        idImageFile = File(_img.path);
         isLoading = true;
       });
     }
     uploadFileId();
   }
 
-  Future getTaxImage() async {
-    File _image = await ImagePicker.pickImage(source: ImageSource.gallery);
+  Future getBankImage() async {
+    final _picker = ImagePicker();
+    final _img =
+        await _picker.getImage(source: ImageSource.gallery, imageQuality: 10);
 
-    if (_image != null) {
+    if (_img != null) {
       setState(() {
-        taxImageFile = _image;
+        bankImageFile = File(_img.path);
+        isLoading = true;
+      });
+    }
+    uploadFileBank();
+  }
+
+  Future getTaxImage() async {
+    // ignore: deprecated_member_use
+    final _picker = ImagePicker();
+    final _img =
+        await _picker.getImage(source: ImageSource.gallery, imageQuality: 10);
+
+    if (_img != null) {
+      setState(() {
+        taxImageFile = File(_img.path);
         isLoading = true;
       });
     }
     uploadFileTax();
   }
 
+  Future uploadFileBank() async {
+    Random random = new Random();
+    String fileName =
+        widget.model.userInfo.key + '-bk-' + random.nextInt(10000).toString();
+    StorageReference reference =
+        FirebaseStorage.instance.ref().child("avatars/$fileName");
+    StorageUploadTask uploadTask = reference.putFile(bankImageFile);
+    StorageTaskSnapshot storageTaskSnapshot;
+    uploadTask.onComplete.then((value) {
+      if (value.error == null) {
+        storageTaskSnapshot = value;
+        storageTaskSnapshot.ref.getDownloadURL().then((downloadUrl) {
+          bankPhotoUrl = downloadUrl;
+          FirebaseDatabase.instance
+              .reference()
+              .child('indoDb/users/en-US/${widget.model.userInfo.key}')
+              .update({
+            //'name': name,
+            //'areaId': areaId,
+            // 'idPhotoUrl': idPhotoUrl,
+            'bankPhotoUrl': bankPhotoUrl
+          }).then((data) async {
+            await prefs.setString('taxPhotoUrl', taxPhotoUrl);
+            setState(() {
+              isLoading = false;
+            });
+            Fluttertoast.showToast(msg: "Upload success");
+          }).catchError((err) {
+            setState(() {
+              isLoading = false;
+            });
+            Fluttertoast.showToast(msg: err.toString());
+          });
+        }, onError: (err) {
+          setState(() {
+            isLoading = false;
+          });
+          Fluttertoast.showToast(msg: 'This file is not an image');
+        });
+      } else {
+        setState(() {
+          isLoading = false;
+        });
+        Fluttertoast.showToast(msg: 'This file is not an image');
+      }
+    }, onError: (err) {
+      setState(() {
+        isLoading = false;
+      });
+      Fluttertoast.showToast(msg: err.toString());
+    });
+  }
+
   Future uploadFileTax() async {
     Random random = new Random();
     String fileName =
-        widget.model.userInfo.key + '-' + random.nextInt(100000).toString();
+        widget.model.userInfo.key + '-tx-' + random.nextInt(10000).toString();
     StorageReference reference =
         FirebaseStorage.instance.ref().child("avatars/$fileName");
     StorageUploadTask uploadTask = reference.putFile(taxImageFile);
@@ -153,7 +237,7 @@ class _ProfileAlbumState extends State<ProfileAlbum> {
   Future uploadFileId() async {
     Random random = new Random();
     String fileName =
-        widget.model.userInfo.key + '-' + random.nextInt(100000).toString();
+        widget.model.userInfo.key + '-id-' + random.nextInt(10000).toString();
     StorageReference reference =
         FirebaseStorage.instance.ref().child("avatars/$fileName");
     StorageUploadTask uploadTask = reference.putFile(idImageFile);
@@ -210,54 +294,135 @@ class _ProfileAlbumState extends State<ProfileAlbum> {
         SingleChildScrollView(
           child: Column(
             children: <Widget>[
+              Container(
+                child: Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        'Personal Id ',
+                        style: TextStyle(
+                            color: Colors.pink[900],
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                            fontStyle: FontStyle.italic),
+                      ),
+                      GestureDetector(
+                          onTap: getIdImage,
+                          onDoubleTap: () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (_) {
+                              return ImageDetails(
+                                image: idPhotoUrl,
+                              );
+                            }));
+                          },
+                          child: Material(
+                            color: Colors.transparent,
+                            child: idPhotoUrl != ''
+                                ? CachedNetworkImage(
+                                    placeholder: (context, url) => Container(
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2.0,
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                                themeColor),
+                                      ),
+                                      width: MediaQuery.of(context)
+                                                  .devicePixelRatio <=
+                                              1.5
+                                          ? 180
+                                          : 220,
+                                      height: MediaQuery.of(context)
+                                                  .devicePixelRatio <=
+                                              1.5
+                                          ? 100
+                                          : 120,
+                                      padding: EdgeInsets.all(10.0),
+                                    ),
+                                    imageUrl: idPhotoUrl,
+                                    width: MediaQuery.of(context)
+                                                .devicePixelRatio <=
+                                            1.5
+                                        ? 180
+                                        : 220,
+                                    height: MediaQuery.of(context)
+                                                .devicePixelRatio <=
+                                            1.5
+                                        ? 100
+                                        : 120,
+                                    fit: BoxFit.cover,
+                                  )
+                                : Opacity(
+                                    opacity: .1,
+                                    child: Icon(
+                                      Icons.image_search,
+                                      size: 95.0,
+                                      color: Colors.pink[900],
+                                    ),
+                                  ),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(0.0)),
+                            clipBehavior: Clip.hardEdge,
+                          ))
+
+                      /*: Material(
+                              child: Image.file(
+                                idImageFile,
+                                width:
+                                    MediaQuery.of(context).devicePixelRatio <=
+                                            1.5
+                                        ? 230
+                                        : 250,
+                                height:
+                                    MediaQuery.of(context).devicePixelRatio <=
+                                            1.5
+                                        ? 100
+                                        : 120,
+                                fit: BoxFit.fill,
+                              ),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(0.0)),
+                              clipBehavior: Clip.hardEdge,
+                            ),*/
+                    ],
+                  ),
+                ),
+                width: double.infinity,
+                margin: EdgeInsets.all(5.0),
+              ),
               IntrinsicHeight(
                 child: Row(
+                  mainAxisSize: MainAxisSize.max,
                   children: [
                     Expanded(
                       child: Container(
                         child: Center(
                           child: Column(
                             children: <Widget>[
-                              Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  mainAxisSize: MainAxisSize.max,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: <Widget>[
-                                    IconButton(
-                                      icon: Icon(
-                                        Icons.add_a_photo,
-                                        color: Colors.black.withOpacity(0.7),
-                                      ),
-                                      onPressed: getIdImage,
-                                      padding: EdgeInsets.all(10.0),
-                                      splashColor: Colors.transparent,
-                                      highlightColor: greyColor,
-                                      iconSize: 25.0,
-                                    ),
-                                    IconButton(
-                                      icon: Icon(
-                                        Icons.zoom_in,
-                                        color: Colors.black.withOpacity(0.7),
-                                      ),
-                                      onPressed: () {
-                                        Navigator.push(context,
-                                            MaterialPageRoute(builder: (_) {
-                                          return ImageDetails(
-                                            image: widget.idPhotoUrl,
-                                          );
-                                        }));
-                                      },
-                                      padding: EdgeInsets.all(10.0),
-                                      splashColor: Colors.transparent,
-                                      highlightColor: greyColor,
-                                      iconSize: 25.0,
-                                    ),
-                                  ]),
-                              idImageFile == null
-                                  ? (idPhotoUrl != ''
-                                      ? Material(
-                                          child: CachedNetworkImage(
+                              Text(
+                                'Tax Id',
+                                style: TextStyle(
+                                    color: Colors.pink[900],
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13,
+                                    fontStyle: FontStyle.italic),
+                              ),
+                              GestureDetector(
+                                  onTap: getTaxImage,
+                                  onDoubleTap: () {
+                                    Navigator.push(context,
+                                        MaterialPageRoute(builder: (_) {
+                                      return ImageDetails(
+                                        image: taxPhotoUrl,
+                                      );
+                                    }));
+                                  },
+                                  child: Material(
+                                    color: Colors.transparent,
+                                    child: taxPhotoUrl != ''
+                                        ? CachedNetworkImage(
                                             placeholder: (context, url) =>
                                                 Container(
                                               child: CircularProgressIndicator(
@@ -274,127 +439,8 @@ class _ProfileAlbumState extends State<ProfileAlbum> {
                                               height: MediaQuery.of(context)
                                                           .devicePixelRatio <=
                                                       1.5
-                                                  ? 90
-                                                  : 100,
-                                              padding: EdgeInsets.all(10.0),
-                                            ),
-                                            imageUrl: idPhotoUrl,
-                                            width: MediaQuery.of(context)
-                                                        .devicePixelRatio <=
-                                                    1.5
-                                                ? 180
-                                                : 220,
-                                            height: MediaQuery.of(context)
-                                                        .devicePixelRatio <=
-                                                    1.5
-                                                ? 90
-                                                : 100,
-                                            fit: BoxFit.fitWidth,
-                                          ),
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(0.0)),
-                                          clipBehavior: Clip.hardEdge,
-                                        )
-                                      : Icon(
-                                          Icons.account_circle,
-                                          size: 100.0,
-                                          color: greyColor,
-                                        ))
-                                  : Material(
-                                      child: Image.file(
-                                        idImageFile,
-                                        width: MediaQuery.of(context)
-                                                    .devicePixelRatio <=
-                                                1.5
-                                            ? 230
-                                            : 250,
-                                        height: MediaQuery.of(context)
-                                                    .devicePixelRatio <=
-                                                1.5
-                                            ? 90
-                                            : 100,
-                                        fit: BoxFit.fitWidth,
-                                      ),
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(0.0)),
-                                      clipBehavior: Clip.hardEdge,
-                                    ),
-                            ],
-                          ),
-                        ),
-                        width: double.infinity,
-                        margin: EdgeInsets.all(5.0),
-                      ),
-                    ),
-                    VerticalDivider(
-                      endIndent: 5,
-                      width: 12,
-                      color: Colors.grey,
-                      indent: 10,
-                    ),
-                    Expanded(
-                      child: Container(
-                        child: Center(
-                          child: Column(
-                            children: <Widget>[
-                              Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  mainAxisSize: MainAxisSize.max,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: <Widget>[
-                                    IconButton(
-                                      icon: Icon(
-                                        Icons.add_a_photo,
-                                        color: Colors.black.withOpacity(0.7),
-                                      ),
-                                      onPressed: getTaxImage,
-                                      padding: EdgeInsets.all(10.0),
-                                      splashColor: Colors.transparent,
-                                      highlightColor: greyColor,
-                                      iconSize: 25.0,
-                                    ),
-                                    IconButton(
-                                      icon: Icon(
-                                        Icons.zoom_in,
-                                        color: Colors.black.withOpacity(0.7),
-                                      ),
-                                      onPressed: () {
-                                        Navigator.push(context,
-                                            MaterialPageRoute(builder: (_) {
-                                          return ImageDetails(
-                                            image: widget.taxPhotoUrl,
-                                          );
-                                        }));
-                                      },
-                                      padding: EdgeInsets.all(10.0),
-                                      splashColor: Colors.transparent,
-                                      highlightColor: greyColor,
-                                      iconSize: 25.0,
-                                    ),
-                                  ]),
-                              taxImageFile == null
-                                  ? (taxPhotoUrl != ''
-                                      ? Material(
-                                          child: CachedNetworkImage(
-                                            placeholder: (context, url) =>
-                                                Container(
-                                              child: CircularProgressIndicator(
-                                                strokeWidth: 2.0,
-                                                valueColor:
-                                                    AlwaysStoppedAnimation<
-                                                        Color>(themeColor),
-                                              ),
-                                              width: MediaQuery.of(context)
-                                                          .devicePixelRatio <=
-                                                      1.5
-                                                  ? 180
-                                                  : 220,
-                                              height: MediaQuery.of(context)
-                                                          .devicePixelRatio <=
-                                                      1.5
-                                                  ? 90
-                                                  : 100,
+                                                  ? 100
+                                                  : 120,
                                               padding: EdgeInsets.all(10.0),
                                             ),
                                             imageUrl: taxPhotoUrl,
@@ -406,20 +452,23 @@ class _ProfileAlbumState extends State<ProfileAlbum> {
                                             height: MediaQuery.of(context)
                                                         .devicePixelRatio <=
                                                     1.5
-                                                ? 90
-                                                : 100,
-                                            fit: BoxFit.fitWidth,
-                                          ),
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(0.0)),
-                                          clipBehavior: Clip.hardEdge,
-                                        )
-                                      : Icon(
-                                          Icons.account_circle,
-                                          size: 100.0,
-                                          color: greyColor,
-                                        ))
-                                  : Material(
+                                                ? 100
+                                                : 120,
+                                            fit: BoxFit.cover,
+                                          )
+                                        : Opacity(
+                                            opacity: .1,
+                                            child: Icon(
+                                              Icons.image_search,
+                                              size: 95.0,
+                                              color: Colors.pink[900],
+                                            )),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(0.0)),
+                                    clipBehavior: Clip.hardEdge,
+                                  ))
+
+                              /*  : Material(
                                       child: Image.file(
                                         taxImageFile,
                                         width: MediaQuery.of(context)
@@ -430,14 +479,103 @@ class _ProfileAlbumState extends State<ProfileAlbum> {
                                         height: MediaQuery.of(context)
                                                     .devicePixelRatio <=
                                                 1.5
-                                            ? 90
-                                            : 100,
-                                        fit: BoxFit.fitWidth,
+                                            ? 100
+                                            : 120,
+                                        fit: BoxFit.fill,
                                       ),
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(0.0)),
                                       clipBehavior: Clip.hardEdge,
+                                    ),*/
+                            ],
+                          ),
+                        ),
+                        width: double.infinity,
+                        margin: EdgeInsets.all(5.0),
+                      ),
+                    ),
+                    VerticalDivider(
+                      endIndent: 5,
+                      width: 3,
+                      color: Colors.pink[900],
+                      indent: 10,
+                    ),
+                    Expanded(
+                      child: Container(
+                        child: Center(
+                          child: Column(
+                            children: <Widget>[
+                              Text(
+                                'Bank Id',
+                                style: TextStyle(
+                                    color: Colors.pink[900],
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13,
+                                    fontStyle: FontStyle.italic),
+                              ),
+                              GestureDetector(
+                                onTap: getBankImage,
+                                onDoubleTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) {
+                                        return ImageDetails(
+                                          image: bankPhotoUrl,
+                                        );
+                                      },
                                     ),
+                                  );
+                                },
+                                child: Material(
+                                  color: Colors.transparent,
+                                  child: bankPhotoUrl != ''
+                                      ? CachedNetworkImage(
+                                          placeholder: (context, url) =>
+                                              Container(
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2.0,
+                                              valueColor:
+                                                  AlwaysStoppedAnimation<Color>(
+                                                      themeColor),
+                                            ),
+                                            width: MediaQuery.of(context)
+                                                        .devicePixelRatio <=
+                                                    1.5
+                                                ? 180
+                                                : 220,
+                                            height: MediaQuery.of(context)
+                                                        .devicePixelRatio <=
+                                                    1.5
+                                                ? 100
+                                                : 120,
+                                            padding: EdgeInsets.all(10.0),
+                                          ),
+                                          imageUrl: bankPhotoUrl,
+                                          width: MediaQuery.of(context)
+                                                      .devicePixelRatio <=
+                                                  1.5
+                                              ? 180
+                                              : 220,
+                                          height: MediaQuery.of(context)
+                                                      .devicePixelRatio <=
+                                                  1.5
+                                              ? 100
+                                              : 120,
+                                          fit: BoxFit.cover,
+                                        )
+                                      : Opacity(
+                                          opacity: .1,
+                                          child: Icon(
+                                            Icons.image_search,
+                                            size: 100.0,
+                                            color: Colors.pink[900],
+                                          )),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(0.0)),
+                                  clipBehavior: Clip.hardEdge,
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -450,7 +588,7 @@ class _ProfileAlbumState extends State<ProfileAlbum> {
               ),
             ],
           ),
-          padding: EdgeInsets.only(left: 10.0, right: 10.0),
+          padding: EdgeInsets.only(left: 5.0, right: 5.0),
         ),
 
         // Loading

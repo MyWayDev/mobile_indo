@@ -1,17 +1,11 @@
-import 'dart:async';
-import 'dart:io';
-import 'dart:math';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sliding_up_panel/sliding_up_panel_widget.dart';
-import 'package:groovin_material_icons/groovin_material_icons.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:mor_release/pages/profile/album.dart';
 import 'package:mor_release/pages/profile/profileForm.dart';
 import 'package:mor_release/scoped/connected.dart';
+import 'package:mor_release/widgets/color_loader_2.dart';
 import 'package:scoped_model/scoped_model.dart';
-import '../const.dart';
 
 class Settings extends StatelessWidget {
   @override
@@ -70,28 +64,36 @@ class SettingsScreenState extends State<SettingsScreen> {
 
   void _profileAlbumBottomSheet(context) {
     showModalBottomSheet(
+        isScrollControlled: true,
+        barrierColor: Colors.white70,
         elevation: 26,
         backgroundColor: Colors.transparent,
         context: context,
         builder: (BuildContext bc) {
           return ProfileAlbum(
-              model: widget.model,
-              idPhotoUrl: widget.model.userInfo.idPhotoUrl,
-              taxPhotoUrl: widget.model.userInfo.taxPhotoUrl);
+            model: widget.model,
+            idPhotoUrl: widget.model.userInfo.idPhotoUrl,
+            taxPhotoUrl: widget.model.userInfo.taxPhotoUrl,
+            bankPhotoUrl: widget.model.userInfo.bankPhotoUrl,
+          );
         });
   }
 
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomPadding: false,
       appBar: AppBar(
         title: Text(
-          widget.model.user.key,
-          style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
+          widget.model.user.name,
+          style: TextStyle(
+            color: Colors.white,
+          ),
         ),
         centerTitle: true,
       ),
       floatingActionButton: FloatingActionButton(
-        elevation: 20,
+        elevation: 30,
         clipBehavior: Clip.none,
         child: Stack(fit: StackFit.expand, children: [
           Positioned(
@@ -114,12 +116,21 @@ class SettingsScreenState extends State<SettingsScreen> {
         backgroundColor: Colors.pink[500],
         onPressed: () => _profileAlbumBottomSheet(context),
       ),
-      resizeToAvoidBottomPadding: true,
-      body: Column(children: <Widget>[
-        ProfileForm(
-          widget.model,
+      body: ModalProgressHUD(
+        child: SingleChildScrollView(
+          padding:
+              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+          reverse: true,
+          child: Column(children: <Widget>[
+            ProfileForm(
+              widget.model,
+            ),
+          ]),
         ),
-      ]),
+        inAsyncCall: widget.model.isloading,
+        opacity: 0.6,
+        progressIndicator: ColorLoader2(),
+      ),
     );
   }
 }

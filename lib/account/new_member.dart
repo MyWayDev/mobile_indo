@@ -444,7 +444,7 @@ class _NewMemberPage extends State<NewMemberPage> {
                                               color: Colors.black,
                                             ),
                                             TextFormField(
-                                              autovalidate: true,
+                                              // autovalidate: true,
                                               decoration: InputDecoration(
                                                   labelText: 'Nama',
                                                   contentPadding:

@@ -24,7 +24,7 @@ dependencies:
   #device_info: ^0.4.0+2
   fluttertoast: ^3.1.0
   shared_preferences: ^0.5.3+2
-  image_picker: ^0.6.0+15
+  image_picker: ^0.6.7+11
   cached_network_image: ^2.2.0+1
   intl: ^0.16.1
   flutter_full_pdf_viewer: ^1.0.6

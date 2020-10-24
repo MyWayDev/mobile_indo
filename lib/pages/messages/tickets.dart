@@ -39,7 +39,6 @@ class _TicketsState extends State<Tickets> {
   @override
   void initState() {
     getTicketTypes();
-
     databaseReference = database.reference().child(path);
     widget.distrId >= 5
         ? query = databaseReference
@@ -50,7 +49,6 @@ class _TicketsState extends State<Tickets> {
     subAdd = query.onChildAdded.listen(_onItemEntryAdded);
     subChanged = query.onChildChanged.listen(_onItemEntryChanged);
     subDel = query.onChildRemoved.listen(_onItemEntryDeleted);
-
     /* WidgetsBinding.instance.addPostFrameCallback((_) {
       _asyncInputDialog(context);
     });*/
@@ -509,29 +507,31 @@ class _TicketsState extends State<Tickets> {
 
   Widget _buildTicketItems(item) {
     return ConstrainedBox(
-        constraints: BoxConstraints.tight(Size(125, 48)),
-        child: ListTile(
-            title: Text(
-              item['itemId'] ?? "",
-              style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+      constraints: BoxConstraints.tight(Size(125, 48)),
+      child: ListTile(
+        title: Text(
+          item['itemId'] ?? "",
+          style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+        ),
+        trailing: Container(
+          width: 28,
+          height: 18,
+          decoration: BoxDecoration(
+            color: Colors.pink[900],
+            shape: BoxShape.circle,
+          ),
+          child: Text(
+            item['qty'] ?? "",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
             ),
-            trailing: Container(
-              width: 28,
-              height: 18,
-              decoration: BoxDecoration(
-                color: Colors.pink[900],
-                shape: BoxShape.circle,
-              ),
-              child: Text(
-                item['qty'] ?? "",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            )));
+          ),
+        ),
+      ),
+    );
   }
 
   _closeTicket(String key, bool value) {
