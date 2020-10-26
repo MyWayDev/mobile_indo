@@ -243,30 +243,32 @@ class _NewMemberPage extends State<NewMemberPage> {
     return ScopedModelDescendant<MainModel>(
         builder: (BuildContext context, Widget child, MainModel model) {
       return Scaffold(
-          floatingActionButton: FloatingActionButton(
-            elevation: 30,
-            clipBehavior: Clip.none,
-            child: Stack(fit: StackFit.expand, children: [
-              Positioned(
-                top: 1,
-                right: 8,
-                child: Icon(
-                  Icons.add,
-                  size: 18,
-                ),
-              ),
-              Positioned(
-                  bottom: 8,
-                  left: 2,
-                  right: 2,
-                  child: Icon(
-                    Icons.photo_album,
-                    size: 32,
-                  ))
-            ]),
-            backgroundColor: Colors.pink[500],
-            onPressed: () => _profileAlbumBottomSheet(context, model),
-          ),
+          floatingActionButton: veri
+              ? FloatingActionButton(
+                  elevation: 30,
+                  clipBehavior: Clip.none,
+                  child: Stack(fit: StackFit.expand, children: [
+                    Positioned(
+                      top: 1,
+                      right: 8,
+                      child: Icon(
+                        Icons.add,
+                        size: 18,
+                      ),
+                    ),
+                    Positioned(
+                        bottom: 8,
+                        left: 2,
+                        right: 2,
+                        child: Icon(
+                          Icons.photo_album,
+                          size: 32,
+                        ))
+                  ]),
+                  backgroundColor: Colors.pink[500],
+                  onPressed: () => _profileAlbumBottomSheet(context, model),
+                )
+              : null,
           body: Container(
             child: Form(
               key: _newMemberFormKey,
