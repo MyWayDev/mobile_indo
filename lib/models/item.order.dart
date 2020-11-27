@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:mor_release/models/gift.order.dart';
+import 'package:mor_release/models/user.dart';
 
 class ItemOrder {
   String itemId;
@@ -117,6 +118,8 @@ class SalesOrder {
   String soType;
   String projId;
   String courierFee;
+  String bonusDeduc;
+  List<DistrBonus> distrBonues;
   List<ItemOrder> order;
   List<GiftOrder> gifts;
   List<PromoOrder> promos;
@@ -139,10 +142,13 @@ class SalesOrder {
       this.soType,
       this.projId,
       this.courierFee,
+      this.bonusDeduc,
+      this.distrBonues,
       this.gifts,
       this.promos});
 
   Map<String, dynamic> toJson() => {
+        "ap3": distrBonues,
         "a9master": {
           "STORE_ID": storeId, //!new
           "BRANCH_ID": branchId, //!new
@@ -159,6 +165,7 @@ class SalesOrder {
           "DS_SHIPMENT_PLACE": areaId,
           "LREMARKS": note,
           "AREMARKS": courierFee ?? '0',
+          "SHIPMTHD_L": bonusDeduc,
           "DISC_NOTES": address,
         },
         "aadetail": order,
@@ -170,14 +177,13 @@ class SalesOrder {
     return json.encode(dyn);
   }
 
-  Future<http.Response> createPost(SalesOrder salesOrder) async {
-    final response =
-        await http.put('http://mywayindoapi.azurewebsites.net/api/invoice',
-            headers: {
-              HttpHeaders.contentTypeHeader: 'application/json',
-              //HttpHeaders.authorizationHeader: ''
-            },
-            body: postOrderToJson(salesOrder));
+  Future<http.Response> createPost(SalesOrder salesOrder, String apiUrl) async {
+    final response = await http.put('$apiUrl/invoice',
+        headers: {
+          HttpHeaders.contentTypeHeader: 'application/json',
+          //HttpHeaders.authorizationHeader: ''
+        },
+        body: postOrderToJson(salesOrder));
     return response;
   }
 }
@@ -196,9 +202,9 @@ class BulkSalesOrder {
     return json.encode(dyn);
   }
 
-  Future<http.Response> createBulkPost(BulkSalesOrder batch) async {
-    final response = await http.put(
-        'http://mywayindoapi.azurewebsites.net/api/insert_batch_sales_orders',
+  Future<http.Response> createBulkPost(
+      BulkSalesOrder batch, String apiUrl) async {
+    final response = await http.put('$apiUrl/insert_batch_sales_orders',
         headers: {
           HttpHeaders.contentTypeHeader: 'application/json',
           //HttpHeaders.authorizationHeader: ''

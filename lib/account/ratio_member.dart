@@ -15,7 +15,8 @@ import 'package:http/http.dart' as http;
 
 class RatioReport extends StatefulWidget {
   final String userId;
-  RatioReport(this.userId);
+  final String apiUrl;
+  RatioReport(this.userId, this.apiUrl);
 
   State<StatefulWidget> createState() {
     return _RatioReport();
@@ -165,8 +166,8 @@ class _RatioReport extends State<RatioReport> {
   Future<List<Member>> memberDetailsReportSummary(String distrid) async {
     members = [];
     isloading(true);
-    http.Response response = await http
-        .get('http://mywayindoapi.azurewebsites.net/api/distrratio/$distrid');
+    http.Response response =
+        await http.get('${widget.apiUrl}/distrratio/$distrid');
     if (response.statusCode == 200) {
       final _summary = json.decode(response.body) as List;
       members = _summary.map((m) => Member.formJsonRatio(m)).toList();

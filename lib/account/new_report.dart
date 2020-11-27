@@ -15,7 +15,8 @@ import 'package:http/http.dart' as http;
 
 class NewReport extends StatefulWidget {
   final String userId;
-  NewReport(this.userId);
+  final String apiUrl;
+  NewReport(this.userId, this.apiUrl);
 
   State<StatefulWidget> createState() {
     return _NewReport();
@@ -130,8 +131,8 @@ class _NewReport extends State<NewReport> {
   Future<List<Member>> memberDetailsReportSummary(String distrid) async {
     members = [];
     isloading(true);
-    http.Response response = await http
-        .get('http://mywayindoapi.azurewebsites.net/api/newmembers/$distrid');
+    http.Response response =
+        await http.get('${widget.apiUrl}/newmembers/$distrid');
     if (response.statusCode == 200) {
       final _summary = json.decode(response.body) as List;
       members = _summary.map((m) => Member.formJsonNew(m)).toList();

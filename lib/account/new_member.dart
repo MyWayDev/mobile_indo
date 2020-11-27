@@ -14,7 +14,6 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:groovin_material_icons/groovin_material_icons.dart';
 import 'package:http/http.dart' as http;
 import 'package:mor_release/pages/profile/album.dart';
-
 import 'package:intl/intl.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
 
@@ -105,8 +104,8 @@ class _NewMemberPage extends State<NewMemberPage> {
   List<AreaPlace> areaPlace;
   void getPlaces() async {
     areaPlace = [];
-    final response = await http.get(
-        'http://mywayindoapi.azurewebsites.net/api/get_all_shipment_places/');
+    final response = await http
+        .get('http://34.101.79.170:5000/api/get_all_shipment_places/');
     if (response.statusCode == 200) {
       final _shipmentArea = json.decode(response.body) as List;
       areaPlace = _shipmentArea.map((s) => AreaPlace.json(s)).toList();
@@ -421,6 +420,7 @@ class _NewMemberPage extends State<NewMemberPage> {
                                                                             model.userInfo.distrId,
                                                                             model.setStoreId)) {
                                                                           msg = await _saveNewMember(
+                                                                              model.settings.apiUrl,
                                                                               model.userInfo.distrId,
                                                                               model.docType,
                                                                               model.setStoreId);
@@ -713,7 +713,6 @@ class _NewMemberPage extends State<NewMemberPage> {
                                                           placeSplit =
                                                               selectedValue
                                                                   .split('\ ');
-                                                          print(placeSplit);
                                                         });
                                                       },
                                                     )
@@ -765,13 +764,14 @@ class _NewMemberPage extends State<NewMemberPage> {
 
   String errorM = '';
   Future<String> _saveNewMember(
-      String user, String docType, String storeId) async {
+      String user, String docType, String storeId, String apiUrl) async {
     print('docType:$docType:storeId:$storeId');
     Id body;
     String msg;
     isloading(true);
     print(_newMemberForm.postNewMemberToJson(_newMemberForm));
     Response response = await _newMemberForm.createPost(
+        apiUrl,
         _newMemberForm,
         user,
         getplace(placeSplit.first).shipmentPlace,

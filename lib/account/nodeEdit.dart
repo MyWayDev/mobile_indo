@@ -87,8 +87,8 @@ class _NodeEditState extends State<NodeEdit> {
   }
 
   Future<MemberSO> getMemberSO(String distrId) async {
-    final _response = await http.get(
-        'http://mywayindoapi.azurewebsites.net/api/get_initial_so/$distrId');
+    final _response = await http
+        .get('${widget.model.settings.apiUrl}/get_initial_so/$distrId');
     if (_response.statusCode == 200) {
       final responseData = await json.decode(_response.body);
       _memberSO = MemberSO.fromJson(responseData);
@@ -128,7 +128,8 @@ class _NodeEditState extends State<NodeEdit> {
     isloading(true);
     String msg;
     print(nodeData.editMemberEncode(nodeData));
-    Response response = await nodeData.editPost(nodeData);
+    Response response =
+        await nodeData.editPost(nodeData, widget.model.settings.apiUrl);
     if (response.statusCode == 200) {
       resetVeri();
     }
@@ -865,7 +866,7 @@ class _NodeEditState extends State<NodeEdit> {
   Future<String> deleteMemberSO() async {
     String _msg = '';
     http.Response response = await http.post(
-        'http://mywayindoapi.azurewebsites.net/api/delete_distr/${_nodeData.distrId}/${_memberSO.soId}/${_nodeData.serviceCenter}/${_memberSO.soType}/${_nodeData.serviceCenter}');
+        '${widget.model.settings.apiUrl}/delete_distr/${_nodeData.distrId}/${_memberSO.soId}/${_nodeData.serviceCenter}/${_memberSO.soType}/${_nodeData.serviceCenter}');
     if (response.statusCode == 200) {
       _msg = 'Deleted';
     } else {

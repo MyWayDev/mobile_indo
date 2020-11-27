@@ -126,9 +126,8 @@ class ShipmentArea {
     return json.encode(dyn);
   }
 
-  Future<http.Response> createPost(ShipmentArea address) async {
-    final response = await http.put(
-        'http://mywayindoapi.azurewebsites.net/api/add_new_distr_shipment_place',
+  Future<http.Response> createPost(ShipmentArea address, String apiUrl) async {
+    final response = await http.put('$apiUrl/api/add_new_distr_shipment_place',
         headers: {
           HttpHeaders.contentTypeHeader: 'application/json',
           //HttpHeaders.authorizationHeader: ''

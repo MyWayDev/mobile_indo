@@ -115,7 +115,9 @@ class NewMember {
   String serviceCenter;
   String areaName;
   String held;
+  var rate;
   String bankId;
+  String shipmentCompany;
 
   NewMember(
       {this.distrId,
@@ -134,7 +136,9 @@ class NewMember {
       this.taxNumber,
       this.serviceCenter,
       this.held,
-      this.bankId});
+      this.rate,
+      this.bankId,
+      this.shipmentCompany});
 
   factory NewMember.formJson(Map<String, dynamic> json) {
     return NewMember(
@@ -169,6 +173,9 @@ class NewMember {
         "SM_ID": bankAccountNumber,
         "AP_AC_ID": taxNumber,
         "SERVICE_CENTER": serviceCenter,
+        "DS_BANK": bankId,
+        "RATE": rate,
+        "Ds_SHIPMENT_COMP": shipmentCompany,
       };
 
   Map<String, dynamic> editToJson() => {
@@ -192,6 +199,7 @@ class NewMember {
   // refactor to new schema from api documentation;
 
   Future<http.Response> createPost(
+      String apiUrl,
       NewMember newMember,
       String user,
       String shipmentPlace,
@@ -199,7 +207,27 @@ class NewMember {
       String docType,
       String storeId) async {
     final response = await http.put(
-        'http://mywayindoapi.azurewebsites.net/api/memregister/$user/$shipmentPlace/$shipmentPlaceName/$docType/$storeId',
+        '$apiUrl/memregister/$user/$shipmentPlace/$shipmentPlaceName/$docType/$storeId',
+        headers: {
+          HttpHeaders.contentTypeHeader: 'application/json',
+          //HttpHeaders.authorizationHeader: ''
+        },
+        body: postNewMemberToJson(newMember));
+
+    return response;
+  }
+
+  Future<http.Response> newMemberCreatePost(
+      String apiUrl,
+      NewMember newMember,
+      String user,
+      String shipmentPlace,
+      String shipmentPlaceName,
+      String docType,
+      String address,
+      String storeId) async {
+    final response = await http.put(
+        '$apiUrl/memregister_updated/$user/$shipmentPlace/$shipmentPlaceName/$address/$docType/$storeId',
         headers: {
           HttpHeaders.contentTypeHeader: 'application/json',
           //HttpHeaders.authorizationHeader: ''
@@ -214,14 +242,13 @@ class NewMember {
     return json.encode(dyn);
   }
 
-  Future<http.Response> editPost(NewMember newMember) async {
-    final response =
-        await http.post('http://mywayindoapi.azurewebsites.net/api/edit_distr/',
-            headers: {
-              HttpHeaders.contentTypeHeader: 'application/json',
-              //HttpHeaders.authorizationHeader: ''
-            },
-            body: editMemberEncode(newMember));
+  Future<http.Response> editPost(NewMember newMember, String apiUrl) async {
+    final response = await http.post('$apiUrl/edit_distr/',
+        headers: {
+          HttpHeaders.contentTypeHeader: 'application/json',
+          //HttpHeaders.authorizationHeader: ''
+        },
+        body: editMemberEncode(newMember));
 
     return response;
   }
@@ -322,5 +349,25 @@ class Member {
       grpCount: json['COUNT'] ?? 0,
       areaName: json['AREA'],
     );
+  }
+}
+
+class DistrBonus {
+  String distrId;
+  String name;
+  var bonus;
+
+  DistrBonus({this.distrId, this.name, this.bonus});
+  toJson() {
+    return {"DISTR_ID": distrId};
+  }
+
+  String distrBonusToJson(DistrBonus distrBonus) {
+    final dyn = distrBonus.toJson();
+    return json.encode(dyn);
+  }
+
+  factory DistrBonus.fromJson(Map<dynamic, dynamic> json) {
+    return DistrBonus(distrId: json['distr_id'], bonus: json['NET_DESRV']);
   }
 }

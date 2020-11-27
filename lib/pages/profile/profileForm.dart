@@ -77,8 +77,8 @@ class _ProfileFormState extends State<ProfileForm> {
 
   void getBanks() async {
     banks = [];
-    final response = await http
-        .get('http://mywayindoapi.azurewebsites.net/api/get_bank_info/');
+    final response =
+        await http.get('http://34.101.79.170:5000/api/get_bank_info/');
     if (response.statusCode == 200) {
       final _banks = json.decode(response.body) as List;
       banks = _banks.map((s) => Bank.json(s)).toList();
@@ -478,7 +478,8 @@ class _ProfileFormState extends State<ProfileForm> {
     isloading(true);
     String msg;
     print(memberEditData.editMemberEncode(memberEditData));
-    Response response = await memberEditData.editPost(memberEditData);
+    Response response = await memberEditData.editPost(
+        memberEditData, widget.model.settings.apiUrl);
     if (response.statusCode == 200) {
       //2033243 resetVeri();
     }

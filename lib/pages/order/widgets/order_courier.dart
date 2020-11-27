@@ -160,6 +160,8 @@ class _CourierOrder extends State<CourierOrder> {
                                   isEmpty: state.value == null,
                                   child: DropdownButtonHideUnderline(
                                     child: DropdownButton<Courier>(
+                                      isExpanded: true,
+
                                       // iconSize: 25.0,
                                       // elevation: 5,
                                       value: stateValue,

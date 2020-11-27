@@ -64,10 +64,10 @@ class ReportTabs extends StatelessWidget {
               preferredSize: Size.fromHeight(45.0), child: _appBar),
           body: TabBarView(
             children: <Widget>[
-              Report(model.userInfo.distrId),
-              NewReport(model.userInfo.distrId),
-              RatioReport(model.userInfo.distrId),
-              DetailsReport(model.userInfo.distrId),
+              Report(model.userInfo.distrId, model.settings.apiUrl),
+              NewReport(model.userInfo.distrId, model.settings.apiUrl),
+              RatioReport(model.userInfo.distrId, model.settings.apiUrl),
+              DetailsReport(model.userInfo.distrId, model.settings.apiUrl),
               // ExpansionTileSample() // SwitchPage(ItemsPage()),
               //OrderPage(), //SwitchPage(OrderPage()),
               //ProductList(),

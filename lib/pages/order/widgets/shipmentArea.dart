@@ -4,6 +4,7 @@ import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:mor_release/models/area.dart';
 import 'package:mor_release/models/courier.dart';
 import 'package:mor_release/pages/order/widgets/addAddress.dart';
+import 'package:mor_release/pages/order/widgets/newMem_Courier.dart';
 import 'package:mor_release/scoped/connected.dart';
 import 'package:mor_release/widgets/color_loader_2.dart';
 
@@ -11,8 +12,14 @@ class ShipmentPlace extends StatefulWidget {
   final MainModel model;
   final String memberId;
   final bool isEdit;
+  final bool isNewMember;
 
-  ShipmentPlace({@required this.model, this.memberId, this.isEdit = false});
+  ShipmentPlace({
+    @required this.model,
+    this.memberId,
+    this.isEdit = false,
+    this.isNewMember = false,
+  });
 
   @override
   _ShipmentAreaState createState() => _ShipmentAreaState();
@@ -29,6 +36,7 @@ class _ShipmentAreaState extends State<ShipmentPlace>
   String type;
   List<Region> distrPoints = [];
   List<ShipmentArea> shipmentAreas = [];
+  List<Courier> couriers = [];
 
   hasData(bool data) {
     setState(() {
@@ -60,6 +68,11 @@ class _ShipmentAreaState extends State<ShipmentPlace>
           .first
           .shipmentName;
     });
+    print('type=>$type');
+    print('distrPoint=>${widget.model.distrPoint}');
+    print('shipmentArea=>${widget.model.shipmentArea}');
+    print('shipmentName=>${widget.model.shipmentName}');
+    print('address=>${widget.model.shipmentAddress}');
   }
 
   getDistrPoints() async {
@@ -91,6 +104,13 @@ class _ShipmentAreaState extends State<ShipmentPlace>
     }
   }
 
+  _showNewMemberCourier() {
+    showDialog(
+        context: context,
+        builder: (_) => NewMemberCourier(couriers, widget.model.shipmentArea,
+            widget.model.userInfo.distrId, widget.model.userInfo.distrId));
+  }
+
   getAreas() async {
     isloading(true);
     print(
@@ -116,8 +136,11 @@ class _ShipmentAreaState extends State<ShipmentPlace>
 
   @override
   void initState() {
+    isloading(true);
+    //getCouriers();
     getDistrPoints();
     distrpoint = widget.model.distrPoint;
+    isloading(false);
 
     super.initState();
   }
@@ -299,8 +322,11 @@ class _ShipmentAreaState extends State<ShipmentPlace>
                                       ? widget.model
                                           .orderToBulk(widget.model.bulkDistrId)
                                       : null;
-
+                                  couriers = await widget.model.couriersList(
+                                      widget.model.shipmentArea,
+                                      widget.model.distrPoint);
                                   Navigator.of(context).pop();
+                                  _showNewMemberCourier();
                                 },
                               )
                             : Container(),

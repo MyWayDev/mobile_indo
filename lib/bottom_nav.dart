@@ -3,6 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:groovin_material_icons/groovin_material_icons.dart';
 import 'package:mor_release/account/new_member.dart';
+import 'package:mor_release/account/new_registration.dart';
 import 'package:mor_release/account/report.dart';
 import 'package:mor_release/models/ticket.dart';
 import 'package:mor_release/pages/items/items.tabs.dart';
@@ -85,7 +86,7 @@ class _BottomNav extends State<BottomNav> with SingleTickerProviderStateMixin {
           // Add tabs as widgets
           children: <Widget>[
             ItemsTabs(),
-            NewMemberPage(),
+            NewReg(model.settings.apiUrl),
             Tickets(
               distrId: int.parse(model.user.key),
             ),

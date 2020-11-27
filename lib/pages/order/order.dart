@@ -9,6 +9,7 @@ import 'package:mor_release/pages/gift/gift_card.dart';
 import 'package:mor_release/pages/gift/promo/promo_card.dart';
 import 'package:mor_release/pages/order/bulkOrder.dart';
 import 'package:mor_release/pages/order/end_order.dart';
+import 'package:mor_release/pages/order/widgets/bonus.deduct.dart';
 import 'package:mor_release/pages/order/widgets/shipmentArea.dart';
 import 'package:mor_release/scoped/connected.dart';
 import 'package:mor_release/widgets/stock_dialog.dart';
@@ -462,10 +463,17 @@ class _OrderPage extends State<OrderPage> {
                                           fillColor: Colors.green,
                                           onPressed: () async {
                                             model.loading = false;
-                                            Navigator.push(context,
-                                                MaterialPageRoute(builder: (_) {
-                                              return EndOrder(model);
-                                            }));
+                                            model.bonusDeductValidation()
+                                                ? model
+                                                    .flush(context, 'error')
+                                                    .show(context)
+                                                : Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (_) {
+                                                      return EndOrder(model);
+                                                    }),
+                                                  );
                                           },
                                           splashColor: Colors.pink[900],
                                         ),
@@ -515,6 +523,9 @@ class _OrderPage extends State<OrderPage> {
                                                 },
                                                 splashColor: Colors.pink[900],
                                               )))))
+                    : Container(),
+                model.itemorderlist.isNotEmpty
+                    ? BonusDeduct(model)
                     : Container(),
                 model.isBulk ? BulkGiftsAndPromos(model) : Container(),
                 _orderExp(context, model, formatter, formatWeight)

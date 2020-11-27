@@ -58,8 +58,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 color: Color(0xFFFDD148),
               ),
               Positioned(
-                bottom: 450.0,
-                right: 100.0,
                 child: Container(
                   height: 400.0,
                   width: 400.0,

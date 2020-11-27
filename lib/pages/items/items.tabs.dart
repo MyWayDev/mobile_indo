@@ -8,6 +8,8 @@ import 'package:mor_release/pages/order/widgets/passDialog.dart';
 import 'package:mor_release/pages/profile/profile.dart';
 import 'package:mor_release/scoped/connected.dart';
 import 'package:mor_release/track/track.tabs.dart';
+import 'package:mor_release/widgets/playList.dart';
+import 'package:mor_release/widgets/youtube.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:badges/badges.dart';
 import '../../cat.dart';
@@ -54,6 +56,15 @@ class ItemsTabs extends StatelessWidget {
                           builder: (context) => Cat(
                                 pdfUrl: model.settings.pdfUrl,
                               )));
+                }),
+            ListTile(
+                leading: Icon(Icons.video_collection),
+                title: Text('videos'),
+                onTap: () {
+                  //print(model.settings.pdfUrl);
+
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => VideoList()));
                 }),
             ListTile(
                 leading: Icon(Icons.backspace),

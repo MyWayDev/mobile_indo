@@ -15,6 +15,8 @@ class Lock {
   List limitedItem;
   String bankInfo;
   String flush;
+  var sKitWeight;
+  String apiUrl;
 
   Lock(
       {this.id,
@@ -27,7 +29,9 @@ class Lock {
       this.pdfUrl,
       this.maxLimited,
       this.bankInfo,
-      this.flush});
+      this.flush,
+      this.sKitWeight,
+      this.apiUrl});
 
   Lock.fromSnapshot(DataSnapshot snapshot)
       : id = snapshot.value['id'],
@@ -43,5 +47,7 @@ class Lock {
         pdfUrl = snapshot.value['pdfUrl'] ?? '',
         limitedItem = snapshot.value['limtedItem'] ?? [],
         flush = snapshot.value['flush'],
-        bankInfo = snapshot.value['bankInfo'] ?? '';
+        sKitWeight = snapshot.value['sKitWeight'],
+        bankInfo = snapshot.value['bankInfo'] ?? '',
+        apiUrl = snapshot.value['apiUrl' ?? 'http://34.101.79.170:5000/api'];
 }

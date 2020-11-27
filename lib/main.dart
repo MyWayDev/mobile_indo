@@ -11,7 +11,6 @@ import 'package:mor_release/pages/messages/local_note.dart';
 import 'package:mor_release/pages/order/bulkOrder.dart';
 import 'package:mor_release/pages/order/end_order.dart';
 import 'package:mor_release/pages/order/order.dart';
-import 'package:mor_release/pages/profile/profile.dart';
 import 'package:mor_release/pages/user/phoneAuth.dart';
 import 'package:mor_release/scoped/connected.dart';
 import './pages/user/registration_page.dart';
@@ -37,6 +36,7 @@ class _MyApp extends State<MyApp> {
   final MainModel model = MainModel();
 
   Random random = Random();
+
   final String pathLink = 'indoDb/tokens/';
   static final FirebaseDatabase database = FirebaseDatabase.instance;
   final DatabaseReference databaseReference = database.reference();
@@ -56,6 +56,7 @@ class _MyApp extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+
     String _token = '';
     initTokenListen();
     Future onSelectNotification(String payload) async => Navigator.push(

@@ -62,13 +62,13 @@ class _AddRegionState extends State<AddRegion> {
     }
   }
 
-  Future<List<ShipmentArea>> getAreas(String areaId) async {
+  Future<List<ShipmentArea>> getAreas(String areaId, String apiUrl) async {
     loading(true);
 
     List<ShipmentArea> shipmentAreas = [];
     areas.clear();
-    final response = await http.get(
-        'http://mywayindoapi.azurewebsites.net/api/get_shipment_places_by_area_id/$areaId');
+    final response =
+        await http.get('$apiUrl/get_shipment_places_by_area_id/$areaId');
     if (response.statusCode == 200) {
       final _shipmentArea = json.decode(response.body) as List;
       shipmentAreas =
@@ -116,62 +116,63 @@ class _AddRegionState extends State<AddRegion> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-        child: AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-      content: Column(
-        mainAxisSize: MainAxisSize.max,
-        //  mainAxisAlignment: MainAxisAlignment.start,
-        // crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Text(
-            'Tambahkan Alamat',
-            softWrap: true,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          SearchableDropdown(
-            hint: Center(
-              child: Text(
-                'Pilih Kota',
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+    return ScopedModelDescendant<MainModel>(
+        builder: (BuildContext context, Widget child, MainModel model) {
+      return SingleChildScrollView(
+          child: AlertDialog(
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+        content: Column(
+          mainAxisSize: MainAxisSize.max,
+          //  mainAxisAlignment: MainAxisAlignment.start,
+          // crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              'Tambahkan Alamat',
+              softWrap: true,
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            SearchableDropdown(
+              hint: Center(
+                child: Text(
+                  'Pilih Kota',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                ),
               ),
+              icon: Icon(
+                Icons.location_searching,
+                size: 24,
+              ),
+              iconEnabledColor: Colors.pink[200],
+              iconDisabledColor: Colors.grey,
+              items: regions,
+              value: selectedRegion,
+              onChanged: (value) async {
+                hasData(false);
+                setState(() {
+                  selectedRegion = value;
+                  regionSplit = selectedRegion.split('\ ');
+                  hasData(true);
+                });
+                await getAreas(regionSplit.first, model.settings.apiUrl);
+                setState(() {});
+              },
             ),
-            icon: Icon(
-              Icons.location_searching,
-              size: 24,
-            ),
-            iconEnabledColor: Colors.pink[200],
-            iconDisabledColor: Colors.grey,
-            items: regions,
-            value: selectedRegion,
-            onChanged: (value) async {
-              hasData(false);
-              setState(() {
-                selectedRegion = value;
-                regionSplit = selectedRegion.split('\ ');
-                hasData(true);
-              });
-              await getAreas(regionSplit.first);
-              setState(() {});
-            },
-          ),
-          regionSplit != null
-              ? Container(
-                  child: areas.length > 0
-                      ? AddAddress(widget.memberId, areas)
-                      : Container(
-                          child: LinearProgressIndicator(
-                            backgroundColor: greyColor,
+            regionSplit != null
+                ? Container(
+                    child: areas.length > 0
+                        ? AddAddress(widget.memberId, areas)
+                        : Container(
+                            child: LinearProgressIndicator(
+                              backgroundColor: greyColor,
+                            ),
                           ),
-                        ),
-                )
-              : Container()
-        ],
-      ),
-      actions: <Widget>[
-        ScopedModelDescendant<MainModel>(
-            builder: (BuildContext context, Widget child, MainModel model) {
-          return IconButton(
+                  )
+                : Container()
+          ],
+        ),
+        actions: <Widget>[
+          IconButton(
             icon: Icon(
               Icons.close,
               color: Colors.red,
@@ -184,10 +185,10 @@ class _AddRegionState extends State<AddRegion> {
                   builder: (_) => ShipmentPlace(
                       model: model, isEdit: model.isBulk ? true : false));
             },
-          );
-        })
-      ],
-    ));
+          )
+        ],
+      ));
+    });
   }
 }
 
@@ -362,11 +363,12 @@ class _AddAddressState extends State<AddAddress> {
     if (list.length > 5) {
       String delId = list.first.shipmentId.toString();
       http.delete(
-          'http://mywayindoapi.azurewebsites.net/api/delete_distr_shipment_place_record/$delId');
+          '${model.settings.apiUrl}/delete_distr_shipment_place_record/$delId');
     }
     String msg;
 
-    http.Response response = await _newAddressForm.createPost(_newAddressForm);
+    http.Response response = await _newAddressForm.createPost(
+        _newAddressForm, model.settings.apiUrl);
     if (response.statusCode == 201) {
       msg = 'sukses';
       isAsync(false);
