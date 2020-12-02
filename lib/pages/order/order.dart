@@ -465,7 +465,8 @@ class _OrderPage extends State<OrderPage> {
                                             model.loading = false;
                                             model.bonusDeductValidation()
                                                 ? model
-                                                    .flush(context, 'error')
+                                                    .flush(context,
+                                                        'Pembayaran bonus tidak boleh lebih dari total pesanan')
                                                     .show(context)
                                                 : Navigator.push(
                                                     context,

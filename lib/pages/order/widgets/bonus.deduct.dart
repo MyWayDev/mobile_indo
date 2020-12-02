@@ -1,6 +1,7 @@
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:groovin_material_icons/groovin_material_icons.dart';
+import 'package:intl/intl.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:mor_release/models/user.dart';
 import 'package:mor_release/pages/order/widgets/disrtBonusList.dart';
@@ -21,6 +22,7 @@ class _BonusDeductState extends State<BonusDeduct> {
   bool veri = false;
   bool _isloading = false;
   DistrBonus _userBonus;
+  final _formatBonus = new NumberFormat("#,###,###");
 
   void isloading(bool i) {
     setState(() {
@@ -58,93 +60,95 @@ class _BonusDeductState extends State<BonusDeduct> {
           child: Container(
             height: 34.0,
             child: RaisedButton(
-              onPressed: widget.model.userInfo.isleader
-                  ? () {
+              onPressed:
+                  /*  widget.model.userInfo.isleader
+                 ? () {
                       showDialog(
                           context: context,
                           builder: (_) => nodeDialog(context));
                     }
-                  : () async {
-                      _userBonus = await widget.model
-                          .distrBonus(widget.model.userInfo.distrId);
-                      DistrBonus userBonus = DistrBonus(
-                          distrId: _userBonus.distrId,
-                          name: widget.model.userInfo.name,
-                          bonus: _userBonus.bonus);
-                      if (_userBonus != null) {
-                        !widget.model.getDistrBonus(
-                                    widget.model.userInfo.distrId) &&
-                                userBonus != null &&
-                                userBonus.bonus > 0
-                            ? showDialog(
-                                barrierDismissible: true,
-                                context: context,
-                                builder: (_) => Dialog(
-                                  elevation: 21,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(10.0)),
-                                  child: Container(
-                                    height: 95,
-                                    child: Center(
-                                      child: ListTile(
-                                        title: Column(children: <Widget>[
-                                          Text(
-                                            int.parse(userBonus.distrId)
-                                                .toString(),
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.pink[900]),
-                                          ),
-                                          Text(
-                                            userBonus.name,
-                                            style: TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          Text(userBonus.bonus.toString()),
-                                        ]),
-                                        leading: IconButton(
-                                            icon: Icon(
-                                              Icons.check,
-                                              size: 30,
-                                              color: Colors.green,
-                                            ),
-                                            onPressed: () {
-                                              widget.model.distrBonusList
-                                                  .add(userBonus);
-                                              Navigator.of(context).pop();
-                                            }),
-                                        trailing: IconButton(
-                                          icon: Icon(
-                                            Icons.close,
-                                            size: 30,
-                                            color: Colors.red,
-                                          ),
-                                          onPressed: () =>
-                                              Navigator.of(context).pop(),
-                                        ),
-                                      ),
+                  :*/
+                  () async {
+                _userBonus = await widget.model
+                    .distrBonus(widget.model.userInfo.distrId);
+                DistrBonus userBonus = DistrBonus(
+                    distrId: _userBonus.distrId,
+                    name: widget.model.userInfo.name,
+                    bonus: _userBonus.bonus);
+                if (_userBonus != null) {
+                  !widget.model.getDistrBonus(widget.model.userInfo.distrId) &&
+                          userBonus != null &&
+                          userBonus.bonus > 0
+                      ? showDialog(
+                          barrierDismissible: true,
+                          context: context,
+                          builder: (_) => Dialog(
+                            elevation: 21,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0)),
+                            child: Container(
+                              height: 95,
+                              child: Center(
+                                child: ListTile(
+                                  title: Column(children: <Widget>[
+                                    Text(
+                                      int.parse(userBonus.distrId).toString(),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.pink[900]),
                                     ),
+                                    Text(
+                                      userBonus.name,
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(_formatBonus.format(userBonus.bonus) +
+                                        ' ' +
+                                        'Rp'),
+                                  ]),
+                                  leading: IconButton(
+                                      icon: Icon(
+                                        Icons.check,
+                                        size: 30,
+                                        color: Colors.green,
+                                      ),
+                                      onPressed: () {
+                                        widget.model.distrBonusList
+                                            .add(userBonus);
+                                        Navigator.of(context).pop();
+                                      }),
+                                  trailing: IconButton(
+                                    icon: Icon(
+                                      Icons.close,
+                                      size: 30,
+                                      color: Colors.red,
+                                    ),
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(),
                                   ),
                                 ),
-                              )
-                            : showDialog(
-                                barrierDismissible: true,
-                                context: context,
-                                builder: (_) => AlertDialog(
-                                  title: Text('Bonus Sudah Terpakai'),
-                                ),
-                              );
-                      }
-                      showDialog(
-                        barrierDismissible: true,
-                        context: context,
-                        builder: (_) => AlertDialog(
-                          title: Text('Bonus Sudah Terpakai'),
-                        ),
-                      );
-                    },
+                              ),
+                            ),
+                          ),
+                        )
+                      : showDialog(
+                          barrierDismissible: true,
+                          context: context,
+                          builder: (_) => AlertDialog(
+                            title: Text('Bonus Sudah Terpakai'),
+                          ),
+                        );
+                } else {
+                  showDialog(
+                    barrierDismissible: true,
+                    context: context,
+                    builder: (_) => AlertDialog(
+                      title: Text('Bonus Sudah Terpakai'),
+                    ),
+                  );
+                }
+              },
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(80.0)),
               padding: EdgeInsets.all(2.0),
@@ -164,7 +168,11 @@ class _BonusDeductState extends State<BonusDeduct> {
                     alignment: Alignment.bottomRight,
                     child: widget.model.distrBonusList.isNotEmpty
                         ? Text(
-                            "${widget.model.distrBonusDeductTotal().toString()} EGP ",
+                            _formatBonus.format(
+                                    widget.model.distrBonusDeductTotal()) +
+                                ' ' +
+                                'Rp' +
+                                ' ',
                             style: TextStyle(
                                 color: Colors.greenAccent,
                                 fontSize: 12.5,
@@ -178,7 +186,7 @@ class _BonusDeductState extends State<BonusDeduct> {
                     alignment: Alignment.center,
                     child: Text(
                       "Pemotongan Bonus",
-                      textAlign: TextAlign.right,
+                      textAlign: TextAlign.left,
                       style: TextStyle(
                           fontSize: 12,
                           color: Colors.white70,
@@ -351,8 +359,8 @@ class _BonusDeductState extends State<BonusDeduct> {
                                                         fontWeight:
                                                             FontWeight.bold),
                                                   ),
-                                                  Text(userBonus.bonus
-                                                      .toString()),
+                                                  Text(_formatBonus
+                                                      .format(userBonus.bonus)),
                                                 ]),
                                                 leading: IconButton(
                                                     icon: Icon(

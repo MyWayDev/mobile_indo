@@ -326,7 +326,10 @@ class _ShipmentAreaState extends State<ShipmentPlace>
                                       widget.model.shipmentArea,
                                       widget.model.distrPoint);
                                   Navigator.of(context).pop();
-                                  _showNewMemberCourier();
+
+                                  widget.isNewMember
+                                      ? _showNewMemberCourier()
+                                      : Container();
                                 },
                               )
                             : Container(),

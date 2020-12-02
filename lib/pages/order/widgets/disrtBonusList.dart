@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:mor_release/models/user.dart';
 import 'package:mor_release/scoped/connected.dart';
@@ -14,6 +15,7 @@ class DistrBonusList extends StatefulWidget {
 
 class _DistrBonusListState extends State<DistrBonusList> {
   bool _isloading = false;
+  final _formatBonus = new NumberFormat("#,###,###");
 
   void isloading(bool i) {
     setState(() {
@@ -23,56 +25,38 @@ class _DistrBonusListState extends State<DistrBonusList> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(child: ScopedModelDescendant<MainModel>(
-        builder: (BuildContext context, Widget child, MainModel model) {
-      return model.distrBonusList.isNotEmpty
-          ? ModalProgressHUD(
-              color: Colors.black,
-              inAsyncCall: _isloading,
-              opacity: 0.6,
-              progressIndicator: ColorLoader2(),
-              child: Container(
-                  height: MediaQuery.of(context).size.height / 1.6,
-                  width: MediaQuery.of(context).size.width,
-                  child: Column(children: <Widget>[
-                    Expanded(
-                        child: ListView.builder(
-                      itemCount: model.distrBonusList.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Dismissible(
-                            onDismissed: (DismissDirection direction) {
-                              if (direction == DismissDirection.endToStart) {
-                                model.deleteDistrBonus(index, context);
-                              } else if (direction ==
-                                  DismissDirection.startToEnd) {
-                                model.deleteDistrBonus(index, context);
-                              }
-                            },
-                            key: Key(model.distrBonusList[index].distrId),
-                            child: Card(
-                                color: Colors.green[300],
-                                child: Column(children: <Widget>[
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    mainAxisSize: MainAxisSize.max,
-                                    children: <Widget>[
-                                      Text(
-                                        ' طلب خصم المكافأة  ',
-                                        style: TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      SizedBox(width: 12)
-                                    ],
-                                  ),
-                                  _buildDistrBonus(
-                                      model.distrBonusList, index, model),
-                                ])));
-                      },
-                    ))
-                  ])))
-          : Container();
-    }));
+    return Dialog(
+      child: ScopedModelDescendant<MainModel>(
+          builder: (BuildContext context, Widget child, MainModel model) {
+        return model.distrBonusList.isNotEmpty
+            ? ModalProgressHUD(
+                color: Colors.black,
+                inAsyncCall: _isloading,
+                opacity: 0.6,
+                progressIndicator: ColorLoader2(),
+                child: Card(
+                    color: Colors.green[200],
+                    child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Text(
+                                'Bayar dengan Dokumen Bonus',
+                                style: TextStyle(
+                                    color: Colors.purple[900],
+                                    fontSize: 13.5,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                          _buildDistrBonus(model.distrBonusList, 0, model),
+                        ])))
+            : Container();
+      }),
+    );
   }
 
   Widget _buildDistrBonus(
@@ -126,7 +110,7 @@ class _DistrBonusListState extends State<DistrBonusList> {
             ),
             Center(
               child: Text(
-                model.distrBonusList[index].bonus.toString(),
+                _formatBonus.format(model.distrBonusList[index].bonus),
                 style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
               ),
             ),

@@ -127,7 +127,7 @@ class ShipmentArea {
   }
 
   Future<http.Response> createPost(ShipmentArea address, String apiUrl) async {
-    final response = await http.put('$apiUrl/api/add_new_distr_shipment_place',
+    final response = await http.put('$apiUrl/add_new_distr_shipment_place',
         headers: {
           HttpHeaders.contentTypeHeader: 'application/json',
           //HttpHeaders.authorizationHeader: ''

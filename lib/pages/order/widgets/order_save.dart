@@ -56,39 +56,124 @@ class OrderSave extends StatelessWidget {
                           Transform.translate(
                             offset: Offset(1.0, 0.0),
                             child: Container(
-                                padding: const EdgeInsets.only(right: 2.0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Text(
-                                      'Total Keseluruhan',
-                                      style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white),
-                                      //  textDirection: TextDirection.rtl,
+                              padding: const EdgeInsets.only(right: 2.0),
+                              child: model.distrBonusList.isNotEmpty
+                                  ? Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Total',
+                                          style: TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.grey[800]),
+                                          //  textDirection: TextDirection.rtl,
+                                        ),
+                                        Text(
+                                          'Pemotongan Bonus',
+                                          style: TextStyle(
+                                              fontSize: 13,
+                                              color: Colors.deepOrange[400]),
+                                          //  textDirection: TextDirection.rtl,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: <Widget>[
+                                            Text(
+                                              'Total Keseluruhan',
+                                              style: TextStyle(
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black),
+                                              //  textDirection: TextDirection.rtl,
+                                            ),
+                                            Text(
+                                              "  + 10% PPN",
+                                              style: TextStyle(
+                                                  color: Colors.pink[800],
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 11),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    )
+                                  : Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: <Widget>[
+                                        Text(
+                                          'Total Keseluruhan',
+                                          style: TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black),
+                                          //  textDirection: TextDirection.rtl,
+                                        ),
+                                        Text(
+                                          "  + 10% PPN",
+                                          style: TextStyle(
+                                              color: Colors.pink[800],
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 11),
+                                        ),
+                                      ],
                                     ),
-                                    Text(
-                                      "  + 10% PPN",
-                                      style: TextStyle(
-                                          color: Colors.pink[800],
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 11),
-                                    ),
-                                  ],
-                                )),
+                            ),
                           ),
                           Expanded(
                             child: Container(),
                           ),
-                          Text(
-                            formatter.format((orderTotal(model) * 1.1) +
-                                    courierFee * 1.01) +
-                                ' Rp',
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold),
-                          ),
+                          model.distrBonusList.isNotEmpty
+                              ? Column(
+                                  children: [
+                                    Text(
+                                      formatter.format((orderTotal(model)) +
+                                              courierFee) +
+                                          ' Rp',
+                                      style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.grey[800],
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(
+                                      '-' +
+                                          formatter.format(
+                                              model.distrBonusList[0].bonus) +
+                                          ' Rp',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.deepOrangeAccent[400],
+                                      ),
+                                    ),
+                                    Text(
+                                      formatter.format((orderTotal(model) -
+                                                  model.distrBonusList[0]
+                                                          .bonus *
+                                                      1.1) +
+                                              courierFee) +
+                                          ' Rp',
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                )
+                              : Text(
+                                  formatter.format((orderTotal(model) * 1.1) +
+                                          courierFee) +
+                                      ' Rp',
+                                  style: TextStyle(
+                                      fontSize: 13,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold),
+                                ),
                         ],
                       ),
                       onPressed: () {
@@ -124,39 +209,125 @@ class OrderSave extends StatelessWidget {
                           Transform.translate(
                             offset: Offset(1.0, 0.0),
                             child: Container(
-                                padding: const EdgeInsets.only(right: 2.0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Text(
-                                      'Total Keseluruhan',
-                                      style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white),
-                                      //  textDirection: TextDirection.rtl,
+                              padding: const EdgeInsets.only(right: 2.0),
+                              child: model.distrBonusList.isNotEmpty
+                                  ? Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Total',
+                                          style: TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.grey[800]),
+                                          //  textDirection: TextDirection.rtl,
+                                        ),
+                                        Text(
+                                          'Pemotongan Bonus',
+                                          style: TextStyle(
+                                              fontSize: 13,
+                                              color: Colors.deepOrange[300]),
+                                          //  textDirection: TextDirection.rtl,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: <Widget>[
+                                            Text(
+                                              'Total Keseluruhan',
+                                              style: TextStyle(
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black),
+                                              //  textDirection: TextDirection.rtl,
+                                            ),
+                                            Text(
+                                              "  + 10% PPN",
+                                              style: TextStyle(
+                                                  color: Colors.pink[800],
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 11),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    )
+                                  : Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: <Widget>[
+                                        Text(
+                                          'Total Keseluruhan',
+                                          style: TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black),
+                                          //  textDirection: TextDirection.rtl,
+                                        ),
+                                        Text(
+                                          "  + 10% PPN",
+                                          style: TextStyle(
+                                              color: Colors.pink[800],
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 11),
+                                        ),
+                                      ],
                                     ),
-                                    Text(
-                                      "  + 10% PPN",
-                                      style: TextStyle(
-                                          color: Colors.pink[800],
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 11),
-                                    ),
-                                  ],
-                                )),
+                            ),
                           ),
                           Expanded(
                             child: Container(),
                           ),
-                          Text(
-                            formatter.format((bulkOrderTotal(model) * 1.1) +
-                                    bulkOrderCourierFee(model) * 1.01) +
-                                ' Rp',
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold),
-                          ),
+                          model.distrBonusList.isNotEmpty
+                              ? Column(
+                                  children: [
+                                    Text(
+                                      formatter.format((bulkOrderTotal(model)) +
+                                              bulkOrderCourierFee(model)) +
+                                          ' Rp',
+                                      style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.grey[800],
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(
+                                      '-' +
+                                          formatter.format(
+                                              model.distrBonusList[0].bonus) +
+                                          ' Rp',
+                                      style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.deepOrangeAccent[400],
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(
+                                      formatter.format((bulkOrderTotal(model) -
+                                                  model.distrBonusList[0]
+                                                          .bonus *
+                                                      1.1) +
+                                              bulkOrderCourierFee(model)) +
+                                          ' Rp',
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                )
+                              : Text(
+                                  formatter.format(
+                                          (bulkOrderTotal(model) * 1.1) +
+                                              bulkOrderCourierFee(model)) +
+                                      ' Rp',
+                                  style: TextStyle(
+                                      fontSize: 13,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold),
+                                ),
                         ],
                       ),
                       onPressed: () async {

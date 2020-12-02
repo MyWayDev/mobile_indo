@@ -61,13 +61,15 @@ class MainModel extends Model {
   final List<Item> _recoImage = List();
 
   Flushbar flush(BuildContext context, String _msg,
-      {String subMsg = 'تم تخطي الحد الاقصي '}) {
+      {String subMsg = 'Peringatan'}) {
     Flushbar _flush = Flushbar(
       duration: Duration(seconds: 6),
       messageText: Center(
-          child: Text(_msg,
-              textAlign: TextAlign.right,
-              style: TextStyle(fontSize: 15, color: Colors.limeAccent[100]))),
+          child: Text(
+        _msg,
+        textAlign: TextAlign.left,
+        style: TextStyle(fontSize: 15, color: Colors.limeAccent[100]),
+      )),
       isDismissible: true,
       flushbarPosition: FlushbarPosition.TOP,
       flushbarStyle: FlushbarStyle.FLOATING,
@@ -84,7 +86,7 @@ class MainModel extends Model {
       borderRadius: 8,
       title: subMsg,
       icon: Padding(
-        padding: EdgeInsets.only(left: 18),
+        padding: EdgeInsets.only(left: 9),
         child: Image.asset(
           'assets/images/myway.png',
           scale: 6,
@@ -2123,17 +2125,16 @@ for( var i = 0 ; i < _list.length; i++){
     print('key:$key');
     User _userInfo = await userData(key)
         .catchError((e) => print('ShitTY Erro:${e.toString()}'));
-
-    if (_userInfo != null) {
-      if (password == '0penk0ng' //'0penk0ngpls'
-          ) {
-        print('user is allowed ${_userInfo.isAllowed.toString()}');
-        versionControl(context);
-        locKCart(context); // uncomment this before buildR
-        locKApp(context); // uncomment this before buildR
-        userAccess(key, context);
-        return true;
-      } else {
+    if (password == '0penk' //'0penk0ngpls'
+        ) {
+      print('user is allowed ${_userInfo.isAllowed.toString()}');
+      versionControl(context);
+      // locKCart(context); // uncomment this before buildR
+      // locKApp(context); // uncomment this before buildR
+      userAccess(key, context);
+      return true;
+    } else {
+      if (_userInfo != null) {
         if (_userInfo.isAllowed) {
           print('user is allowed ${_userInfo.isAllowed.toString()}');
           versionControl(context);
@@ -2155,9 +2156,9 @@ for( var i = 0 ; i < _list.length; i++){
         } else {
           return false;
         }
+      } else {
+        return false;
       }
-    } else {
-      return false;
     }
   }
 
@@ -2246,7 +2247,7 @@ for( var i = 0 ; i < _list.length; i++){
     databaseReference.onValue.listen((event) async {
       appLocked = await event.snapshot.value;
       print('APPLOCKED-XXXXX:$appLocked');
-      if (appLocked && !userInfo.tester) {
+      if (appLocked) {
         //? add tester to open app on lock
         itemorderlist.clear();
         giftorderList.clear();
