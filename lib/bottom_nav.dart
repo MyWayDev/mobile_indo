@@ -86,7 +86,7 @@ class _BottomNav extends State<BottomNav> with SingleTickerProviderStateMixin {
           // Add tabs as widgets
           children: <Widget>[
             ItemsTabs(),
-            NewReg(model.settings.apiUrl),
+            NewReg(model),
             Tickets(
               distrId: int.parse(model.user.key),
             ),

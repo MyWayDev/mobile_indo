@@ -23,7 +23,7 @@ class _NewMemberCourierState extends State<NewMemberCourier> {
   String areaId;
   Courier _chosenValue;
   Courier stateValue;
-  double courierFee;
+  var courierFee;
   bool _loading = false;
   isloading(bool l) {
     setState(() {
@@ -101,11 +101,16 @@ class _NewMemberCourierState extends State<NewMemberCourier> {
                               _loading = true;
                             });
                             state.didChange(newValue);
+                            print(
+                                "CourierId=>${newValue.id.toString()}..areaID=>$areaId..skitweight=>${model.settings.sKitWeight}");
                             courierFee = await model.courierServiceFee(
                                 newValue.id.toString(),
                                 areaId,
                                 model.settings.sKitWeight);
-                            print('courierFee=>$courierFee');
+                            setState(() {
+                              model.newRegcourierFee = courierFee;
+                            });
+                            //  print('courierFee=>$courierFee');
 
                             isloading(false);
                             // print(newValue.id.toString());
@@ -129,19 +134,22 @@ class _NewMemberCourierState extends State<NewMemberCourier> {
                   },
                 ),
               ),
-              courierFee != null && courierFee > 0
+              courierFee != null
                   ? Column(children: [
                       Container(
                           height: 27,
                           child: ListTile(
                             title: Text(
                               'Courier Fee',
-                              style: TextStyle(fontSize: 14),
+                              style: TextStyle(
+                                  fontSize: 12, fontWeight: FontWeight.bold),
                               // textDirection: TextDirection.rtl,
                             ),
                             trailing: Text(
-                              formatter.format(courierFee) + ' Rp ',
-                              style: TextStyle(fontSize: 14),
+                              formatter
+                                      .format(courierFee > 0 ? courierFee : 0) +
+                                  ' Rp ',
+                              style: TextStyle(fontSize: 12),
                             ),
                             leading: Icon(
                               GroovinMaterialIcons.truck,
@@ -154,21 +162,49 @@ class _NewMemberCourierState extends State<NewMemberCourier> {
                           child: ListTile(
                             title: Text(
                               'Membership Fee',
-                              style: TextStyle(fontSize: 14),
-                              // textDirection: TextDirection.rtl,
+                              style: TextStyle(
+                                  fontSize: 12, fontWeight: FontWeight.bold),
                             ),
                             trailing: Text(
                               formatter.format(
                                       double.tryParse(model.settings.catCode)) +
                                   ' Rp',
-                              style: TextStyle(fontSize: 14),
+                              style: TextStyle(fontSize: 12),
                             ),
                             leading: Icon(
                               GroovinMaterialIcons.account_plus,
                               size: 22,
                               color: Colors.black,
                             ),
-                          ))
+                          )),
+                      Padding(
+                        padding: EdgeInsets.only(top: 24),
+                      ),
+                      Divider(
+                        color: Colors.black,
+                      ),
+                      Container(
+                          height: 27,
+                          child: ListTile(
+                            title: Text(
+                              'Total',
+                              style: TextStyle(
+                                  fontSize: 12.5, fontWeight: FontWeight.bold),
+                              // textDirection: TextDirection.rtl,
+                            ),
+                            trailing: Text(
+                              formatter.format(courierFee +
+                                      double.tryParse(model.settings.catCode)) +
+                                  ' Rp ',
+                              style: TextStyle(
+                                  fontSize: 12.2, fontWeight: FontWeight.bold),
+                            ),
+                            leading: Icon(
+                              GroovinMaterialIcons.cash_multiple,
+                              size: 24,
+                              color: Colors.green,
+                            ),
+                          )),
                     ])
                   : Container()
             ]),

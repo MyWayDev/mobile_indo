@@ -59,6 +59,7 @@ class MainModel extends Model {
   bool isBalanceChecked = true;
   bool isTypeing = false;
   final List<Item> _recoImage = List();
+  double newRegcourierFee = 0.0;
 
   Flushbar flush(BuildContext context, String _msg,
       {String subMsg = 'Peringatan'}) {
@@ -1676,8 +1677,14 @@ class MainModel extends Model {
 
   Future<OrderMsg> saveOrder(String shipmentId, double courierfee,
       String distrId, String note, String areaId) async {
-    itemorderlist.forEach((i) => print({i.itemId: i.qty}));
-    giftorderList.forEach((p) => print(p.pack.map((g) => {g.itemId: p.qty})));
+    itemorderlist.forEach(
+      (i) => print({i.itemId: i.qty}),
+    );
+    giftorderList.forEach(
+      (p) => print(
+        p.pack.map((g) => {g.itemId: p.qty}),
+      ),
+    );
     print('OrderListLength:${itemorderlist.length}');
     //? fix errors on bottom commentted block;
 
@@ -1686,18 +1693,29 @@ class MainModel extends Model {
     //print("courier fee test=> :$courierfee");
 
     if (giftorderList.length > 0 || promoOrderList.length > 0) {
-      giftorderList
-          .forEach((g) => g.pack.forEach((p) => {p.bp = 0: p.bv = 0.0}));
+      giftorderList.forEach(
+        (g) => g.pack.forEach((p) => {p.bp = 0: p.bv = 0.0}),
+      );
       promoOrderList.forEach(
-          (p) => p.promoPack.forEach((pp) => {pp.bp = 0: pp.bv = 0.0}));
-      giftorderList.forEach((g) => g.pack.forEach((p) => p.price = 0.0));
-      promoOrderList
-          .forEach((p) => p.promoPack.forEach((pp) => pp.price = 0.0));
+        (p) => p.promoPack.forEach((pp) => {pp.bp = 0: pp.bv = 0.0}),
+      );
+      giftorderList.forEach(
+        (g) => g.pack.forEach((p) => p.price = 0.0),
+      );
+      promoOrderList.forEach(
+        (p) => p.promoPack.forEach((pp) => pp.price = 0.0),
+      );
 
-      giftorderList
-          .forEach((g) => g.pack.forEach((p) => addToItemOrder(p, g.qty)));
+      giftorderList.forEach(
+        (g) => g.pack.forEach(
+          (p) => addToItemOrder(p, g.qty),
+        ),
+      );
       promoOrderList.forEach(
-          (p) => p.promoPack.forEach((pp) => addToItemOrder(pp, p.qty)));
+        (p) => p.promoPack.forEach(
+          (pp) => addToItemOrder(pp, p.qty),
+        ),
+      );
     }
     if (courierfee > 0) {
       addCourierToOrder('90', courierfee);
@@ -1732,7 +1750,9 @@ class MainModel extends Model {
       promoOrderList.clear();
       distrBonusList.clear();
 
-      OrderMsg msg = OrderMsg.fromJson(json.decode(response.body));
+      OrderMsg msg = OrderMsg.fromJson(
+        json.decode(response.body),
+      );
 
       return msg;
     } else {
@@ -1760,7 +1780,9 @@ class MainModel extends Model {
 // List<Area> _areas = List();
       List<dynamic> responseList = json.decode(response.body);
       areas = responseList.map((l) => Area.fromJson(l)).toList();
-      areas.forEach((f) => print({f.areaId: f.name}));
+      areas.forEach(
+        (f) => print({f.areaId: f.name}),
+      );
     }
     return areas;
 /*
@@ -1806,7 +1828,9 @@ for(var area in areas){
     if (response.statusCode == 200) {
       final _shipmentArea = json.decode(response.body) as List;
       shipmentAreas = _shipmentArea.map((s) => AreaPlace.json(s)).toList();
-      shipmentAreas.forEach((a) => print(a.spName));
+      shipmentAreas.forEach(
+        (a) => print(a.spName),
+      );
     } else {
       shipmentAreas = [];
     }
@@ -1823,7 +1847,9 @@ for(var area in areas){
       final _shipmentArea = json.decode(response.body) as List;
       shipmentAreas =
           _shipmentArea.map((s) => ShipmentArea.fromJson(s)).toList();
-      shipmentAreas.forEach((a) => print(a.shipmentName));
+      shipmentAreas.forEach(
+        (a) => print(a.shipmentName),
+      );
 
       for (ShipmentArea s in shipmentAreas) {
         await couriersList(s.shipmentArea, point)
@@ -1912,14 +1938,18 @@ for(var area in areas){
       Map<dynamic, dynamic> _courierDiscount = snapshot.value;
       List list = _courierDiscount.values.toList();
       bool _hasData = list
-          .map((f) => CourierDiscount.json(f))
+          .map(
+            (f) => CourierDiscount.json(f),
+          )
           .where((r) =>
               r.enabled == true && totalBp >= r.onBp && totalBp <= r.toBp)
           .isNotEmpty;
 
       if (_hasData) {
         courierDiscount = list
-                .map((f) => CourierDiscount.json(f))
+                .map(
+                  (f) => CourierDiscount.json(f),
+                )
                 .where((r) =>
                     r.enabled == true && totalBp >= r.onBp && totalBp <= r.toBp)
                 .first
@@ -1945,7 +1975,11 @@ for(var area in areas){
 
     Map<dynamic, dynamic> _stores = snapshot.value;
     List list = _stores.values.toList();
-    stores = list.map((f) => Store.json(f)).toList();
+    stores = list
+        .map(
+          (f) => Store.json(f),
+        )
+        .toList();
 
     return stores;
   }
@@ -1997,6 +2031,7 @@ for(var area in areas){
         .child(
             '$path/courier/en-US/$courierId/service') //!enviroments/production
         .once();
+
     List list = snapshot.value;
 // print(list.length);
     List<Service> services = list.map((f) => Service.fromJson(f)).toList();

@@ -250,6 +250,7 @@ class _StoreFloatState extends State<StoreFloat>
               ),
               onPressed: () async {
                 setState(() {
+                  widget.model.newRegcourierFee = 0;
                   widget.model.setStoreId = widget.model.stores[index].storeId;
                   widget.model.distrPoint = widget.model.stores[index].region;
                   widget.model.distrPointName = widget.model.stores[index].name;

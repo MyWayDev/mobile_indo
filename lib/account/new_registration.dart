@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -20,8 +21,9 @@ import 'package:intl/intl.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
 
 class NewReg extends StatefulWidget {
-  final String apiUrl;
-  NewReg(this.apiUrl);
+  final MainModel model;
+
+  NewReg(this.model);
   //final List<Area> areas;
   // NewMemberPage(this.areas);
   State<StatefulWidget> createState() {
@@ -54,7 +56,9 @@ class _NewReg extends State<NewReg> {
 
   void getBanks() async {
     banks = [];
-    final response = await http.get('${widget.apiUrl}/get_bank_info/');
+    final response =
+        await http.get('${widget.model.settings.apiUrl}/get_bank_info/');
+
     if (response.statusCode == 200) {
       final _banks = json.decode(response.body) as List;
       banks = _banks.map((s) => Bank.json(s)).toList();
@@ -85,7 +89,6 @@ class _NewReg extends State<NewReg> {
   void initState() {
     getPlaces();
     getBanks();
-
     //  getAreas();
     controller.addListener(() {
       setState(() {});
@@ -95,6 +98,7 @@ class _NewReg extends State<NewReg> {
 
   @override
   void dispose() {
+    widget.model.newRegcourierFee = 0;
     controller.dispose();
     super.dispose();
   }
@@ -143,8 +147,8 @@ class _NewReg extends State<NewReg> {
   List<AreaPlace> areaPlace;
   void getPlaces() async {
     areaPlace = [];
-    final response =
-        await http.get('${widget.apiUrl}/get_all_shipment_places/');
+    final response = await http
+        .get('${widget.model.settings.apiUrl}/get_all_shipment_places/');
     if (response.statusCode == 200) {
       final _shipmentArea = json.decode(response.body) as List;
       areaPlace = _shipmentArea.map((s) => AreaPlace.json(s)).toList();
@@ -226,6 +230,8 @@ class _NewReg extends State<NewReg> {
         });
   }
 
+  final doubleFormat = new NumberFormat("####.##");
+  final formatter = new NumberFormat("#,###");
   bool validData;
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   bool validateAndSave(String userId, String sc) {
@@ -315,119 +321,118 @@ class _NewReg extends State<NewReg> {
               child: ListView(
                 children: <Widget>[
                   Container(
-                      padding: EdgeInsets.all(8.0),
+                      padding: EdgeInsets.all(6.0),
                       child: ConstrainedBox(
                         constraints:
-                            BoxConstraints.expand(height: 800, width: 600),
+                            BoxConstraints.expand(height: 700, width: 600),
                         child: SingleChildScrollView(
                           primary: true,
                           child: Center(
-                            child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  ListTile(
-                                    contentPadding: EdgeInsets.only(left: 8),
-                                    leading: Icon(Icons.vpn_key,
-                                        size: 25.0, color: Colors.pink[500]),
-                                    title: TextFormField(
-                                      textAlign: TextAlign.center,
-                                      controller: controller,
-                                      enabled: !veri ? true : false,
-                                      style: TextStyle(
-                                          fontSize: 15,
-                                          color: Colors.black87,
-                                          fontWeight: FontWeight.bold),
-                                      decoration: InputDecoration(
-                                        hintText: ' Masukkan ID sponsor',
-                                        hintStyle:
-                                            TextStyle(color: Colors.grey[400]),
-                                      ),
-                                      keyboardType: TextInputType.number,
-                                      validator: (value) => value.isEmpty
-                                          ? 'Code is Empty !!'
-                                          : RegExp('[0-9]').hasMatch(value)
-                                              ? null
-                                              : 'invalid code !!',
-                                      onSaved: (_) {
-                                        _newMemberForm.sponsorId =
-                                            _nodeData.distrId;
-                                      },
+                              child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                ListTile(
+                                  contentPadding: EdgeInsets.only(left: 6),
+                                  leading: Icon(Icons.vpn_key,
+                                      size: 25.0, color: Colors.pink[500]),
+                                  title: TextFormField(
+                                    textAlign: TextAlign.center,
+                                    controller: controller,
+                                    enabled: !veri ? true : false,
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        color: Colors.black87,
+                                        fontWeight: FontWeight.bold),
+                                    decoration: InputDecoration(
+                                      hintText: ' Masukkan ID sponsor',
+                                      hintStyle:
+                                          TextStyle(color: Colors.grey[400]),
                                     ),
-                                    trailing: IconButton(
-                                      icon: !veri && controller.text.length > 0
-                                          ? Icon(
-                                              Icons.check,
-                                              size: 30.0,
-                                              color: Colors.blue,
-                                            )
-                                          : controller.text.length > 0
-                                              ? Icon(
-                                                  Icons.close,
-                                                  size: 28.0,
-                                                  color: Colors.grey,
-                                                )
-                                              : Container(),
-                                      color: Colors.pink[900],
-                                      onPressed: () async {
-                                        isloading(true);
-                                        if (!veri) {
-                                          veri = await model.leaderVerification(
+                                    keyboardType: TextInputType.number,
+                                    validator: (value) => value.isEmpty
+                                        ? 'Code is Empty !!'
+                                        : RegExp('[0-9]').hasMatch(value)
+                                            ? null
+                                            : 'invalid code !!',
+                                    onSaved: (_) {
+                                      _newMemberForm.sponsorId =
+                                          _nodeData.distrId;
+                                    },
+                                  ),
+                                  trailing: IconButton(
+                                    icon: !veri && controller.text.length > 0
+                                        ? Icon(
+                                            Icons.check,
+                                            size: 30.0,
+                                            color: Colors.blue,
+                                          )
+                                        : controller.text.length > 0
+                                            ? Icon(
+                                                Icons.close,
+                                                size: 28.0,
+                                                color: Colors.grey,
+                                              )
+                                            : Container(),
+                                    color: Colors.pink[900],
+                                    onPressed: () async {
+                                      isloading(true);
+                                      if (!veri) {
+                                        veri = await model.leaderVerification(
+                                            controller.text.padLeft(8, '0'));
+                                        if (veri) {
+                                          _nodeData = await model.nodeJson(
                                               controller.text.padLeft(8, '0'));
-                                          if (veri) {
-                                            _nodeData = await model.nodeJson(
-                                                controller.text
-                                                    .padLeft(8, '0'));
-                                            _nodeData.distrId == '00000000'
-                                                ? resetVeri()
-                                                : controller.text =
-                                                    _nodeData.distrId +
-                                                        ' ' +
-                                                        _nodeData.name;
-                                          } else {
-                                            resetVeri();
-                                          }
+                                          _nodeData.distrId == '00000000'
+                                              ? resetVeri()
+                                              : controller.text =
+                                                  _nodeData.distrId +
+                                                      ' ' +
+                                                      _nodeData.name;
                                         } else {
                                           resetVeri();
                                         }
-                                        isloading(false);
-                                      },
-                                      splashColor: Colors.pink,
-                                    ),
+                                      } else {
+                                        resetVeri();
+                                      }
+                                      isloading(false);
+                                    },
+                                    splashColor: Colors.pink,
                                   ),
-                                  ModalProgressHUD(
-                                      inAsyncCall: _loading,
-                                      opacity: 0.6,
-                                      progressIndicator: ColorLoader2(),
-                                      child: veri
-                                          ? Container(
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.max,
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.stretch,
-                                                children: <Widget>[
-                                                  Row(
-                                                    children: [
-                                                      Flexible(
-                                                        fit: FlexFit.tight,
-                                                        flex: 1,
-                                                        child: TextFormField(
-                                                          // autovalidate: true,
-                                                          decoration: InputDecoration(
-                                                              labelText: 'Nama',
-                                                              contentPadding:
-                                                                  EdgeInsets
-                                                                      .all(1.0),
-                                                              icon: Icon(
-                                                                  GroovinMaterialIcons
-                                                                      .format_title,
-                                                                  color: Colors
-                                                                          .pink[
-                                                                      500])),
-                                                          /* validator: (value) {
+                                ),
+                                ModalProgressHUD(
+                                    inAsyncCall: _loading,
+                                    opacity: 0.6,
+                                    progressIndicator: ColorLoader2(),
+                                    child: veri
+                                        ? Container(
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.stretch,
+                                              children: <Widget>[
+                                                Row(
+                                                  children: [
+                                                    Flexible(
+                                                      fit: FlexFit.tight,
+                                                      flex: 1,
+                                                      child: TextFormField(
+                                                        // autovalidate: true,
+                                                        decoration: InputDecoration(
+                                                            labelText: 'Nama',
+                                                            contentPadding:
+                                                                EdgeInsets.all(
+                                                                    1.0),
+                                                            icon: Icon(
+                                                                GroovinMaterialIcons
+                                                                    .format_title,
+                                                                color:
+                                                                    Colors.pink[
+                                                                        500])),
+                                                        /* validator: (value) {
                                               String _msg;
                                               value.length > 6
                                                   ? _msg =
@@ -435,94 +440,96 @@ class _NewReg extends State<NewReg> {
                                                   : _msg = null;
                                               return _msg;
                                             },*/
-                                                          keyboardType:
-                                                              TextInputType
-                                                                  .text,
-                                                          onSaved:
-                                                              (String value) {
-                                                            _newMemberForm
-                                                                .name = value;
-                                                          },
-                                                        ),
+                                                        keyboardType:
+                                                            TextInputType.text,
+                                                        onSaved:
+                                                            (String value) {
+                                                          _newMemberForm.name =
+                                                              value;
+                                                        },
                                                       ),
-                                                      Padding(
-                                                          padding:
-                                                              EdgeInsets.only(
-                                                                  left: 25,
-                                                                  right: 25),
-                                                          child: Column(
-                                                            children: [
-                                                              Padding(
-                                                                padding: EdgeInsets
-                                                                    .only(
-                                                                        right:
-                                                                            1),
-                                                                child: selected ==
-                                                                        null
-                                                                    ? Text(
-                                                                        'Tanggal lahir')
-                                                                    : Text(''),
+                                                    ),
+                                                    Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                left: 25,
+                                                                right: 25),
+                                                        child: Column(
+                                                          children: [
+                                                            Padding(
+                                                              padding: EdgeInsets
+                                                                  .only(
+                                                                      right: 1),
+                                                              child: selected ==
+                                                                      null
+                                                                  ? Text(
+                                                                      'Tanggal lahir')
+                                                                  : Text(''),
+                                                            ),
+                                                            RawMaterialButton(
+                                                              child: Icon(
+                                                                GroovinMaterialIcons
+                                                                    .calendar_check,
+                                                                size: 24.0,
+                                                                color: Colors
+                                                                    .white,
                                                               ),
-                                                              RawMaterialButton(
-                                                                child: Icon(
-                                                                  GroovinMaterialIcons
-                                                                      .calendar_check,
-                                                                  size: 24.0,
-                                                                  color: Colors
-                                                                      .white,
-                                                                ),
-                                                                shape:
-                                                                    CircleBorder(),
-                                                                highlightColor:
-                                                                    Colors.pink[
-                                                                        500],
-                                                                elevation: 8,
-                                                                fillColor:
-                                                                    Colors.pink[
-                                                                        500],
-                                                                onPressed: () {
-                                                                  _showDateTimePicker(model
-                                                                      .userInfo
-                                                                      .distrId);
-                                                                },
-                                                                splashColor:
-                                                                    Colors.pink[
-                                                                        900],
-                                                              ),
-                                                              Padding(
-                                                                padding: EdgeInsets
-                                                                    .only(
-                                                                        top: 2),
-                                                                child: selected !=
-                                                                        null
-                                                                    ? Text(DateFormat(
-                                                                            'yyyy-MM-dd')
-                                                                        .format(
-                                                                            selected)
-                                                                        .toString())
-                                                                    : Text(''),
-                                                              ),
-                                                            ],
-                                                          )),
-                                                    ],
-                                                  ),
-                                                  Row(
-                                                    children: [
-                                                      Expanded(
-                                                        child: TextFormField(
-                                                          decoration: InputDecoration(
-                                                              labelText:
-                                                                  'Nomor tanda pengenal',
-                                                              contentPadding:
-                                                                  EdgeInsets
-                                                                      .all(4.0),
-                                                              icon: Icon(
-                                                                  Icons
-                                                                      .assignment_ind,
-                                                                  color: Colors
-                                                                          .pink[
-                                                                      500])),
-                                                          /*  'validator: (value) {
+                                                              shape:
+                                                                  CircleBorder(),
+                                                              highlightColor:
+                                                                  Colors.pink[
+                                                                      500],
+                                                              elevation: 8,
+                                                              fillColor: Colors
+                                                                  .pink[500],
+                                                              onPressed: () {
+                                                                _showDateTimePicker(
+                                                                    model
+                                                                        .userInfo
+                                                                        .distrId);
+                                                              },
+                                                              splashColor:
+                                                                  Colors.pink[
+                                                                      900],
+                                                            ),
+                                                            Padding(
+                                                              padding: EdgeInsets
+                                                                  .only(top: 2),
+                                                              child: selected !=
+                                                                      null
+                                                                  ? Text(DateFormat(
+                                                                          'yyyy-MM-dd')
+                                                                      .format(
+                                                                          selected)
+                                                                      .toString())
+                                                                  : Text(''),
+                                                            ),
+                                                          ],
+                                                        )),
+                                                  ],
+                                                ),
+                                                Wrap(
+                                                  children: [
+                                                    Row(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: [
+                                                        Flexible(
+                                                          child: TextFormField(
+                                                            decoration: InputDecoration(
+                                                                labelText:
+                                                                    'Nomor tanda pengenal',
+                                                                contentPadding:
+                                                                    EdgeInsets
+                                                                        .all(
+                                                                            4.0),
+                                                                icon: Icon(
+                                                                    Icons
+                                                                        .assignment_ind,
+                                                                    color: Colors
+                                                                            .pink[
+                                                                        500])),
+                                                            /*  'validator: (value) {
                                               String _msg;
                                               value.length <=16
                                                   ? _msg =
@@ -530,146 +537,161 @@ class _NewReg extends State<NewReg> {
                                                   : _msg = null;
                                               return _msg;
                                             },*/
-                                                          autocorrect: true,
-                                                          textCapitalization:
-                                                              TextCapitalization
-                                                                  .sentences,
-                                                          keyboardType:
-                                                              TextInputType
-                                                                  .text,
-                                                          onSaved:
-                                                              (String value) {
-                                                            _newMemberForm
-                                                                    .personalId =
-                                                                value;
-                                                          },
-                                                        ),
-                                                      ),
-                                                      Expanded(
-                                                        child: TextFormField(
-                                                          decoration:
-                                                              InputDecoration(
-                                                                  labelText:
-                                                                      'Nomor telepon',
-                                                                  filled: true,
-                                                                  fillColor: Colors
-                                                                      .transparent,
-                                                                  contentPadding:
-                                                                      EdgeInsets
-                                                                          .all(
-                                                                              2.0),
-                                                                  icon: Icon(
-                                                                    Icons.phone,
-                                                                    color: Colors
-                                                                            .pink[
-                                                                        500],
-                                                                  )),
-                                                          validator: (value) {
-                                                            String _msg;
-                                                            value.length < 8
-                                                                ? _msg =
-                                                                    ' خطأ فى حفظ  الهاتف'
-                                                                : _msg = null;
-                                                            return _msg;
-                                                          },
-                                                          keyboardType:
-                                                              TextInputType
-                                                                  .numberWithOptions(
-                                                                      signed:
-                                                                          true),
-                                                          onSaved:
-                                                              (String value) {
-                                                            _newMemberForm
-                                                                    .telephone =
-                                                                value;
-                                                          },
-                                                        ),
-                                                      )
-                                                    ],
-                                                  ),
-                                                  Row(
-                                                    children: [
-                                                      Flexible(
-                                                        child: TextFormField(
-                                                          maxLines: 6,
-                                                          decoration:
-                                                              InputDecoration(
-                                                                  labelText:
-                                                                      'Alamat',
-                                                                  filled: true,
-                                                                  fillColor: Colors
-                                                                      .transparent,
-                                                                  contentPadding:
-                                                                      EdgeInsets
-                                                                          .all(
-                                                                              2.0),
-                                                                  icon: Icon(
-                                                                    GroovinMaterialIcons
-                                                                        .home,
-                                                                    color: Colors
-                                                                            .pink[
-                                                                        500],
-                                                                  )),
-                                                          validator: (value) {
-                                                            String _msg;
-                                                            value.length < 9
-                                                                ? _msg = 'Error'
-                                                                : _msg = null;
-                                                            return _msg;
-                                                          },
-                                                          keyboardType:
-                                                              TextInputType
-                                                                  .text,
-                                                          onSaved:
-                                                              (String value) {
-                                                            _newMemberForm
-                                                                    .address =
-                                                                value;
-                                                          },
-                                                        ),
-                                                      ),
-                                                      Container(
-                                                        width: 126,
-                                                        child: Row(children: <
-                                                            Widget>[
-                                                          Container(
-                                                            width: 32,
-                                                            child: Icon(
-                                                                Icons
-                                                                    .add_location,
-                                                                color: Colors
-                                                                    .pink[500]),
-                                                          ),
-                                                          Flexible(
-                                                              child:
-                                                                  SearchableDropdown(
-                                                            underline: Divider(
-                                                              color: Colors
-                                                                  .transparent,
-                                                            ),
-                                                            isExpanded: true,
-                                                            //style: TextStyle(fontSize: 12),
-                                                            hint: Text('Area'),
-                                                            iconEnabledColor:
-                                                                Colors
-                                                                    .pink[200],
-                                                            iconDisabledColor:
-                                                                Colors.grey,
-                                                            items: places,
-                                                            value:
-                                                                selectedValue,
-                                                            onChanged: (value) {
-                                                              setState(() {
-                                                                selectedValue =
-                                                                    value;
-                                                                placeSplit =
-                                                                    selectedValue
-                                                                        .split(
-                                                                            '\ ');
-                                                              });
+                                                            autocorrect: true,
+                                                            textCapitalization:
+                                                                TextCapitalization
+                                                                    .sentences,
+                                                            keyboardType:
+                                                                TextInputType
+                                                                    .text,
+                                                            onSaved:
+                                                                (String value) {
+                                                              _newMemberForm
+                                                                      .personalId =
+                                                                  value;
                                                             },
-                                                          ))
-                                                        ]), /* Row(
+                                                          ),
+                                                        ),
+                                                        Flexible(
+                                                          fit: FlexFit.tight,
+                                                          child: TextFormField(
+                                                            decoration:
+                                                                InputDecoration(
+                                                                    labelText:
+                                                                        'Nomor telepon',
+                                                                    filled:
+                                                                        true,
+                                                                    fillColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    contentPadding:
+                                                                        EdgeInsets.all(
+                                                                            2.0),
+                                                                    icon: Icon(
+                                                                      Icons
+                                                                          .phone,
+                                                                      color: Colors
+                                                                              .pink[
+                                                                          500],
+                                                                    )),
+                                                            validator: (value) {
+                                                              String _msg;
+                                                              value.length < 8
+                                                                  ? _msg =
+                                                                      ' خطأ فى حفظ  الهاتف'
+                                                                  : _msg = null;
+                                                              return _msg;
+                                                            },
+                                                            keyboardType:
+                                                                TextInputType
+                                                                    .numberWithOptions(
+                                                                        signed:
+                                                                            true),
+                                                            onSaved:
+                                                                (String value) {
+                                                              _newMemberForm
+                                                                      .telephone =
+                                                                  value;
+                                                            },
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                    Row(
+                                                      children: [
+                                                        Flexible(
+                                                          flex: 1,
+                                                          fit: FlexFit.tight,
+                                                          child: TextFormField(
+                                                            maxLines: 6,
+                                                            decoration:
+                                                                InputDecoration(
+                                                                    labelText:
+                                                                        'Alamat',
+                                                                    filled:
+                                                                        true,
+                                                                    fillColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    contentPadding:
+                                                                        EdgeInsets.all(
+                                                                            2.0),
+                                                                    icon: Icon(
+                                                                      GroovinMaterialIcons
+                                                                          .home,
+                                                                      color: Colors
+                                                                              .pink[
+                                                                          500],
+                                                                    )),
+                                                            validator: (value) {
+                                                              String _msg;
+                                                              value.length < 9
+                                                                  ? _msg =
+                                                                      'Error'
+                                                                  : _msg = null;
+                                                              return _msg;
+                                                            },
+                                                            keyboardType:
+                                                                TextInputType
+                                                                    .text,
+                                                            onSaved:
+                                                                (String value) {
+                                                              _newMemberForm
+                                                                      .address =
+                                                                  value;
+                                                            },
+                                                          ),
+                                                        ),
+                                                        Container(
+                                                          width: 126,
+                                                          child: Row(children: <
+                                                              Widget>[
+                                                            Container(
+                                                              width: 32,
+                                                              child: Icon(
+                                                                  Icons
+                                                                      .add_location,
+                                                                  color: Colors
+                                                                          .pink[
+                                                                      500]),
+                                                            ),
+                                                            Flexible(
+                                                                fit: FlexFit
+                                                                    .tight,
+                                                                child:
+                                                                    SearchableDropdown(
+                                                                  underline:
+                                                                      Divider(
+                                                                    color: Colors
+                                                                        .transparent,
+                                                                  ),
+                                                                  isExpanded:
+                                                                      true,
+                                                                  //style: TextStyle(fontSize: 12),
+                                                                  hint: Text(
+                                                                      'Area'),
+                                                                  iconEnabledColor:
+                                                                      Colors.pink[
+                                                                          200],
+                                                                  iconDisabledColor:
+                                                                      Colors
+                                                                          .grey,
+                                                                  items: places,
+                                                                  value:
+                                                                      selectedValue,
+                                                                  onChanged:
+                                                                      (value) {
+                                                                    setState(
+                                                                        () {
+                                                                      selectedValue =
+                                                                          value;
+                                                                      placeSplit =
+                                                                          selectedValue
+                                                                              .split('\ ');
+                                                                    });
+                                                                  },
+                                                                ))
+                                                          ]), /* Row(
                                               mainAxisSize: MainAxisSize.min,
                                               children: <Widget>[
                                                 SearchableDropdown(
@@ -700,63 +722,64 @@ class _NewReg extends State<NewReg> {
                                                 ),
                                               ],
                                             ),*/
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  TextFormField(
-                                                    decoration: InputDecoration(
-                                                        labelText:
-                                                            'Bank Account Name',
-                                                        filled: true,
-                                                        fillColor:
-                                                            Colors.transparent,
-                                                        contentPadding:
-                                                            EdgeInsets.all(2.0),
-                                                        icon: Icon(
-                                                          GroovinMaterialIcons
-                                                              .account,
-                                                          color:
-                                                              Colors.pink[500],
-                                                        )),
-                                                    validator: (value) {
-                                                      String _msg;
-                                                      value.length < 3
-                                                          ? _msg =
-                                                              'Name is too short'
-                                                          : _msg = null;
-                                                      return _msg;
-                                                    },
-                                                    keyboardType:
-                                                        TextInputType.text,
-                                                    onSaved: (String value) {
-                                                      _newMemberForm
-                                                              .bankAccoutName =
-                                                          value;
-                                                    },
-                                                  ),
-                                                  Row(
-                                                    children: [
-                                                      Expanded(
-                                                        child: TextFormField(
-                                                          decoration:
-                                                              InputDecoration(
-                                                                  labelText:
-                                                                      'Bank Account Number',
-                                                                  filled: true,
-                                                                  fillColor: Colors
-                                                                      .transparent,
-                                                                  contentPadding:
-                                                                      EdgeInsets
-                                                                          .all(
-                                                                              2.0),
-                                                                  icon: Icon(
-                                                                    GroovinMaterialIcons
-                                                                        .numeric,
-                                                                    color: Colors
-                                                                            .pink[
-                                                                        500],
-                                                                  )),
-                                                          /*  validator: (value) {
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                                TextFormField(
+                                                  decoration: InputDecoration(
+                                                      labelText:
+                                                          'Bank Account Name',
+                                                      filled: true,
+                                                      fillColor:
+                                                          Colors.transparent,
+                                                      contentPadding:
+                                                          EdgeInsets.all(2.0),
+                                                      icon: Icon(
+                                                        GroovinMaterialIcons
+                                                            .account,
+                                                        color: Colors.pink[500],
+                                                      )),
+                                                  validator: (value) {
+                                                    String _msg;
+                                                    value.length < 3
+                                                        ? _msg =
+                                                            'Name is too short'
+                                                        : _msg = null;
+                                                    return _msg;
+                                                  },
+                                                  keyboardType:
+                                                      TextInputType.text,
+                                                  onSaved: (String value) {
+                                                    _newMemberForm
+                                                        .bankAccoutName = value;
+                                                  },
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    Flexible(
+                                                      fit: FlexFit.tight,
+                                                      child: TextFormField(
+                                                        decoration:
+                                                            InputDecoration(
+                                                                labelText:
+                                                                    'Bank Account Number',
+                                                                filled: true,
+                                                                fillColor: Colors
+                                                                    .transparent,
+                                                                contentPadding:
+                                                                    EdgeInsets
+                                                                        .all(
+                                                                            2.0),
+                                                                icon: Icon(
+                                                                  GroovinMaterialIcons
+                                                                      .numeric,
+                                                                  color: Colors
+                                                                          .pink[
+                                                                      500],
+                                                                )),
+                                                        /*  validator: (value) {
                                               String _msg;
                                               value.length < 16
                                                   ? _msg =
@@ -764,174 +787,312 @@ class _NewReg extends State<NewReg> {
                                                   : _msg = null;
                                               return _msg;
                                             },*/
-                                                          keyboardType:
-                                                              TextInputType
-                                                                  .number,
-                                                          onSaved:
-                                                              (String value) {
-                                                            _newMemberForm
-                                                                    .bankAccountNumber =
-                                                                value;
-                                                          },
-                                                        ),
+                                                        keyboardType:
+                                                            TextInputType
+                                                                .number,
+                                                        onSaved:
+                                                            (String value) {
+                                                          _newMemberForm
+                                                                  .bankAccountNumber =
+                                                              value;
+                                                        },
                                                       ),
-                                                      Container(
-                                                        width: 155,
-                                                        child: Theme(
-                                                          data: Theme.of(
-                                                                  context)
-                                                              .copyWith(
-                                                                  primaryColor:
-                                                                      Colors
-                                                                          .pink),
-                                                          child: Container(
-                                                              child: Row(
-                                                            mainAxisSize:
-                                                                MainAxisSize
-                                                                    .max,
-                                                            children: [
-                                                              Container(
-                                                                width: 32,
-                                                                child: Icon(
-                                                                    GroovinMaterialIcons
-                                                                        .bank,
-                                                                    color: Colors
-                                                                            .pink[
-                                                                        500]),
-                                                              ),
-                                                              Expanded(
-                                                                  child:
-                                                                      SearchableDropdown(
-                                                                underline:
-                                                                    Divider(
+                                                    ),
+                                                    Container(
+                                                      width: 155,
+                                                      child: Theme(
+                                                        data: Theme.of(context)
+                                                            .copyWith(
+                                                                primaryColor:
+                                                                    Colors
+                                                                        .pink),
+                                                        child: Container(
+                                                            child: Row(
+                                                          mainAxisSize:
+                                                              MainAxisSize.max,
+                                                          children: [
+                                                            Container(
+                                                              width: 32,
+                                                              child: Icon(
+                                                                  GroovinMaterialIcons
+                                                                      .bank,
                                                                   color: Colors
-                                                                      .transparent,
-                                                                ),
-                                                                searchHint:
-                                                                    Text(
-                                                                  'Select or Type Bank Name',
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .center,
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          12,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold),
-                                                                ),
-                                                                isExpanded:
-                                                                    true,
-                                                                //style: TextStyle(fontSize: 12),
-                                                                hint: Center(
-                                                                  child: Text(
-                                                                    bankName,
+                                                                          .pink[
+                                                                      500]),
+                                                            ),
+                                                            Flexible(
+                                                                fit: FlexFit
+                                                                    .tight,
+                                                                child:
+                                                                    SearchableDropdown(
+                                                                  underline:
+                                                                      Divider(
+                                                                    color: Colors
+                                                                        .transparent,
+                                                                  ),
+                                                                  searchHint:
+                                                                      Text(
+                                                                    'Select or Type Bank Name',
                                                                     textAlign:
                                                                         TextAlign
                                                                             .center,
                                                                     style: TextStyle(
                                                                         fontSize:
-                                                                            13,
+                                                                            12,
                                                                         fontWeight:
                                                                             FontWeight.bold),
                                                                   ),
-                                                                ),
+                                                                  isExpanded:
+                                                                      true,
+                                                                  //style: TextStyle(fontSize: 12),
+                                                                  hint: Center(
+                                                                    child: Text(
+                                                                      bankName,
+                                                                      textAlign:
+                                                                          TextAlign
+                                                                              .center,
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              13,
+                                                                          fontWeight:
+                                                                              FontWeight.bold),
+                                                                    ),
+                                                                  ),
 
-                                                                iconEnabledColor:
-                                                                    Colors.pink[
-                                                                        200],
-                                                                iconDisabledColor:
-                                                                    Colors.grey,
-                                                                items: bankList,
-                                                                value:
-                                                                    selectedBank,
+                                                                  iconEnabledColor:
+                                                                      Colors.pink[
+                                                                          200],
+                                                                  iconDisabledColor:
+                                                                      Colors
+                                                                          .grey,
+                                                                  items:
+                                                                      bankList,
+                                                                  value:
+                                                                      selectedBank,
 
-                                                                onChanged:
-                                                                    (value) {
-                                                                  setState(() {
-                                                                    selectedBank =
-                                                                        value;
-                                                                    bankSplit =
-                                                                        selectedBank
-                                                                            .split('\ ');
-                                                                    print(bankSplit
-                                                                        .first);
-                                                                    _newMemberForm
-                                                                            .bankId =
-                                                                        bankSplit
-                                                                            .first;
+                                                                  onChanged:
+                                                                      (value) {
+                                                                    setState(
+                                                                        () {
+                                                                      selectedBank =
+                                                                          value;
+                                                                      bankSplit =
+                                                                          selectedBank
+                                                                              .split('\ ');
+                                                                      print(bankSplit
+                                                                          .first);
+                                                                      _newMemberForm
+                                                                              .bankId =
+                                                                          bankSplit
+                                                                              .first;
 
-                                                                    /*isChanged =
+                                                                      /*isChanged =
                                                                     true;*/
-                                                                  });
-                                                                },
-                                                              ))
-                                                            ],
-                                                          )),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  TextFormField(
-                                                    decoration: InputDecoration(
-                                                        labelText: 'Tax Number',
-                                                        filled: true,
-                                                        fillColor:
-                                                            Colors.transparent,
-                                                        contentPadding:
-                                                            EdgeInsets.all(2.0),
-                                                        icon: Icon(
-                                                          GroovinMaterialIcons
-                                                              .tag_text_outline,
-                                                          color:
-                                                              Colors.pink[500],
+                                                                    });
+                                                                  },
+                                                                ))
+                                                          ],
                                                         )),
-                                                    /*  validator: (value) {
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                TextFormField(
+                                                  decoration: InputDecoration(
+                                                      labelText: 'Tax Number',
+                                                      filled: true,
+                                                      fillColor:
+                                                          Colors.transparent,
+                                                      contentPadding:
+                                                          EdgeInsets.all(2.0),
+                                                      icon: Icon(
+                                                        GroovinMaterialIcons
+                                                            .tag_text_outline,
+                                                        color: Colors.pink[500],
+                                                      )),
+                                                  /*  validator: (value) {
                                               String _msg;
                                               value.length < 12
                                                   ? _msg = 'Tax is too short'
                                                   : _msg = null;
                                               return _msg;
                                             },*/
-                                                    keyboardType:
-                                                        TextInputType.number,
-                                                    onSaved: (String value) {
-                                                      _newMemberForm.taxNumber =
-                                                          value;
-                                                    },
-                                                  ),
-                                                ],
-                                              ),
-                                            )
-                                          : Container()),
-                                  veri
-                                      ? IconButton(
-                                          icon: Icon(
-                                            Icons.check_circle,
-                                            color: Colors.greenAccent[400],
-                                            size: 60,
+                                                  keyboardType:
+                                                      TextInputType.number,
+                                                  onSaved: (String value) {
+                                                    _newMemberForm.taxNumber =
+                                                        value;
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                          )
+                                        : Container()),
+                                model.newRegcourierFee > 0
+                                    ? Container(
+                                        height: 16,
+                                        child: ListTile(
+                                          title: Text(
+                                            'Courier Fee',
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold),
+                                            // textDirection: TextDirection.rtl,
                                           ),
-                                          onPressed: () async {
-                                            showDialog(
-                                                context: context,
-                                                builder: (_) {
-                                                  return ShipmentPlace(
-                                                    model: model,
-                                                    memberId:
-                                                        model.userInfo.distrId,
-                                                    isEdit: true,
-                                                    isNewMember: true,
-                                                  );
-                                                });
+                                          trailing: Text(
+                                            formatter.format(
+                                                    model.newRegcourierFee > 0
+                                                        ? model.newRegcourierFee
+                                                        : 0) +
+                                                ' Rp ',
+                                            style: TextStyle(fontSize: 12),
+                                          ),
+                                          leading: Icon(
+                                            GroovinMaterialIcons.truck,
+                                            size: 22,
+                                            color: Colors.black,
+                                          ),
+                                        ))
+                                    : Container(),
+                                Padding(
+                                  padding: EdgeInsets.only(bottom: 3),
+                                ),
+                                veri
+                                    ? Container(
+                                        height: 16,
+                                        child: ListTile(
+                                          title: Text(
+                                            'Membership Fee',
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          trailing: Text(
+                                            formatter.format(double.tryParse(
+                                                    model.settings.catCode)) +
+                                                ' Rp',
+                                            style: TextStyle(fontSize: 12),
+                                          ),
+                                          leading: Icon(
+                                            GroovinMaterialIcons.account_plus,
+                                            size: 22,
+                                            color: Colors.black,
+                                          ),
+                                        ))
+                                    : Container(),
+                                Padding(padding: EdgeInsets.only(bottom: 22)),
+                                Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    widget.model.newRegcourierFee > 0 &&
+                                            model.docType == 'CR'
+                                        ? Expanded(
+                                            flex: 1,
+                                            child: RawMaterialButton(
+                                              fillColor: Colors.tealAccent[400],
+                                              splashColor: Colors.pink[500],
+                                              constraints: BoxConstraints(
+                                                  maxWidth: 45, maxHeight: 45),
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          30.0)),
+                                              child: Container(
+                                                height: 34,
+                                                child: Row(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceAround,
+                                                    mainAxisSize:
+                                                        MainAxisSize.max,
+                                                    children: [
+                                                      Icon(
+                                                        GroovinMaterialIcons
+                                                            .cash_multiple,
+                                                        size: 24,
+                                                        color: Colors.white,
+                                                      ),
+                                                      Text(
+                                                        'Total',
+                                                        style: TextStyle(
+                                                            fontSize: 12.5,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                        // textDirection: TextDirection.rtl,
+                                                      ),
+                                                      Text(
+                                                        formatter.format(model
+                                                                    .newRegcourierFee +
+                                                                double.tryParse(model
+                                                                    .settings
+                                                                    .catCode)) +
+                                                            ' Rp ',
+                                                        style: TextStyle(
+                                                            fontSize: 12.2,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                    ]),
+                                              ),
+                                              onPressed: () {},
+                                            ),
+                                          )
+                                        : Container(),
+                                    veri
+                                        ? Container(
+                                            child: RawMaterialButton(
+                                                constraints: BoxConstraints(
+                                                    minWidth: 46,
+                                                    minHeight: 46),
+                                                splashColor: Colors.amber,
+                                                shape: CircleBorder(),
+                                                highlightColor:
+                                                    Colors.pink[500],
+                                                elevation: 8,
+                                                fillColor: model.docType == 'CR'
+                                                    ? Colors.amber
+                                                    : Colors.green,
+                                                child: Icon(
+                                                  model.docType == 'CR'
+                                                      ? GroovinMaterialIcons
+                                                          .truck
+                                                      : Icons.check,
+                                                  color: Colors.white,
+                                                  size: 34,
+                                                ),
+                                                onPressed: () async {
+                                                  model.newRegcourierFee = 0;
+                                                  model.docType == 'CR'
+                                                      ? showDialog(
+                                                          context: context,
+                                                          builder: (_) {
+                                                            return ShipmentPlace(
+                                                              model: model,
+                                                              memberId: model
+                                                                  .userInfo
+                                                                  .distrId,
+                                                              isEdit: true,
+                                                              isNewMember: true,
+                                                            );
+                                                          })
+                                                      : Container(); //* add save Funcion
 
-                                            /*  String msg = '';
+                                                  /*  String msg = '';
                                             if (validateAndSave(
                                                 model.userInfo.distrId,
                                                 model.setStoreId)) {
-                                              msg = await _saveNewMember(
+                                              msg = await saveNewMember(
                                                   model.settings.apiUrl,
                                                   model.userInfo.distrId,
                                                   model.docType,
+                                                  model.shipmentAddress,
                                                   model.setStoreId);
                                               showReview(context, msg);
 
@@ -941,16 +1102,17 @@ class _NewReg extends State<NewReg> {
                                               PaymentInfo(model)
                                                   .flushAction(context)
                                                   .show(context);*/
-                                          }
+                                                }
 
-                                          //  s
+                                                //  s
 
-                                          //_newMemberFormKey.currentState.reset();
+                                                //_newMemberFormKey.currentState.reset();
 
-                                          )
-                                      : Container()
-                                ]),
-                          ),
+                                                ))
+                                        : Container(),
+                                  ],
+                                )
+                              ])),
                         ),
                       )),
                 ],
@@ -961,8 +1123,8 @@ class _NewReg extends State<NewReg> {
   }
 
   String errorM = '';
-  Future<String> saveNewMember(
-      String user, String docType, String storeId, String apiUrl) async {
+  Future<String> saveNewMember(String user, String docType, String storeId,
+      String apiUrl, String address) async {
     //  print('docType:$docType:storeId:$storeId');
     Id body;
     String msg;
@@ -975,7 +1137,7 @@ class _NewReg extends State<NewReg> {
         getplace(placeSplit.first).shipmentPlace,
         getplace(placeSplit.first).spName,
         docType,
-        _newMemberForm.address,
+        address, //_newMemberForm.address,
         storeId);
     if (response.statusCode == 201) {
       body = Id.fromJson(json.decode(response.body));

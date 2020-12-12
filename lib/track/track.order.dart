@@ -29,7 +29,8 @@ class _TrackOrder extends State<TrackOrder> {
   final formatter = new NumberFormat("#,###");
   double addPpnTax(int index) {
     double cf = double.tryParse(firstSorder[index].coureirFee) ?? 0.0;
-    return double.tryParse(firstSorder[index].soTotal) * 1.1 + cf * 1.01;
+
+    return (double.tryParse(firstSorder[index].soTotal) * 1.1 + cf);
   }
 
   void isLoading(bool o, MainModel model) {
@@ -197,11 +198,13 @@ class _TrackOrder extends State<TrackOrder> {
             child: ListTile(
               leading: Text(
                 item.itemId,
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
               ),
-              title: Text(
-                item.itemName,
+              title: Text(item.itemName, style: TextStyle(fontSize: 13)),
+              trailing: Text(
+                item.qty.round().toString(),
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
               ),
-              trailing: Text(item.qty.round().toString()),
             ),
           );
   }
@@ -294,7 +297,10 @@ class _TrackOrder extends State<TrackOrder> {
                 // Text(sos[index].docId, style: TextStyle(fontSize: 14)),
                 Text(
                   sos[index].distrName,
-                  style: TextStyle(fontSize: 14),
+                  style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red[50]),
                 ),
                 Divider(
                   height: 3.0,
@@ -421,7 +427,7 @@ class _TrackOrder extends State<TrackOrder> {
                                         firstSorder[index].distrId,
                                         style: TextStyle(
                                             fontStyle: FontStyle.italic,
-                                            // fontSize: 14,
+                                            fontSize: 13,
                                             color: Colors.white),
                                       ),
                                     ],
@@ -444,7 +450,7 @@ class _TrackOrder extends State<TrackOrder> {
                                         firstSorder[index].docDate,
                                         style: TextStyle(
                                             fontStyle: FontStyle.italic,
-                                            //fontSize: 14,
+                                            fontSize: 13,
                                             color: Colors.white),
                                       ),
                                     ],
@@ -466,7 +472,7 @@ class _TrackOrder extends State<TrackOrder> {
                                         children: <Widget>[
                                           Text(firstSorder[index].docId,
                                               style: TextStyle(
-                                                  fontSize: 14,
+                                                  fontSize: 13,
                                                   fontWeight: FontWeight.bold,
                                                   color: Colors.yellow[100])),
                                           firstSorder[index]
@@ -554,20 +560,43 @@ class _TrackOrder extends State<TrackOrder> {
                                     trailing: Container(
                                       child: Column(
                                         children: <Widget>[
-                                          Text(
-                                            'Rp ${(formatter.format(addPpnTax(index)))}',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.red[100],
-                                              fontSize: 15,
-                                            ),
-                                          ),
+                                          firstSorder[index].totalBonus > 0
+                                              ? Column(children: [
+                                                  Text(
+                                                    'Rp ${(formatter.format(addPpnTax(index)))}' +
+                                                        ' ' +
+                                                        ' - Rp ${(formatter.format(firstSorder[index].totalBonus))}',
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.green[200],
+                                                      fontSize: 12,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    'Rp ${(formatter.format(addPpnTax(index) - firstSorder[index].totalBonus))}',
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.red[50],
+                                                      fontSize: 13,
+                                                    ),
+                                                  )
+                                                ])
+                                              : Text(
+                                                  'Rp ${(formatter.format(addPpnTax(index)))}',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.red[100],
+                                                    fontSize: 13,
+                                                  ),
+                                                ),
                                           Text(
                                             'Bp ${firstSorder[index].soBp}',
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               color: Colors.blue[100],
-                                              fontSize: 15,
+                                              fontSize: 13,
                                             ),
                                           )
                                         ],

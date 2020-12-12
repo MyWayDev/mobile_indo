@@ -175,6 +175,8 @@ class _CourierOrder extends State<CourierOrder> {
                                           _loading = true;
                                         });
                                         state.didChange(newValue);
+                                        print(
+                                            "CourierId=>${newValue.id.toString()}..areaID=>$areaId..OrderWeight=>${model.orderWeight()}");
                                         courierFee =
                                             await model.courierServiceFee(
                                                 newValue.id.toString(),

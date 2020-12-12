@@ -359,7 +359,7 @@ class DistrBonus {
 
   DistrBonus({this.distrId, this.name, this.bonus});
   toJson() {
-    return {"DISTR_ID": distrId};
+    return {"DISTR_ID": distrId, "ANAME": bonus};
   }
 
   String distrBonusToJson(DistrBonus distrBonus) {

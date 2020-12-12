@@ -20,7 +20,7 @@ class Lock {
 
   Lock(
       {this.id,
-      this.lockApp = false,
+      this.lockApp,
       this.catCode,
       this.version,
       this.adminFee,
@@ -35,19 +35,19 @@ class Lock {
 
   Lock.fromSnapshot(DataSnapshot snapshot)
       : id = snapshot.value['id'],
-        lockApp = snapshot.value['lockApp'],
-        lockCart = snapshot.value['lockCart'],
-        adminFee = snapshot.value['adminFee'],
+        lockApp = snapshot.value['lockApp'] ?? false,
+        lockCart = snapshot.value['lockCart'] ?? false,
+        adminFee = snapshot.value['adminFee'] ?? 0,
         bannerUrl = snapshot.value['bannerUrl'],
-        catCode = snapshot.value['catCode'],
+        catCode = snapshot.value['catCode'] ?? '33000',
         version = snapshot.value['version'],
-        safetyStock = snapshot.value['safetyStock'],
+        safetyStock = snapshot.value['safetyStock'] ?? 0,
         maxOrder = snapshot.value['maxOrder'],
         maxLimited = snapshot.value['maxLimited'],
         pdfUrl = snapshot.value['pdfUrl'] ?? '',
         limitedItem = snapshot.value['limtedItem'] ?? [],
         flush = snapshot.value['flush'],
-        sKitWeight = snapshot.value['sKitWeight'],
+        sKitWeight = snapshot.value['sKitWeight' ?? 1.0],
         bankInfo = snapshot.value['bankInfo'] ?? '',
         apiUrl = snapshot.value['apiUrl' ?? 'http://34.101.79.170:5000/api'];
 }
